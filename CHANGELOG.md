@@ -1,5 +1,12 @@
 # Journal des versions
 
+## v0.0.3 — Lot 2 : stockage
+- Interfaces `LibraryStore` et `PrefsStore`, implémentations IndexedDB (base `rogue-planner`) et mémoire.
+- `openStorage` : repli en mémoire si IndexedDB est absent, en erreur ou sans réponse en 3 s.
+- `requestPersistence` : `navigator.storage.persist()` demandé une seule fois, refus silencieux.
+- `loadExamples` : deux builds et un run d'exemple du prototype au premier lancement.
+- Chaque objet lu est validé par son schéma ; un objet invalide est ignoré et signalé dans la console.
+
 ## v0.0.2 — Lot 1 : moteur
 - Schéma Zod du pack et `loadPack` avec contrôles croisés (identifiants uniques, références), erreurs au chemin JSON.
 - Prérequis (`missing`, `isUnlocked`), `buildOwned`, `reachableDuos`, `toggleTarget`, `applyPick`, `runProgress`.

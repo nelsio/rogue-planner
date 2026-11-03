@@ -440,3 +440,18 @@ Si un lot dépasse une PR raisonnable (plus de ~1 500 lignes hors tests et donn�
 - `toggleTarget` et `applyPick` ne touchent pas `updatedAt` : les dates sont posées avant le dispatch (§2).
 - Les libellés de prérequis (`core.labels.spec.ts`, §6.3) sont reportés au lot 3, où l'interface les affiche.
 - Tests ajoutés : `core.schemas.spec.ts`, `core.pack.spec.ts`.
+
+## Annexe Lot 2 — Stockage (v0.0.3)
+- `src/storage` : `types.ts` (interfaces, `PrefsSchema`), `memory.ts`, `indexeddb.ts`, `index.ts`
+  (`openStorage`, `requestPersistence`, `loadExamples`). `openStorage` renvoie `{ kind, library, prefs }` ;
+  `kind: "memory"` signale le repli, et le texte du bandeau est dans `strings.storageFallback` (affiché au lot 3).
+- Préférence ajoutée à §3.5 : `examplesLoaded`. Les exemples sont chargés une seule fois, et seulement si la
+  bibliothèque est vide ; un joueur qui supprime tout ne les voit pas revenir.
+- Exemples SWORN : `src/games/sworn/examples.json`, copie de la fixture du prototype (un test vérifie l'égalité),
+  importée par `mergeImport`. Le stockage reste indépendant du jeu : les exemples lui sont passés en paramètre.
+- Préférences en IndexedDB : une entrée par clé dans le magasin `prefs`. Lecture clé par clé : une valeur invalide
+  est ignorée et signalée, les autres sont gardées.
+- Persistance non demandée en repli mémoire (sans objet).
+- Si la base s'ouvre après le délai de 3 s, elle est refermée aussitôt : on reste en mémoire pour la session.
+- L'ordre de `list*` n'est pas garanti (ordre des clés en IndexedDB, d'insertion en mémoire) : l'interface trie.
+- `tests/setup.ts` charge `fake-indexeddb/auto` (classes IndexedDB globales).
