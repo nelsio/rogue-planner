@@ -36,11 +36,7 @@ export default defineConfig({
   test: {
     environment: "jsdom",
     include: ["tests/**/*.spec.{ts,tsx}"],
-    exclude: [
-      "tests/e2e/**",
-      // Lot 0 : réactivée au lot 1 avec le moteur.
-      "tests/core.engine.spec.ts",
-    ],
+    exclude: ["tests/e2e/**"],
     setupFiles: ["tests/setup.ts"],
     coverage: {
       provider: "v8",

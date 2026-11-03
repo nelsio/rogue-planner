@@ -19,7 +19,5 @@
       "@rogue/core": ["./src/core/index.ts"]
     }
   },
-  "include": ["src", "tests", "vite.config.ts", "playwright.config.ts"],
-  // Lot 0 : la spec du moteur attend l'API du lot 1 ; elle rejoint la compilation avec le moteur.
-  "exclude": ["tests/core.engine.spec.ts"]
+  "include": ["src", "tests", "vite.config.ts", "playwright.config.ts"]
 }

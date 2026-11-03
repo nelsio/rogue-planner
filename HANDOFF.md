@@ -423,3 +423,20 @@ Si un lot dépasse une PR raisonnable (plus de ~1 500 lignes hors tests et donn�
 - Règle ESLint `no-non-null-assertion` désactivée : la spec fournie, non modifiable, utilise `!`.
 - `tests/e2e/smoke.spec.ts` : la page s'affiche sans défilement horizontal, sur les 4 projets Playwright.
 - Le `README.MD` vide fourni a été remplacé par `README.md`.
+
+## Annexe Lot 1 — Moteur (v0.0.2)
+- Fichiers : `core/zod.ts` (Zod en français, chemins d'erreur), `core/pack.ts`, `core/schemas.ts`, `core/requires.ts`,
+  `core/progress.ts`, `core/import.ts`. Types `Build`, `Run`, `CustomItem`, `Pack` déduits des schémas Zod.
+- `SlotId` vaut `string` : le moteur ne fige pas les 6 emplacements de SWORN, ils viennent de `pack.slots`.
+  Un emplacement absent de `build.abilities` se lit comme `null`.
+- Les contrôles croisés vérifient aussi : fae et emplacement de chaque bénédiction, aptitude sans emplacement,
+  `augments[].for` parmi les armes et sorts des classes, options d'enclume uniques.
+- `reachableDuos` : la présence d'une fae se juge sur les bénédictions possédées hors duos.
+- `withCustom` ajoute le type `{ id: "custom", label: "Ajout manuel" }` à `pack.kinds` ; une saisie manuelle
+  n'occupe jamais d'emplacement d'aptitude, même si elle en précise un.
+- `mergeImport` est atomique : un seul objet invalide fait refuser tout le fichier, avec chaque erreur à son chemin
+  (`builds.1.hero`). Le `game` de l'enveloppe complète les objets qui n'en ont pas (runs du prototype).
+  Il ne contrôle pas l'unicité du run actif : à traiter par l'interface (lot 5).
+- `toggleTarget` et `applyPick` ne touchent pas `updatedAt` : les dates sont posées avant le dispatch (§2).
+- Les libellés de prérequis (`core.labels.spec.ts`, §6.3) sont reportés au lot 3, où l'interface les affiche.
+- Tests ajoutés : `core.schemas.spec.ts`, `core.pack.spec.ts`.
