@@ -186,3 +186,17 @@ pre.json{margin:0;max-height:260px;overflow:auto;background:var(--sunk);border-r
 /* ---- Ajouts v0.1 ---- */
 .banner{margin-top:12px;padding:10px 14px;border-radius:8px;border:1px solid color-mix(in oklab,var(--warn) 55%,transparent);background:color-mix(in oklab,var(--warn) 14%,var(--surface));font-size:.9rem}
 .game .sigil{width:18px;height:18px;border-radius:50%;background:var(--sigil,var(--f-custom))}
+/* Cibles tactiles d'au moins 40 px sur écran tactile (HANDOFF §6.7). */
+@media (pointer:coarse){
+  .btn,.icon-btn,.prio,.chip,.seg button,nav.tabs button,select.slot-select,label.field > :is(input,select){min-height:40px}
+  /* WebKit fige la hauteur d'un select natif : apparence retirée, chevron dessiné par deux dégradés. */
+  select,.game select{-webkit-appearance:none;appearance:none;padding-right:28px;
+    background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);
+    background-position:calc(100% - 15px) 50%,calc(100% - 10px) 50%;background-size:5px 5px;background-repeat:no-repeat}
+  /* La cible du sélecteur de jeu est toute la pastille. */
+  .game{min-height:40px}
+  .game select{min-height:38px}
+  .btn.small,.icon-btn{min-width:40px}
+  .chip,.prio{display:inline-flex;align-items:center}
+  details summary{padding-block:10px}
+}

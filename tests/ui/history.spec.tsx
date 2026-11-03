@@ -11,6 +11,17 @@ const run = (id: string, over: Partial<Run>): Run => ({
 });
 
 describe("historique", () => {
+  it("le RUN d'un build supprimé l'indique dans son en-tête", async () => {
+    const app = await renderApp();
+    await app.user.click(within(screen.getByRole("article", { name: "Spirale de givre" })).getByRole("button", { name: "Lancer un run" }));
+    await app.user.click(screen.getByRole("button", { name: "Builds" }));
+    const card = screen.getByRole("article", { name: "Spirale de givre" });
+    await app.user.click(within(card).getByRole("button", { name: "Supprimer" }));
+    await app.user.click(within(within(card).getByRole("alert")).getByRole("button", { name: "Supprimer" }));
+    await app.user.click(within(screen.getByRole("navigation")).getByRole("button", { name: /^Run/ }));
+    expect(screen.getByRole("heading", { name: "Build supprimé" })).toBeInTheDocument();
+  });
+
   it("run d'exemple : date, build, départ, résultat, prises, notes", async () => {
     const app = await renderApp();
     await app.user.click(screen.getByRole("button", { name: "Historique" }));
@@ -48,7 +59,8 @@ describe("historique", () => {
     expect(document.querySelector(".meter")).toHaveTextContent("4Runs2Victoires50%Réussite");
     const dates = screen.getAllByRole("row").slice(1).map((r) => within(r).getAllByRole("cell")[0].textContent);
     expect(dates).toEqual(["03/11/2026", "02/11/2026", "01/11/2026", "30/10/2026"]);
-    expect(screen.getAllByText("Run libre")).toHaveLength(2);
+    expect(screen.getAllByText("Run libre")).toHaveLength(1);
+    expect(screen.getAllByText("Build supprimé")).toHaveLength(1);
 
     await app.user.selectOptions(screen.getByRole("combobox", { name: "Build" }), "b1");
     expect(document.querySelector(".meter")).toHaveTextContent("2Runs2Victoires100%Réussite");

@@ -46,9 +46,11 @@ export function AppProvider(props: { initial: AppState; basePack: Pack; storage:
     syncRows(prev.builds, state.builds, lib.putBuild, lib.removeBuild);
     syncRows(prev.runs, state.runs, lib.putRun, lib.removeRun);
     syncRows(prev.custom, state.custom, lib.putCustom, lib.removeCustom);
-    if (prev.theme !== state.theme || prev.view !== state.view || prev.editingId !== state.editingId) {
+    if (
+      prev.theme !== state.theme || prev.view !== state.view || prev.editingId !== state.editingId || prev.codexFamily !== state.codexFamily
+    ) {
       storage.prefs
-        .set({ theme: state.theme, lastView: state.view, lastBuildId: state.editingId ?? undefined })
+        .set({ theme: state.theme, lastView: state.view, lastBuildId: state.editingId ?? undefined, codexFamily: state.codexFamily })
         .catch((e: unknown) => console.error("Échec de l'enregistrement des préférences", e));
     }
     saved.current = state;

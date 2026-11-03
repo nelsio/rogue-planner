@@ -25,7 +25,7 @@ describe("coquille", () => {
     const { user, storage } = await renderApp();
     await user.click(screen.getByRole("button", { name: "Catalogue" }));
     expect(screen.getByRole("button", { name: "Catalogue" })).toHaveAttribute("aria-current", "page");
-    expect(screen.getByText(/prochaine version/)).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Bénédictions" })).toBeInTheDocument();
     await flush();
     expect((await storage.prefs.get()).lastView).toBe("catalog");
   });

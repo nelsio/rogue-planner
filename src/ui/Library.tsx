@@ -4,6 +4,7 @@ import type { Build } from "@rogue/core";
 import { useApp } from "./context";
 import { buildFamilies, FaeChip } from "./fae";
 import { duplicateBuild, newBuild } from "./factory";
+import { ImportExport } from "./ImportExport";
 import { strings as t } from "./strings";
 import { useStartRun } from "./useStartRun";
 
@@ -20,6 +21,7 @@ export function Library() {
   const { state, dispatch, pack, env } = useApp();
   const [confirmRemove, setConfirmRemove] = useState<string | null>(null);
   const { start, confirmFor } = useStartRun();
+  const [io, setIo] = useState(false);
 
   return (
     <section className="view">
@@ -33,8 +35,7 @@ export function Library() {
             {t.newBuild}
           </button>
           <button className="btn" onClick={() => start(null)}>{t.freeRun}</button>
-          {/* Import / export : lot 5. */}
-          <button className="btn ghost" disabled>{t.importExport}</button>
+          <button className="btn ghost" onClick={() => setIo(true)}>{t.importExport}</button>
         </div>
       </div>
       {confirmFor(null)}
@@ -55,6 +56,7 @@ export function Library() {
       ) : (
         <p className="empty">{t.noBuilds}</p>
       )}
+      {io && <ImportExport onClose={() => setIo(false)} />}
     </section>
   );
 }

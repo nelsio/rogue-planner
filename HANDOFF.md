@@ -375,6 +375,8 @@ Si un lot dépasse une PR raisonnable (plus de ~1 500 lignes hors tests et donn�
 | P6 | Enclumes = augments de « Sword in the Stone » ; « Reaper » (Scythe) retiré par un correctif du jeu, absent du pack | Confirmer le vocabulaire en jeu |
 | P7 | Effets résumés en français à partir de l'anglais du wiki | Relecture à faire en jouant |
 | P8 | Cartes de build : le prototype écrit toujours « N runs · N victoires » ; la v0.1 accorde (« 1 run · 0 victoire ») | Écart volontaire (lot 3a), à confirmer |
+| P9 | Crédits : liens directs vers les pages de fae du wiki (Fandom répond 403 aux requêtes automatiques) | Ajouter les liens après vérification à la main |
+| P10 | Run d'un build supprimé : « Build supprimé » au lieu de « Run libre » (prototype) | Validé le 2026-11-03 (lot 5) |
 
 ---
 
@@ -509,3 +511,25 @@ Si un lot dépasse une PR raisonnable (plus de ~1 500 lignes hors tests et donn�
 - Enclumes en RUN : les augments affichés suivent l'arme et le sort du run ; un changement de kit garde les enclumes prises.
 - e2e : `tests/e2e/run.spec.ts` (scénarios 2 et 5, pas de défilement horizontal en RUN et dans l'historique) ;
   `tests/e2e/helpers.ts` lit IndexedDB pour attendre les écritures avant un rechargement.
+
+## Annexe Lot 5 — Catalogue, import / export, finitions (v0.1.0)
+- `src/ui` : `Catalog.tsx` (liste, formulaire, `customId`), `ImportExport.tsx`. Reducer : `codexFamily`,
+  `customAdded`, `customRemoved`, `libraryImported` ; le filtre de fae du catalogue est retenu (`prefs.codexFamily`).
+- **« Build supprimé »** (décision du 2026-11-03) : un run dont le build n'existe plus l'affiche dans l'historique et
+  en tête du RUN, au lieu de « Run libre » (prototype). « Run libre » reste pour un run lancé sans build.
+- Ajout manuel : fae au choix ou « Autre » (pastille neutre `--f-custom`), emplacement facultatif, effet par défaut
+  « Effet à préciser », identifiant `custom:<nom-normalisé>-<4 caractères>` tirés de l'UUID de `Env`.
+- Retirer un ajout manuel ne touche ni les builds ni les runs qui le citent : la ligne disparaît de l'affichage ;
+  le moteur (`applyPick`, `runProgress`) tolère désormais une prise inconnue du pack, et un test le couvre.
+- Import : refus atomique avec au plus 10 erreurs affichées (`chemin : message`) ; « Ce texte n'est pas un JSON
+  valide. » ; texte vide signalé. Après fusion, **un seul run reste actif** : celui commencé le plus tard ; les
+  autres passent en abandonné (`singleActiveRun`, point laissé ouvert au lot 1).
+- Export : le JSON affiché est celui téléchargé et copié (builds, runs, ajouts, exemples compris).
+- **Cibles tactiles** (`@media (pointer:coarse)`) : boutons, puces, priorités, onglets, champs et select d'au moins
+  40 px. WebKit fige la hauteur d'un select natif : sur écran tactile, les select perdent leur apparence native et
+  le chevron est dessiné en CSS. Sur ordinateur, rien ne change par rapport au prototype. La cible du sélecteur de
+  jeu est toute sa pastille.
+- IndexedDB : `onversionchange` referme la base (mise à niveau ou suppression demandée par une autre page).
+- e2e : `io.spec.ts` (scénario 3), `mobile.spec.ts` (scénario 4 : onglets en bas, aucun défilement horizontal et
+  cibles ≥ 40 px sur chaque écran et chaque feuille). `scripts/screenshots.mjs` produit `docs/img` (hors CI).
+- Crédits : les pages de fae du wiki sont nommées mais pas liées, Fandom refusant les vérifications automatiques (P9).

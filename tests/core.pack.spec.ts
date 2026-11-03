@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { applyPick, getItem, loadPack, PackFormatError, toggleTarget, withCustom, type Build, type Pack } from "@rogue/core";
+import { applyPick, getItem, loadPack, PackFormatError, runProgress, toggleTarget, withCustom, type Build, type Pack, type Run } from "@rogue/core";
 import packJson from "../src/games/sworn/pack.json";
 import { swornPack } from "../src/games/sworn";
 
@@ -101,6 +101,21 @@ describe("withCustom", () => {
     const p = withCustom(pack, [custom]);
     const b = { abilities: { dash: null }, targets: [] } as unknown as Build;
     expect(toggleTarget(p, b, custom.id).targets).toEqual([{ id: custom.id, prio: "bonus" }]);
+  });
+});
+
+describe("prise inconnue du pack (ajout manuel retiré depuis)", () => {
+  const run = (): Run => ({
+    id: "r", game: "sworn", buildId: null, status: "active", startedAt: "t", hero: "vigilante", weapon: "Sword",
+    spell: "Shadow Strike", picks: [{ id: "custom:retiree", at: "t0" }], anvils: [], others: [], result: null,
+  });
+
+  it("runProgress l'ignore pour les emplacements", () => {
+    expect(runProgress(pack, null, run())).toMatchObject({ taken: 1, slots: { light: { current: null } } });
+  });
+
+  it("applyPick la garde quand une aptitude arrive", () => {
+    expect(applyPick(pack, run(), "lugh:lucky-touch", "t1").picks.map((p) => p.id)).toEqual(["custom:retiree", "lugh:lucky-touch"]);
   });
 });
 

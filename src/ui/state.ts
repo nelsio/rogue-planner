@@ -13,6 +13,8 @@ export interface AppState {
   view: View;
   editingId: string | null;
   theme: Theme;
+  /** Dernier filtre de fae du catalogue (« all » ou un id de fae). */
+  codexFamily: string;
   toast: { seq: number; text: string } | null;
 }
 
@@ -32,7 +34,12 @@ export type Action =
   /** Run modifié (prise, enclume, kit, fin) ; `view` change d'écran au passage. */
   | { type: "runSaved"; run: Run; toast?: string; view?: View }
   /** « Abandonner sans enregistrer » : le run est supprimé. */
-  | { type: "runRemoved"; id: string; view?: View };
+  | { type: "runRemoved"; id: string; view?: View }
+  | { type: "codexFamily"; family: string }
+  | { type: "customAdded"; item: CustomItem; toast: string }
+  | { type: "customRemoved"; id: string }
+  /** Résultat d'un import par fusion ; un seul run reste actif (le plus récent), les autres sont abandonnés à `at`. */
+  | { type: "libraryImported"; library: Library; at: string };
 
 /** Les builds les plus récents d'abord ; l'ordre de lecture départage. */
 export const byRecent = (builds: Build[]) => [...builds].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
@@ -42,7 +49,16 @@ export function initialState(library: Library, prefs: Prefs): AppState {
   const editing = prefs.lastBuildId && builds.some((b) => b.id === prefs.lastBuildId) ? prefs.lastBuildId : null;
   let view: View = VIEWS.find((v) => v === prefs.lastView) ?? "builds";
   if (view === "edit" && !editing) view = "builds";
-  return { ...library, builds, view, editingId: editing, theme: prefs.theme ?? "auto", toast: null };
+  return {
+    ...library, builds, view, editingId: editing, theme: prefs.theme ?? "auto", codexFamily: prefs.codexFamily ?? "all", toast: null,
+  };
+}
+
+/** Garde un seul run actif : celui commencé le plus tard ; les autres passent en abandonné à la date `at`. */
+export function singleActiveRun(runs: Run[], at: string): Run[] {
+  const active = runs.filter((r) => r.status === "active").sort((a, b) => b.startedAt.localeCompare(a.startedAt));
+  const extra = new Set(active.slice(1));
+  return extra.size ? runs.map((r) => (extra.has(r) ? { ...r, status: "abandoned" as const, endedAt: at } : r)) : runs;
 }
 
 const withToast = (state: AppState, text: string): AppState["toast"] => ({ seq: (state.toast?.seq ?? 0) + 1, text });
@@ -89,6 +105,16 @@ export function reducer(state: AppState, action: Action): AppState {
       };
     case "runRemoved":
       return { ...state, runs: state.runs.filter((r) => r.id !== action.id), view: action.view ?? state.view };
+    case "codexFamily":
+      return { ...state, codexFamily: action.family };
+    case "customAdded":
+      return { ...state, custom: [...state.custom, action.item], toast: withToast(state, action.toast) };
+    case "customRemoved":
+      return { ...state, custom: state.custom.filter((c) => c.id !== action.id) };
+    case "libraryImported": {
+      const { builds, runs, custom } = action.library;
+      return { ...state, builds: byRecent(builds), runs: singleActiveRun(runs, action.at), custom };
+    }
   }
 }
 

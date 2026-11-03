@@ -24,7 +24,11 @@ export async function openDatabase(factory: IDBFactory): Promise<IDBPDatabase<Pl
     if (!db.objectStoreNames.contains("prefs")) db.createObjectStore("prefs");
   };
   const db = await new Promise<IDBDatabase>((resolve, reject) => {
-    request.onsuccess = () => resolve(request.result);
+    request.onsuccess = () => {
+      // Une autre page demande une mise à niveau ou la suppression de la base : on la libère.
+      request.result.onversionchange = () => request.result.close();
+      resolve(request.result);
+    };
     request.onerror = () => reject(request.error);
   });
   return wrap(db) as unknown as IDBPDatabase<PlannerDB>;
