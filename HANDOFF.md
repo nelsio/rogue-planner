@@ -492,3 +492,20 @@ Si un lot dépasse une PR raisonnable (plus de ~1 500 lignes hors tests et donn�
 - Accessibilité : « Sort » nomme à la fois le sort du kit et l'emplacement d'aptitude Sort ; les deux listes sont
   dans des blocs distincts (Départ, Aptitudes visées). À revoir si un lecteur d'écran s'y perd.
 - e2e : `tests/e2e/creation.spec.ts` (scénario 1, et sélecteur tenu dans l'écran sans défilement horizontal).
+
+## Annexe Lot 4 — RUN et Historique (v0.0.5)
+- `src/ui` : `RunView.tsx` (RUN, autres choix, fin du run), `History.tsx`, `KitFields.tsx` (classe, arme, sort,
+  partagé avec la Création), `anvils.ts`. `Picker.tsx` prend un mode `build` ou `run`.
+- Reducer : actions `runSaved` (prise, enclume, kit, autres choix, fin du run, avec changement d'écran facultatif)
+  et `runRemoved` (« Abandonner sans enregistrer »).
+- Les calculs du RUN viennent du moteur : `runProgress` (compteurs, hors plan, emplacements, encore à trouver,
+  duos ouverts) et `applyPick` (une aptitude remplace celle du même emplacement, pas de doublon).
+- Sans run actif, l'onglet Run propose les trois premiers builds et « Run sans build » (prototype).
+- Sélecteur en RUN : « Prévues dans le build » (non prises) en tête quand la recherche est vide, puis « Toutes » ;
+  les verrouillées suivent les débloquées, grisées (`dim`) mais choisissables.
+- Autres choix : la saisie se valide aussi par Entrée ; un texte vide n'ajoute rien.
+- Historique : un run dont le build a été supprimé s'affiche « Run libre », comme dans le prototype. Le filtre
+  n'est pas retenu entre deux visites.
+- Enclumes en RUN : les augments affichés suivent l'arme et le sort du run ; un changement de kit garde les enclumes prises.
+- e2e : `tests/e2e/run.spec.ts` (scénarios 2 et 5, pas de défilement horizontal en RUN et dans l'historique) ;
+  `tests/e2e/helpers.ts` lit IndexedDB pour attendre les écritures avant un rechargement.

@@ -1,25 +1,8 @@
 import { expect, test, type Page } from "@playwright/test";
+import { storedPref } from "./helpers";
 
 const noHorizontalScroll = (page: Page) =>
   page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth);
-
-/** Lit une préférence directement dans la base IndexedDB de la page. */
-const storedPref = (page: Page, key: string) =>
-  page.evaluate(
-    (k) =>
-      new Promise<unknown>((resolve, reject) => {
-        const open = indexedDB.open("rogue-planner");
-        open.onerror = () => reject(open.error);
-        open.onsuccess = () => {
-          const get = open.result.transaction("prefs").objectStore("prefs").get(k);
-          get.onsuccess = () => {
-            resolve(get.result);
-            open.result.close();
-          };
-        };
-      }),
-    key,
-  );
 
 test("la bibliothèque s'ouvre avec les builds d'exemple", async ({ page }) => {
   await page.goto("");

@@ -2,6 +2,8 @@
 import { useEffect } from "react";
 import { useApp } from "./context";
 import { Editor } from "./Editor";
+import { History } from "./History";
+import { RunView } from "./RunView";
 import { Library } from "./Library";
 import { activeRun, type View } from "./state";
 import { strings as t } from "./strings";
@@ -69,7 +71,9 @@ export function App() {
 function Screen({ view }: { view: View }) {
   if (view === "builds") return <Library />;
   if (view === "edit") return <Editor />;
-  // Run et Historique : lot 4 ; Catalogue : lot 5.
+  if (view === "run") return <RunView />;
+  if (view === "history") return <History />;
+  // Catalogue : lot 5.
   return (
     <section className="view">
       <p className="empty">{t.comingSoon}</p>

@@ -23,11 +23,11 @@ describe("coquille", () => {
 
   it("change d'onglet et le retient dans les préférences", async () => {
     const { user, storage } = await renderApp();
-    await user.click(screen.getByRole("button", { name: "Historique" }));
-    expect(screen.getByRole("button", { name: "Historique" })).toHaveAttribute("aria-current", "page");
+    await user.click(screen.getByRole("button", { name: "Catalogue" }));
+    expect(screen.getByRole("button", { name: "Catalogue" })).toHaveAttribute("aria-current", "page");
     expect(screen.getByText(/prochaine version/)).toBeInTheDocument();
     await flush();
-    expect((await storage.prefs.get()).lastView).toBe("history");
+    expect((await storage.prefs.get()).lastView).toBe("catalog");
   });
 
   it("thème : auto → clair → sombre → auto, appliqué et enregistré", async () => {

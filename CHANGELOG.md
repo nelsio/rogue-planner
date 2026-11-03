@@ -1,5 +1,14 @@
 # Journal des versions
 
+## v0.0.5 — Lot 4 : RUN et Historique
+- RUN : en-tête (heure de début, build ou « Run libre », kit modifiable), compteurs Essentielles / Prises / Hors plan
+  et barre de progression, emplacements avec « Prévu » et contour si différent, prises dans l'ordre (prévue / hors plan),
+  enclumes (prévues en pointillé), autres choix (Merlin, Morgane, Sanctuaire, Autre).
+- Colonne de droite : encore à trouver, duos atteignables maintenant, notes du build.
+- Bouton flottant « + Bénédiction » : prévues d'abord, verrouillées grisées mais choisissables.
+- Fin du run : victoire ou défaite, « Jusqu'où ? », notes ; enregistrer, continuer, abandonner sans enregistrer.
+- Historique : filtre par build, totaux (runs, victoires, réussite), tableau défilant dans son conteneur sur mobile.
+
 ## v0.0.4 — Lot 3 : coquille, bibliothèque et Création
 ### Lot 3b : Création
 - Départ : nom, classe, arme et sort (filtrés par classe), sélecteur Libre / Restreint avec sa phrase d'aide.

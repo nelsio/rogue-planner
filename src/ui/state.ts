@@ -28,7 +28,11 @@ export type Action =
   /** Build modifié en Création (date de modification déjà posée) ; il garde sa place dans la liste. */
   | { type: "buildSaved"; build: Build; toast?: string }
   /** Lance un run ; un run actif passe en « abandonné » à la date `at`. */
-  | { type: "runStarted"; run: Run; at: string };
+  | { type: "runStarted"; run: Run; at: string }
+  /** Run modifié (prise, enclume, kit, fin) ; `view` change d'écran au passage. */
+  | { type: "runSaved"; run: Run; toast?: string; view?: View }
+  /** « Abandonner sans enregistrer » : le run est supprimé. */
+  | { type: "runRemoved"; id: string; view?: View };
 
 /** Les builds les plus récents d'abord ; l'ordre de lecture départage. */
 export const byRecent = (builds: Build[]) => [...builds].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
@@ -76,6 +80,15 @@ export function reducer(state: AppState, action: Action): AppState {
       const runs = state.runs.map((r) => (r.status === "active" ? { ...r, status: "abandoned" as const, endedAt: action.at } : r));
       return { ...state, runs: [...runs, action.run], view: "run" };
     }
+    case "runSaved":
+      return {
+        ...state,
+        runs: state.runs.map((r) => (r.id === action.run.id ? action.run : r)),
+        view: action.view ?? state.view,
+        toast: action.toast ? withToast(state, action.toast) : state.toast,
+      };
+    case "runRemoved":
+      return { ...state, runs: state.runs.filter((r) => r.id !== action.id), view: action.view ?? state.view };
   }
 }
 

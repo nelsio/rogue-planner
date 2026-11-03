@@ -1,24 +1,17 @@
 // Mode Création (HANDOFF §6.3) : départ, aptitudes, bénédictions visées, fae, duos, enclumes, notes.
 import { useState } from "react";
-import { buildOwned, itemIndex, missing, reachableDuos, toggleTarget, type Build, type Pack } from "@rogue/core";
+import { buildOwned, itemIndex, missing, reachableDuos, toggleTarget, type Build } from "@rogue/core";
+import { anvilGroups } from "./anvils";
 import { useApp } from "./context";
 import { buildFamilies } from "./fae";
 import { FaeDot, ItemText } from "./items";
+import { KitFields } from "./KitFields";
 import { familyName } from "./labels";
 import { Library } from "./Library";
 import { ModeSwitch } from "./ModeSwitch";
 import { Picker } from "./Picker";
 import { strings as t } from "./strings";
 import { useStartRun } from "./useStartRun";
-
-/** Augments de l'arme puis du sort d'un kit. */
-export function anvilGroups(pack: Pack, kit: { weapon: string; spell: string }) {
-  const options = (name: string) => pack.augments.find((a) => a.for === name)?.options ?? [];
-  return [
-    { kind: pack.labels.loadoutWeapon ?? "", name: kit.weapon, options: options(kit.weapon) },
-    { kind: pack.labels.loadoutSpell ?? "", name: kit.spell, options: options(kit.spell) },
-  ];
-}
 
 export function Editor() {
   const { state } = useApp();
@@ -35,7 +28,6 @@ function BuildEditor({ build: b }: { build: Build }) {
   const index = itemIndex(pack);
   const owned = buildOwned(b);
   const restricted = b.mode === "restricted";
-  const hero = pack.loadouts.find((l) => l.id === b.hero) ?? pack.loadouts[0];
   const families = buildFamilies(pack, b);
   const duos = reachableDuos(pack, owned, { restricted }).filter((id) => !b.targets.some((x) => x.id === id));
 
@@ -62,32 +54,7 @@ function BuildEditor({ build: b }: { build: Build }) {
               {t.buildName}
               <input value={b.name} onChange={(e) => save({ ...b, name: e.target.value })} />
             </label>
-            <div className="grid-fields">
-              <label className="field">
-                {pack.labels.loadoutHero}
-                <select
-                  value={hero.id}
-                  onChange={(e) => {
-                    const h = pack.loadouts.find((l) => l.id === e.target.value)!;
-                    save({ ...b, hero: h.id, weapon: h.weapons[0], spell: h.spells[0] });
-                  }}
-                >
-                  {pack.loadouts.map((l) => <option key={l.id} value={l.id}>{l.name}</option>)}
-                </select>
-              </label>
-              <label className="field">
-                {pack.labels.loadoutWeapon}
-                <select value={b.weapon} onChange={(e) => save({ ...b, weapon: e.target.value })}>
-                  {hero.weapons.map((w) => <option key={w}>{w}</option>)}
-                </select>
-              </label>
-              <label className="field">
-                {pack.labels.loadoutSpell}
-                <select value={b.spell} onChange={(e) => save({ ...b, spell: e.target.value })}>
-                  {hero.spells.map((s) => <option key={s}>{s}</option>)}
-                </select>
-              </label>
-            </div>
+            <KitFields kit={b} onChange={(kit) => save({ ...b, ...kit })} />
             <div className="row">
               <ModeSwitch mode={b.mode} onChange={setMode} />
               <span className="muted" style={{ fontSize: ".88rem" }}>{t.modeHelp[b.mode]}</span>
@@ -246,7 +213,7 @@ function BuildEditor({ build: b }: { build: Build }) {
         </label>
       </div>
 
-      {picking && <Picker build={b} onSave={save} onClose={() => setPicking(false)} onMode={setMode} />}
+      {picking && <Picker mode="build" build={b} onSave={save} onClose={() => setPicking(false)} onMode={setMode} />}
     </section>
   );
 }
