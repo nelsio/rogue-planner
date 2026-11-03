@@ -1,0 +1,841 @@
+<title>Rogue Planner</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Grenze+Gotisch:wght@600&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout : bibliothèque de builds → Création (éditeur deux colonnes sur PC) ou RUN (suivi plein écran, barre d'onglets en bas sur mobile).
+   Sombre d'abord (clairière de nuit), variante claire (brume). Chaque fae porte sa couleur, comme les clans du Carnet de Rokugan. */
+:root{
+  color-scheme:dark;
+  --bg:#111619; --surface:#192024; --surface-2:#212a2f; --sunk:#0c1012; --ink:#e4e8e2;
+  --muted:color-mix(in oklab,var(--ink) 62%,var(--bg));
+  --line:color-mix(in oklab,var(--ink) 14%,transparent);
+  --moon:#dccf9a; --moon-ink:#e8dcaa; --on-moon:#15191b;
+  --ok:#86cf9f; --warn:#e6bc62; --danger:#f0897d;
+  --scrim:rgb(0 0 0 / .6); --shadow:0 14px 40px rgb(0 0 0 / .5);
+  --f-badb:#c886d9; --f-beira:#8fd0ee; --f-cliona:#7fd6c0; --f-gogmagog:#cdae88;
+  --f-lugh:#ecc95a; --f-mab:#a9d861; --f-oberon:#95abf5; --f-titania:#f29d6c; --f-custom:#b8b8b0;
+  --f-display:"Grenze Gotisch","UnifrakturCook","Times New Roman",serif;
+  --f-body:"Atkinson Hyperlegible","Segoe UI",system-ui,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){
+  color-scheme:light;
+  --bg:#e9ece8; --surface:#f6f7f4; --surface-2:#ffffff; --sunk:#dde1dc; --ink:#1a2023;
+  --moon:#7a6716; --moon-ink:#5f500f; --on-moon:#ffffff;
+  --ok:#2a7a46; --warn:#8a5c00; --danger:#b3261e;
+  --scrim:rgb(0 0 0 / .35); --shadow:0 12px 32px rgb(30 40 40 / .18);
+  --f-badb:#7d3a90; --f-beira:#1d6a8d; --f-cliona:#1b7462; --f-gogmagog:#7a5734;
+  --f-lugh:#856700; --f-mab:#4a7612; --f-oberon:#344fae; --f-titania:#ab4616; --f-custom:#5d5d57;
+}}
+:root[data-theme="light"]{
+  color-scheme:light;
+  --bg:#e9ece8; --surface:#f6f7f4; --surface-2:#ffffff; --sunk:#dde1dc; --ink:#1a2023;
+  --moon:#7a6716; --moon-ink:#5f500f; --on-moon:#ffffff;
+  --ok:#2a7a46; --warn:#8a5c00; --danger:#b3261e;
+  --scrim:rgb(0 0 0 / .35); --shadow:0 12px 32px rgb(30 40 40 / .18);
+  --f-badb:#7d3a90; --f-beira:#1d6a8d; --f-cliona:#1b7462; --f-gogmagog:#7a5734;
+  --f-lugh:#856700; --f-mab:#4a7612; --f-oberon:#344fae; --f-titania:#ab4616; --f-custom:#5d5d57;
+}
+*{box-sizing:border-box}
+html,body{background:var(--bg);color:var(--ink)}
+body{font:16px/1.45 var(--f-body);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 96px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--moon);outline-offset:2px}
+.wrap{max-width:1080px;margin-inline:auto}
+
+/* En-tête */
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);display:flex;align-items:center;gap:12px;padding-block:12px;border-bottom:1px solid var(--line)}
+.brand{font:600 1.7rem/1 var(--f-display);letter-spacing:.01em;color:var(--moon-ink);margin:0}
+.game{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:4px 10px 4px 6px;background:var(--surface);font-size:.85rem}
+.game select{border:0;background:transparent;font-weight:700;padding:0}
+.game .sigil{width:18px;height:18px;border-radius:50%;background:conic-gradient(var(--f-badb),var(--f-beira),var(--f-cliona),var(--f-gogmagog),var(--f-lugh),var(--f-mab),var(--f-oberon),var(--f-titania),var(--f-badb))}
+.spacer{flex:1}
+.icon-btn{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:6px 10px;font-size:.85rem}
+nav.tabs{display:flex;gap:4px}
+nav.tabs button{border:0;background:transparent;padding:8px 12px;border-radius:8px;color:var(--muted);font-weight:700}
+nav.tabs button[aria-current="page"]{background:var(--surface-2);color:var(--ink)}
+nav.tabs .live{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--danger);margin-left:6px;vertical-align:middle;animation:pulse 1.6s infinite}
+@keyframes pulse{50%{opacity:.35}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media (max-width:720px){
+  header.top nav.tabs{position:fixed;left:0;right:0;bottom:0;top:auto;z-index:6;background:var(--surface);border-top:1px solid var(--line);
+    padding:6px max(8px,env(safe-area-inset-right,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px));justify-content:space-around}
+  nav.tabs button{flex:1;padding:10px 4px;font-size:.85rem}
+  .brand{font-size:1.45rem}
+}
+
+/* Typo et blocs */
+h2{font:700 1.25rem/1.2 var(--f-body);margin:0;text-wrap:balance}
+h3{font:700 .78rem/1 var(--f-body);text-transform:uppercase;letter-spacing:.09em;color:var(--muted);margin:0}
+.muted{color:var(--muted)}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.eyebrow{font-size:.78rem;text-transform:uppercase;letter-spacing:.09em;color:var(--muted)}
+section.view{padding-block:20px;display:grid;gap:20px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:grid;gap:12px;min-width:0}
+.btn{border:1px solid var(--line);background:var(--surface-2);border-radius:8px;padding:9px 14px;font-weight:700}
+.btn.primary{background:var(--moon);color:var(--on-moon);border-color:transparent}
+.btn.danger{color:var(--danger)}
+.btn.ghost{background:transparent}
+.btn.small{padding:5px 10px;font-size:.85rem}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+label.field{display:grid;gap:4px;font-size:.85rem;color:var(--muted);min-width:0}
+label.field > :is(input,select,textarea){color:var(--ink);background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:9px 10px;width:100%}
+textarea{resize:vertical;min-height:70px}
+.grid-fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.example{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;border:1px dashed var(--muted);color:var(--muted);border-radius:4px;padding:1px 6px}
+.empty{color:var(--muted);font-size:.9rem;padding:8px 0}
+
+/* Fae */
+.fae{--c:var(--f-custom)}
+.fae[data-fae="badb"]{--c:var(--f-badb)} .fae[data-fae="beira"]{--c:var(--f-beira)} .fae[data-fae="cliona"]{--c:var(--f-cliona)}
+.fae[data-fae="gogmagog"]{--c:var(--f-gogmagog)} .fae[data-fae="lugh"]{--c:var(--f-lugh)} .fae[data-fae="mab"]{--c:var(--f-mab)}
+.fae[data-fae="oberon"]{--c:var(--f-oberon)} .fae[data-fae="titania"]{--c:var(--f-titania)}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--c);display:inline-block;flex:none}
+.duo-dot{width:14px;height:10px;border-radius:5px;display:inline-block;flex:none;background:linear-gradient(90deg,var(--c1) 50%,var(--c2) 50%)}
+.chip{display:inline-flex;align-items:center;gap:6px;border:1px solid color-mix(in oklab,var(--c) 45%,transparent);background:color-mix(in oklab,var(--c) 12%,var(--surface));border-radius:999px;padding:4px 10px;font-size:.85rem;font-weight:700}
+.chip[aria-pressed="false"]{background:transparent;border-color:var(--line);color:var(--muted);font-weight:400}
+.chip[aria-pressed="false"] .dot{opacity:.5}
+.faes{display:flex;gap:6px;flex-wrap:wrap}
+
+/* Bibliothèque */
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px;display:grid;gap:10px;align-content:start}
+.card h2{font-size:1.1rem}
+.kit{font-size:.9rem;color:var(--muted)}
+.stats{display:flex;gap:16px;font-size:.85rem}
+.stats b{font-family:var(--f-mono);font-variant-numeric:tabular-nums;color:var(--ink)}
+.confirm{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:.9rem;color:var(--danger)}
+
+/* Emplacements d'aptitude */
+.slots{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+.slot{border:1px solid var(--line);border-radius:8px;padding:8px 10px;background:var(--surface-2);display:grid;gap:2px;min-height:58px;text-align:left}
+.slot .sl{font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.slot .sv{font-weight:700;display:flex;gap:6px;align-items:center}
+.slot.empty-slot .sv{color:var(--muted);font-weight:400}
+.slot.filled{border-color:color-mix(in oklab,var(--c) 55%,transparent);background:color-mix(in oklab,var(--c) 10%,var(--surface-2))}
+.slot .planned{font-size:.78rem;color:var(--muted)}
+.slot.off{outline:1px dashed var(--warn)}
+select.slot-select{width:100%;background:var(--surface-2);border:1px solid var(--line);border-radius:6px;padding:4px 6px;font-size:.88rem}
+
+/* Liste de bénédictions */
+.blist{display:grid;gap:6px}
+.bitem{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface-2)}
+.bitem .bn{font-weight:700}
+.bitem .be{font-size:.85rem;color:var(--muted)}
+.bitem .bt{font-size:.72rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.bitem.got{border-color:color-mix(in oklab,var(--ok) 50%,transparent)}
+.bitem.got .bn::after{content:" ✓";color:var(--ok)}
+.prio{border:1px solid var(--line);border-radius:999px;font-size:.75rem;padding:3px 9px;background:transparent;font-weight:700}
+.prio[data-p="core"]{background:var(--moon);color:var(--on-moon);border-color:transparent}
+.tag{font-size:.72rem;font-weight:700;border-radius:4px;padding:1px 6px;background:var(--sunk);color:var(--muted)}
+.tag.plan{background:color-mix(in oklab,var(--moon) 22%,transparent);color:var(--moon-ink)}
+.tag.off{background:color-mix(in oklab,var(--warn) 20%,transparent);color:var(--warn)}
+.tag.duo{background:color-mix(in oklab,var(--ok) 20%,transparent);color:var(--ok)}
+.req{font-size:.78rem;color:var(--muted);margin-top:2px}
+.req-ok{color:var(--ok);font-weight:700}
+.req-miss{color:var(--warn);font-weight:700}
+.bitem.locked{opacity:.5;cursor:not-allowed}
+.bitem.dim{opacity:.62}
+.bitem.warn{border-color:color-mix(in oklab,var(--warn) 55%,transparent)}
+details summary{cursor:pointer;font-size:.88rem;padding:4px 0}
+.stack-s{display:grid;gap:6px}
+.aug-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:6px}
+.aug{display:grid;gap:2px;align-content:start;text-align:left;width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface-2);min-width:0}
+.aug .bn{font-weight:700}.aug .be{font-size:.85rem;color:var(--muted)}
+.aug .tag{justify-self:start;margin-top:2px}
+.aug.planned{border-style:dashed;border-color:var(--moon)}
+.aug[aria-pressed="true"]{border-style:solid;border-color:var(--moon);background:color-mix(in oklab,var(--moon) 16%,var(--surface-2))}
+.aug[aria-pressed="true"] .bn::after{content:" ✓";color:var(--ok)}
+
+/* Éditeur et RUN : deux colonnes sur PC */
+.split{display:grid;gap:16px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:900px){.split{grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);align-items:start}.split > .side{position:sticky;top:calc(env(safe-area-inset-top,0px) + 76px)}}
+
+/* RUN */
+.runhead{display:grid;gap:6px}
+.runhead .kit{font-size:.95rem}
+.meter{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.meter div{background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:10px;display:grid;gap:2px}
+.meter b{font:500 1.5rem/1 var(--f-mono);font-variant-numeric:tabular-nums}
+.meter span{font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em}
+.meter .k-core b{color:var(--moon-ink)} .meter .k-off b{color:var(--warn)}
+.bar{height:6px;border-radius:3px;background:var(--sunk);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--moon)}
+.fab{position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(76px + env(safe-area-inset-bottom,0px));z-index:6;box-shadow:var(--shadow);border-radius:999px;padding:14px 20px;font-size:1rem}
+@media (min-width:721px){.fab{bottom:calc(24px + env(safe-area-inset-bottom,0px))}}
+.log{display:grid;gap:4px;counter-reset:pick}
+.log .bitem{grid-template-columns:auto auto 1fr auto}
+.log .n{font-family:var(--f-mono);font-size:.8rem;color:var(--muted);min-width:1.6em}
+
+/* Feuille (sélecteur) */
+.sheet-scrim{position:fixed;inset:0;background:var(--scrim);z-index:20;display:flex;align-items:flex-end;justify-content:center}
+.sheet{background:var(--surface);width:min(720px,100%);max-height:88%;border-radius:16px 16px 0 0;display:grid;grid-template-rows:auto auto 1fr;box-shadow:var(--shadow);
+  padding:16px max(16px,env(safe-area-inset-right,0px)) calc(16px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));gap:12px}
+@media (min-width:721px){.sheet-scrim{align-items:center}.sheet{border-radius:16px;max-height:80%}}
+.sheet .scroll{overflow:auto;display:grid;gap:14px;align-content:start;min-height:0}
+.sheet .bitem{cursor:pointer;text-align:left;width:100%}
+.sheet .bitem:hover{border-color:var(--moon)}
+.search{width:100%;background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:10px 12px}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(140px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:8px 14px;border-radius:8px;z-index:30;font-weight:700;font-size:.9rem}
+table.hist{width:100%;border-collapse:collapse;font-size:.92rem}
+table.hist th{text-align:left;font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);padding:6px 8px;border-bottom:1px solid var(--line)}
+table.hist td{padding:8px;border-bottom:1px solid var(--line);vertical-align:top}
+.outcome{font-weight:700} .outcome.win{color:var(--ok)} .outcome.loss{color:var(--danger)}
+.tablewrap{overflow-x:auto}
+pre.json{margin:0;max-height:260px;overflow:auto;background:var(--sunk);border-radius:8px;padding:10px;font:12px/1.4 var(--f-mono);white-space:pre-wrap;word-break:break-all}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{border:0;background:transparent;padding:8px 14px;font-weight:700;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--surface-2);color:var(--ink)}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <h1 class="brand">Rogue Planner</h1>
+    <label class="game" title="Jeu"><span class="sigil" aria-hidden="true"></span>
+      <select id="game" aria-label="Jeu"><option value="sworn">SWORN</option><option disabled>Autres jeux : bientôt</option></select>
+    </label>
+    <span class="spacer"></span>
+    <nav class="tabs" id="tabs"></nav>
+    <button class="icon-btn" id="themeBtn" aria-label="Changer de thème">◐</button>
+  </header>
+  <main id="app"></main>
+</div>
+<div id="layer"></div>
+
+<script>
+/* ===================== Pack SWORN (données) =====================
+   Source : guide Steam « SWORN: All Blessings Guide » (accès anticipé), noms en anglais, effets résumés en français.
+   À vérifier contre la 1.0 ; les bénédictions manquantes s'ajoutent dans le Catalogue. */
+const SLOTS=[["light","Attaque légère"],["heavy","Attaque lourde"],["spell","Sort"],["dash","Esquive"],["companion","Compagnon"],["ultimate","Ultime"]];
+const SLOT_LABEL=Object.fromEntries(SLOTS);
+const HEROES={
+  vigilante:{name:"Vigilante",weapons:["Sword","Bow","Bo Staff","Chakrams"],spells:["Shadow Strike","Assassin Dagger","Blade Rush","Dagger Flurry"]},
+  monk:{name:"Monk",weapons:["Tome","Chimes","Magic Staff","Mace"],spells:["Crystal Turrets","Storm Call","Arcane Shield","Black Hole"]},
+  specter:{name:"Specter",weapons:["Armillary Sphere","Scythe","Claws","Arcane Blade"],spells:["Spirit Guardians","Mystic Beam","Dragon Dive","Blink"]},
+  rook:{name:"Rook",weapons:["Great Hammer","Halberd","Gauntlets","Hand Cannon"],spells:["Counter","Sky Drop","Commander's Shield","Bull Rush"]},
+};
+const OTHER_KINDS=[["merlin","Merlin"],["morgana","Morgane"],["shrine","Sanctuaire"],["other","Autre"]];
+/* Enclumes : augments de l'Épée dans la pierre, propres à l'arme et au sort choisis avant le run.
+   Source : SWORN Wiki, page « Sword in the Stone » (CC BY-SA). Effets résumés en français. */
+const ANVILS={
+  "Sword":[["Acceleration","+10 % de vitesse, attaque légère 30 % plus rapide"],["Blade Wave","Les 2 premiers coups légers lancent des vagues"],["Cursed Blade","Jusqu'à +90 % de dégâts selon votre malédiction"],["Double Edge","Attaque lourde −25 %, mais utilisable deux fois de suite"],["Honed Echo","L'attaque lourde libère une onde"],["Hurricane","L'attaque lourde crée un vortex qui blesse sur la durée"],["Magnesis","Attaque lourde +30 %, attire les ennemis"]],
+  "Bow":[["Focus Fire","Attaque lourde : +10 dégâts par flèche"],["Heavy Draw","Attaque légère chargée 25 % plus lentement, +50 % de dégâts"],["Rain Of Arrows","Attaque lourde : 2 flèches en plus"],["Rapid Fire","Attaque légère chargée 80 % plus vite"],["Skyfall","Attaque lourde 30 % plus rapide, +30 % de dégâts"],["Triple Shot","Attaque légère : 3 flèches en éventail, −40 % de dégâts"]],
+  "Bo Staff":[["Above it All","Invulnérable un instant pendant l'attaque lourde"],["Fivefold Strike","Si les 4 premiers coups légers touchent, le dernier double ses dégâts"],["Heavy Impact","Attaque lourde : plus de recul, écrase contre les murs"],["Helm Splitter","Attaque lourde +40 % au centre de l'impact"],["Light Impact","Attaque légère : léger recul, +25 % de dégâts"],["Unending Torrent","Après le Sort, attaque légère +40 % de vitesse pendant 3 s"]],
+  "Chakrams":[["Great Razors","Chakrams 50 % plus grands, +30 % de dégâts"],["Razor Dance","+50 % de vitesse et un tour de plus pendant l'attaque lourde"],["Razor Vortex","Attaque lourde 50 % plus grande, +30 % de dégâts"],["Spare Blade","Un chakram de plus à lancer"],["Streamline","Chakrams lancés 40 % plus loin et plus vite"]],
+  "Assassin Dagger":[["Ricochet Blade","+25 % de dégâts, ricoche (3 rebonds)"],["Veteran's Blade","+1 dégât par ennemi tué au Sort, pour tout le run (max +150)"],["Vigilante's Mark","Marque : +25 % de dégâts subis pendant 3 s"]],
+  "Blade Rush":[["Cutpurse Dash","5 pièces d'or par ennemi tué au Sort"],["Triple Slash","Trois ruées rapides, −20 % de dégâts"],["Vampire Dash","1 PV par ennemi traversé"]],
+  "Dagger Flurry":[["Fan of Knives","5 lames en plus"],["Killing Throw","Achève les ennemis mineurs sous 20 % de vie, +3 PV"],["Splintering Blades","Les lames éclatent en couteaux à l'impact"]],
+  "Shadow Strike":[["Marked for Death","Marque : +25 % de dégâts subis, +3 PV par ennemi tué"],["Omnislash","+25 % de dégâts, frappe tous les ennemis d'une zone"],["Shadow Dancer","Après le Sort, +50 % d'esquive pendant 3 s"]],
+  "Mace":[["Discharge","L'attaque légère en esquive crée un Éclair"],["Greater Smite","Éclairs 20 % plus grands, +20 % de dégâts"],["Holy Fervor","−40 % de dégâts subis pendant l'attaque légère"],["Morningstar","Attaque légère +40 % avec la pointe de l'arme"],["Thunderous Call","Chaque salve d'Éclairs en tire un de plus"]],
+  "Magic Staff":[["Cubic Spread","Attaque légère : 3 projectiles en cône, −40 % chacun"],["Magic Guard","Forte réduction de dégâts en chargeant l'attaque lourde, +50 % si touché"],["Shaping Slam","L'attaque lourde tire aussi 4 projectiles"]],
+  "Tome":[["Anticipation","Petits projectiles pendant la visée de l'attaque lourde"],["Leaden Pages","Attaque lourde +25 % de dégâts, zone +40 %"],["Lengthy Text","Attaque légère : un projectile de plus"],["Paper Storm","Attaque lourde −40 %, mais 3 projectiles"],["Reading Backwards","Attaque légère étroite, puis large en chargeant"],["Scholarly Focus","Attaque légère +20 % de dégâts et de portée"]],
+  "Chimes":[["Capriccio","Attaque légère : une Note de plus sur un ennemi proche"],["Coda","Le dernier coup léger devient un final puissant"],["Echoing Notes","Les Notes légères explosent une 2e fois (−35 %)"],["Grazioso","L'attaque lourde se guide vers l'ennemi, +50 %"],["Reverberate","L'attaque lourde rebondit et explose deux fois"]],
+  "Storm Call":[["Maelstrom","+20 % de dégâts, zone +50 %"],["Pursuing Storm","Le Sort suit lentement l'ennemi le plus proche"],["Storm Surge","Chaque frappe est plus rapide et plus forte (+5)"]],
+  "Crystal Turrets":[["Dual Core","Dure 75 % plus longtemps et tire plus"],["Piercing Shards","+25 % de dégâts, transperce"],["Rapid Fire","Cadence +200 %, −25 % de dégâts"]],
+  "Black Hole":[["Collapse","+15 dégâts par ennemi pris dedans"],["Event Horizon","Se déclenche une 2e fois (−20 %)"],["Supermassive","Zone +25 %, dégâts +25 %"]],
+  "Arcane Shield":[["Arcane Power","+15 % de dégâts aux joueurs protégés"],["Divine Shielding","Bloque entièrement un coup"],["Midnight Pulse","Le bouclier pulse toutes les 1,5 s (25 dégâts)"]],
+  "Great Hammer":[["Axis of Rotation","Attaque lourde jusqu'à +50 % au plus près"],["Bludgeon","Attaque légère : recul +400 %, écrase contre les murs (60)"],["Fully Wound","Attaque lourde +30 %, +1 charge de rotation"],["Inertial Strength","Attaque lourde : tourne et charge 50 % plus vite"],["Let It Rip","Charge deux fois plus longue, deux fois plus de rotations"],["Solid Foundation","+1 rotation à l'attaque lourde, chargée ou non"],["Spinning Lunge","L'attaque légère en esquive devient une rotation"],["Spring Loaded","Charge plus vite, +1 rotation à pleine charge"],["Star Swinger","Attaque légère 40 % plus rapide, +15 %"],["Top Heavy","Attaque légère +40 % avec la tête du marteau"]],
+  "Hand Cannon":[["Direct Hit","Attaque légère +40 % en touche directe"],["Hot Barrel","Attaque lourde +40 % à portée maximale"],["Splash Damage","Explosion de l'attaque légère 50 % plus grande, +20 %"],["Triple Barrage","Attaque légère : 3 projectiles (dégâts divisés par 3)"]],
+  "Halberd":[["Focus","Attaque légère chargée 30 % plus vite"],["Hefty Momentum","+5 dégâts par attaque pleinement chargée d'affilée (max 10)"],["Lock In","Esquiver après une charge complète la conserve"],["Stinger","Attaque lourde à 120 %, portée plus longue"]],
+  "Gauntlets":[["Barraging Beatdown","+300 % au 5e coup léger consécutif"],["Faithful Fighter","Les attaques remplissent l'Ultime 30 % plus vite"],["Furious Fists","Attaque légère 50 % plus rapide"],["Haymaker","Attaque lourde en esquive : gros recul, écrase contre les murs"],["Heavy Hitter","Attaque lourde : recul et +30 %"],["Soften Them Up","Attaque légère : +30 % de dégâts subis pendant 1 s"],["Sucker Punch","Attaque lourde +150 % sur un ennemi en pleine santé"]],
+  "Bull Rush":[["Finale","Impact au sol à la fin du Sort (75)"],["Raging Bull","+30 dégâts par coup consécutif"],["The Horns","Recul +50 %, écrase contre les murs (100)"]],
+  "Counter":[["Adrenaline","Après un contre : +20 % de dégâts, +35 % de vitesse d'attaque"],["Blood Lust","Après un contre : vol de vie (+1 PV par coup, 4 s)"],["Revenge","L'ennemi contré subit +20 % de dégâts de toutes sources"]],
+  "Commander's Shield":[["Feared Aegis","Ennemis dans la zone : +25 % de dégâts subis"],["Healing Crest","1 PV à tous les joueurs par ennemi tué dans la zone"],["Righteous Iron","Zone +30 %, protège les joueurs"]],
+  "Sky Drop":[["Bullseye","Centre de l'impact +125 %"],["Debris Launcher","Débris au départ et à l'atterrissage (45)"],["Massive Impact","+25 % de dégâts, zone +45 %"]],
+  "Armillary Sphere":[["Arcane Bombardment","Attaque lourde : 3 projectiles, −25 %"],["Arcane Chaos","Attaque légère : 2 traits de plus, dispersion +100 %"],["Gravity Well","Attaque lourde : attire les ennemis mineurs, +30 %"],["Overflowing Bolts","Attaque légère : 2 traits de plus"],["Plentiful Bolts","Attaque légère : 1 trait de plus"],["Spread Bolts","Attaque légère : deux fois plus de projectiles, plus dispersés"]],
+  "Scythe":[["Deathly Caster","Après un Sort, la prochaine attaque lourde double ses dégâts"],["Energy Drain","Tuer à l'attaque lourde rend 1 Mana"],["Malice","Tuer à l'attaque lourde : +40 % de vitesse d'attaque pendant 3 s"],["Razor's Edge","Attaque légère +40 % à portée maximale"],["Serrated Edge","Attaque légère : bonus de dégâts, effets au contact appliqués deux fois"],["Swift Death","Attaque légère +20 %, plus mobile"]],
+  "Arcane Blade":[["Arcane Recall","Les lames légères reviennent quand elles se rechargent"],["Blade Mass","Attaque lourde plus grande, environ +30 %"],["Blade Torrent","Le projectile lourd frappe 50 % plus souvent"],["Deadly Duo","Attaque légère : +2 dégâts et +2 lames"],["Embedding Strikes","Attaque légère +100 %, mais ne transperce plus"],["Mystic Smash","L'attaque lourde invoque un marteau (120)"],["Spell Weaver","+20 % à l'attaque lourde par Sort lancé (max 5)"],["Triple Finale","La dernière lame légère est tirée trois fois"],["Weaving Slashes","Attaque lourde : un coup de plus, dégâts réduits"]],
+  "Claws":[["Air Slash","Attaque légère 50 % plus grande, +20 %"],["Berserker","Attaque lourde +100 %, mais coûte 1 PV si elle touche"],["Death Lust","Tuer à l'attaque légère : +20 % de vitesse (cumulable 3 fois)"],["Demonic Ritual","L'attaque lourde coûte 5 PV, puis l'attaque légère soigne"],["Sacrificial Power","Jusqu'à +100 % selon la vie manquante"]],
+  "Mystic Beam":[["Focusing Crystal","+10 par coup consécutif sur la même cible"],["Life Drain","Vol de vie, mais −60 % de vie max"],["Piercing Beam","Transperce, +15 %"]],
+  "Blink":[["Blink Strike","La prochaine attaque après le Sort double ses dégâts"],["Phantom Rush","+20 %, blesse les ennemis traversés (50)"],["Shadow Dancer","+50 % d'esquive pendant 2,5 s"]],
+  "Spirit Guardians":[["Deadly Orbit","Les esprits frappent au contact, +200 %"],["Open The Floodgates","Le Sort reste actif et consomme du Mana ; +1 Mana max"],["Primed Power","Deux esprits permanents, −1 Mana max"]],
+  "Dragon Dive":[["Deft Dive","Meilleure maniabilité, traverse les ennemis"],["Gathering Flames","Plus de dégâts avec la distance (max +100)"],["Purifying Flames","1 PV par ennemi tué"]],
+};
+function anvilsFor(o){
+  return [o.weapon,o.spell].filter(Boolean).map(item=>({item,kind:o.weapon===item?"Arme":"Sort",list:(ANVILS[item]||[]).map(([name,effect])=>({id:`${slug(item)}:${slug(name)}`,name,effect}))}));
+}
+const FAE_RAW=[
+ {id:"badb",name:"Badb",title:"Le Sombre Présage",status:"Coup dans le dos",
+  abil:["Shadow Touch","Shadow Strike","Shadow Flourish","Shadow Dash","The Thing From The Dark","League of Shadows"],
+  verb:"peut frapper dans le dos",dash:"Laisse une Ombre derrière vous",comp:"Le compagnon lance des Ombres",ult:"Invoque des Ombres autour des ennemis",
+  std:[["Blood Thinner","Moins de Saignement requis pour l'Hémorragie"],["Bloody Shadows","Les Ombres infligent Saignement"],["Bloody Stabs","Les coups dans le dos infligent Saignement"],["Deadly Precision","Coups dans le dos plus forts"],["Fleetfooted","Esquive qui recharge plus vite"],["Grievous Wounds","L'Hémorragie frappe en % de vie max"],["Into The Night","Invisibilité après un ennemi tué"],["Like A Ghost","Esquive automatique en étant invisible"],["Nimble","Charge d'esquive en plus"],["Phantom Step","Plus rapide en étant invisible"],["Shadow Step","Une esquive sur 5 rend invisible"],["Shady Business","L'Hémorragie envoie des Ombres"],["Sling Blades","Les Ombres lancent des dagues"],["Slippery Target","Chance d'esquiver un coup"],["Stealth Caster","Le Sort rend invisible"],["Strike From Shadows","Bonus en sortant de l'invisibilité"],["Swift Assassin","Vitesse de déplacement"],["Tragic Aura","Aura qui inflige Saignement"]],
+  rt:["Swift Killers","Vitesse de déplacement de l'équipe"]},
+ {id:"beira",name:"Beira",title:"La Sorcière Gelée",status:"Froid",
+  abil:["Chilling Touch","Chilling Strike","Chilling Flourish","Chilling Dash","Arctic Vole","Icy Vortex"],
+  verb:"inflige Froid",dash:"Laisse une Nova de givre",comp:"Le campagnol lance des Novas de givre",ult:"Déchaîne des rafales glacées",
+  std:[["Arcane Engine","Mana qui se régénère plus vite"],["Bitter End","Les Novas infligent beaucoup de Morsure du givre"],["Bitter Frost","Morsure du givre qui monte plus vite"],["Cold Snap","Les Novas explosent tout de suite"],["Compounding Cold","Novas plus fortes par cumul de Froid"],["Freezing Chill","Le Froid ajoute de la Morsure du givre"],["Frost Torrent","L'Ultime lâche des Novas"],["Frostburn","Dégâts sur la durée au-delà de 5 Froid"],["Frozen Blood","Le Gel crée une Nova"],["Glacial Force","Gel plus long"],["Ice Age","L'Ultime inflige une forte Morsure du givre"],["Ice Storm","Les attaques de Froid peuvent créer des Novas"],["Mana Well","Charge de Mana en plus"],["Nova Burst","Novas plus grandes et plus fortes"],["Permafrost","Le Froid retombe moins vite"],["Seeking Nova","Tuer un ennemi gelé envoie une Nova"],["Spell Caster","Sort plus fort"],["Spell Thief","Les attaques rendent du Mana"]],
+  rt:["Deep Chill","Froid maximal plus haut pour l'équipe"]},
+ {id:"cliona",name:"Cliona",title:"Mère des Banshees",status:"Faiblesse",
+  abil:["Draining Touch","Draining Strike","Draining Flourish","Draining Dash","Banshee","March of Souls"],
+  verb:"inflige Faiblesse",dash:"Tire un Missile d'âme derrière vous",comp:"La Banshee tire des Missiles d'âme",ult:"Lance une nuée de Missiles d'âme",
+  std:[["Inescapable End","Missiles sur tous les ennemis affaiblis de la salle"],["Accretion","La Faiblesse donne des Âmes capturées"],["Banshee's Offering","La Banshee invoque parfois une Urne"],["Cliona's Favor","L'Ultime invoque deux Urnes"],["Death Engine","Les Missiles d'âme donnent des Âmes capturées"],["Death Shroud","Moins de dégâts subis"],["Fate Breaker","Survit à un coup mortel par salle"],["Fate Weaver","Un choix de récompense en moins, rareté plus haute"],["Indomitable Spirit","Déchirure d'âme plus forte"],["Longing","Faiblesse plus longue"],["Nullify","Moins de dégâts des pièges"],["Overflowing Soul","Les Urnes tirent en continu"],["Soul Burst","Missiles d'âme en plus"],["Spirit Channeler","Déchirure d'âme moins chère"],["Spirit Siphon","Charge spirituelle sur les affaiblis"],["Spirit Thief","Charge spirituelle quand un affaibli meurt"],["Splintered Soul","La Faiblesse libère un Missile"]],
+  rt:["Untouchable","Équipe invulnérable en début de salle"]},
+ {id:"gogmagog",name:"Gogmagog",title:"Le Dernier Géant",status:"Choc",
+  abil:["Mighty Touch","Mighty Strike","Mighty Flourish","Mighty Dash","Stony Companion","Wrath of the Giant"],
+  verb:"inflige Choc",dash:"Crée un Séisme",comp:"Le Golem de pierre crée des Séismes",ult:"Vous incarnez Gogmagog et pilonnez",
+  std:[["Aftershock","Séismes doublés, zone plus grande"],["Armored Skin","Bouclier en début de salle"],["Bastion","Le Golem donne un Bouclier aux alliés"],["Concussive Slam","Vulnérable après l'Étourdissement"],["Devastating Quake","Séismes plus forts"],["Flawless","Choc en plus sans dégât subi depuis 3 s"],["Fully Armored","Bouclier cumulable jusqu'à 3"],["Giant Slayer","Choc en plus contre élites et boss"],["Giant's Protection","L'Ultime remplit le Bouclier"],["Giant's Vengeance","Bouclier brisé : 6 Séismes"],["Iron Flesh","Bouclier de départ en plus"],["Landslide","Repousse plus loin les ennemis mineurs"],["Opportunistic","Étourdissement plus long"],["Pillage","Les ennemis lâchent de la monnaie"],["Plunder","Plus de monnaie sur certaines récompenses"],["Press The Attack","Choc en plus sans esquive depuis 3 s"],["Quaking Stun","L'Étourdissement crée 6 Séismes"],["Relentless","Choc en plus contre les étourdis"],["Shakedown","Bouclier brisé : Vulnérable"],["Sturdy Mass","Réduction de dégâts par ennemi proche (25 % max)"],["Tough Stuff","1 dégât de moins par coup"],["Unmatched Power","Plus de Choc infligé"]],
+  rt:["Steel Resolve","Bouclier qui se régénère pour chaque joueur"]},
+ {id:"lugh",name:"Lugh",title:"La Main du Destin",status:"Critique",
+  abil:["Lucky Touch","Lucky Strike","Lucky Flourish","Lucky Dash","Golden Squirrel","Stroke of Luck"],
+  verb:"peut faire un coup critique",dash:"Tire un Trèfle doré",comp:"L'écureuil doré lance des Trèfles",ult:"Lance une javeline à chance de critique",
+  std:[["Attack of Opportunity","La Javeline dorée peut faire un critique"],["Collector","Meilleures récompenses"],["Critical Clover","Un critique lance un Trèfle"],["Critical Favor","Les attaques critiques montent la Faveur"],["Deadly Precision","Plus de dégâts contre les Marqués"],["Death Tax","Les ennemis lâchent de la monnaie"],["Endless Fortune","Fortune maximale plus haute"],["Favored Clovers","Les Trèfles donnent de la Faveur"],["First Target","Un ennemi Marqué en début de salle"],["Gambler Mentality","Un critique raté donne de la Fortune"],["Gilded Armor","Payer de la monnaie pour 50 % de résistance"],["Golden Mark","Attraper un Trèfle peut Marquer"],["Good Fortune","Les Trèfles donnent de la Fortune"],["Good Investment","Monnaie à chaque salle tant qu'on ne dépense pas"],["Greed","Dégâts selon la monnaie détenue"],["Heaven's Phalanx","L'Ultime frappe avec des Javelines"],["Lucky Mark","Un critique Marque un ennemi proche"],["On The House","La Fortune monte en combat"],["Royal Treasury","Trèfles plus forts, 3 lancés au lieu d'1"]],
+  rt:["Treasure Trove","Meilleures chances de rareté pour l'équipe"]},
+ {id:"mab",name:"Mab",title:"Reine des Araignées",status:"Venin",
+  abil:["Venomous Touch","Venomous Strike","Venomous Flourish","Infecting Dash","Brood Mother","Venomous Demise"],
+  verb:"inflige Venin",dash:"Fin d'esquive : inflige Infecté",comp:"Le compagnon est une araignée géante",ult:"Vous incarnez Mab et crachez de la Bile",
+  std:[["Amassing Brood","Une attaque sur 3 invoque une Araignée"],["Bile Thrower","La Mère des couvées crache de la Bile"],["Brood Queen","Une Mère des couvées en plus"],["Call to Legs","L'Ultime invoque 8 Araignées"],["Caustic Finale","Mort sous Venin : jet de Bile"],["Chemical X","Crache de la Bile régulièrement"],["Dividing Daughters","Un Infecté mort peut donner 2 Araignées"],["Fast Acting","Le Venin agit plus vite"],["Feast","Les éliminations montent la vie max (plafonné)"],["Feeding Frenzy","L'Ultime accélère vos araignées"],["Hibernator","Soin en fin de salle"],["Lasting Sting","Venin plus long et plus fort"],["Leech","Soin en tuant un Infecté"],["Lingering Pests","Araignées qui restent plus longtemps"],["Potent Poison","Venin maximal plus haut"],["Regenerative","Soins plus forts (25 PV)"],["Sharp Fangs","Compagnons plus forts"],["Toxic Incubation","5 Venin ou plus : Infecté"],["Ultimate Arachnid","Infectés tués : dégâts permanents de la couvée"],["Waste Not","Le Venin projette de la Bile sur un autre ennemi"]],
+  rt:["We Are Many","Les compagnons font double dégâts"]},
+ {id:"oberon",name:"Oberon",title:"Roi des Fae",status:"Fureur",
+  abil:["Tempest Touch","Tempest Strike","Tempest Flourish","Tempest Dash","Storm Falcon","Tempestuous Barrage"],
+  verb:"donne de la Fureur au contact",dash:"Invoque un Tourbillon",comp:"Le faucon tire des Tourbillons",ult:"Déchaîne des coups de Fureur",
+  std:[["Approaching Storm","Dégâts selon le nombre d'ennemis proches"],["Arcing Bolts","Éclair en chaîne plus loin et plus fort"],["As the Wind","Esquive 25 % plus longue"],["Closed Circuit","Plus de rebonds d'Éclair en chaîne"],["Ebb and Flow","Le Flux monte doucement en combat"],["Electric Judgement","Éclairs rapides pendant l'Ultime"],["Eye of the Storm","Le faucon garde deux Tourbillons"],["Flood Meditation","Les attaques de Fureur montent le Flux"],["Furious Lightning","Les attaques de Fureur lancent des Éclairs"],["Guiding Breeze","Vitesse quand on subit des dégâts"],["Last Wind","Entrer en Flux lance des Tourbillons"],["Lightning Rod","Le faucon tire des Éclairs en chaîne"],["Live in Fury","Fureur plus longue"],["Onslaught","Fureur maximale plus haute"],["Plentiful Winds","Un Tourbillon en plus"],["Rapid Flood","Bonus de vitesse du Flux plus forts"],["Rising Current","Éclairs plus forts selon la Fureur"],["Storm Meditation","10 Fureur ou plus : Éclairs réguliers"],["Swift Killer","Bonus de dégâts en esquivant"],["Tailwind","+1 Fureur max par Tourbillon actif"],["Torrential Flood","Flux plus long"],["Typhoon","Les Tourbillons tirent des Éclairs"],["Whirlwind Shot","En Flux, la Fureur lance des Tourbillons"]],
+  rt:["Go With the Flow","L'équipe monte doucement en Flux"]},
+ {id:"titania",name:"Titania",title:"Reine des Fae",status:"Embrasement",
+  abil:["Burning Touch","Burning Strike","Burning Flourish","Burning Dodge","Ember Cat","Lion Claw"],
+  verb:"embrase toutes les 8 s",dash:"Immolation toutes les 6 s",comp:"Le chat de braise tire des boules de feu",ult:"Lance un chat de braise qui embrase",
+  std:[["Afterburn","Frapper un embrasé cause l'Immolation"],["Cauterize","L'Immolation peut déclencher Brûlure"],["Disintegration","Immolation de plus en plus forte"],["Dying Spark","Plus de dégâts sous 35 % de vie"],["Ember Core","Le chat s'immole régulièrement"],["Ember Scorch","Les boules de feu infligent Brûlure"],["Enduring Flame","Frapper un embrasé cause l'Immolation"],["Fan the Flame","Embrasement plus rapide pendant l'Immolation"],["Feed the Fire","Immolation plus longue"],["Great Ignis","Charge d'Embrasement en plus"],["Greater Ignis","Autre charge d'Embrasement en plus"],["Hot Streak","Tuer un embrasé recharge en partie"],["Lion Spirit","L'Ultime rend les charges d'Embrasement"],["Overheat","Bonus pendant la recharge d'Embrasement"],["Raging Inferno","Immolation plus fréquente"],["Rapid Burn","Embrasement qui recharge plus vite"],["Ring of Fire","Embrasement plus fort sur les immolés"],["Rising Flame","Ultime qui se recharge seul"],["Scorching Aura","2 s d'Immolation : Brûlure"],["Scorching Edge","L'Embrasement inflige Brûlure"],["Searing Blaze","Brûlure plus longue"],["Slow Burn","Embrasement plus fort, recharge plus lente"],["Strike Back","Ultime gagné en subissant des dégâts"],["Third Degree","Brûlure plus forte"],["Volcanic Retaliation","Subir des dégâts crée une Éruption"]],
+  rt:["Heat Wave","Les ennemis apparaissent brûlés"]},
+];
+const DUOS_RAW=[
+ ["Fan of Knives","badb","beira","Les Ombres lancent des dagues sur les ennemis gelés"],["Helpless Prey","badb","cliona","Une Ombre frappe les affaiblis"],["Bone Collector","badb","gogmagog","Les éliminations donnent des dégâts (15 max par salle)"],["Weak Point","badb","lugh","Meilleur critique dans le dos"],["Salt the Wound","badb","mab","Les coups dans le dos font agir le Venin"],["Channeled Darkness","badb","oberon","En Flux, la Fureur frappe dans le dos"],["Immolating Shades","badb","titania","Les Ombres laissent l'Immolation"],
+ ["Eternal Sting","mab","beira","Le Venin ne retombe pas sur les gelés"],["Grave Weakness","mab","cliona","La Faiblesse réduit plus les dégâts ennemis"],["King of Spiders","mab","gogmagog","La Mère des couvées grandit et inflige Choc"],["Lucky Sting","mab","lugh","Le Venin peut ajouter 2 cumuls"],["Venom Meditation","mab","oberon","Les Éclairs en chaîne infligent Venin"],["Combustion","mab","titania","L'Embrasement fait exploser le Venin"],
+ ["Inevitable","beira","cliona","Dégâts de base en hausse après 30 s de combat"],["Shatter","beira","gogmagog","Le Choc brise les ennemis gelés"],["Flash Freeze","beira","lugh","Le Froid peut geler net"],["Nova Surge","beira","oberon","Les Novas éclatent trois fois"],["Icy Hot","beira","titania","Les Novas laissent l'Immolation"],
+ ["Bone Breaker","cliona","gogmagog","Plus de Choc sur les affaiblis"],["Easy Targets","cliona","lugh","Critiques plus forts sur les affaiblis"],["Spirit of the Wind","cliona","oberon","Perdre de la Fureur donne de la Charge spirituelle"],["Pyre","cliona","titania","Les affaiblis se brûlent eux-mêmes"],
+ ["Critical Opening","gogmagog","lugh","Meilleur critique sur les étourdis"],["Berserker","gogmagog","oberon","Réduction de dégâts en Flux"],["Detonate","gogmagog","titania","Les Étourdissements créent des Éruptions"],
+ ["Critical Temperature","titania","lugh","Meilleur critique sur les brûlés"],["Flame Meditation","titania","oberon","Pas de recharge d'Embrasement en Flux"],["Wave of Fortune","lugh","oberon","Critique bien meilleur en Flux"],
+];
+const slug=s=>s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+function buildPack(){
+  const fae={},bl={};
+  for(const f of FAE_RAW){
+    fae[f.id]={id:f.id,name:f.name,title:f.title,status:f.status};
+    f.abil.forEach((n,i)=>{const slot=SLOTS[i][0];
+      const eff=i<3?`${SLOT_LABEL[slot]} : ${f.verb}`:i===3?f.dash:i===4?f.comp:f.ult;
+      bl[`${f.id}:${slug(n)}`]={id:`${f.id}:${slug(n)}`,name:n,fae:[f.id],type:"ability",slot,effect:eff};});
+    for(const [n,e] of f.std) bl[`${f.id}:${slug(n)}`]={id:`${f.id}:${slug(n)}`,name:n,fae:[f.id],type:"standard",effect:e};
+    bl[`${f.id}:${slug(f.rt[0])}`]={id:`${f.id}:${slug(f.rt[0])}`,name:f.rt[0],fae:[f.id],type:"roundtable",effect:f.rt[1]};
+  }
+  for(const [n,a,b,e] of DUOS_RAW) bl[`duo:${slug(n)}`]={id:`duo:${slug(n)}`,name:n,fae:[a,b],type:"duo",effect:e};
+  return {id:"sworn",name:"SWORN",version:"accès anticipé (à vérifier en 1.0)",fae,blessings:bl};
+}
+const PACK=buildPack();
+/* ===================== Prérequis (mode restreint) =====================
+   Source : SWORN Wiki (sworn-game.fandom.com), pages des 8 fae, contenu sous licence CC BY-SA. Relevé le 03/11/2026.
+   Le wiki raisonne en « déclencheurs » : « Any Critical Hit trigger » = n'importe quelle bénédiction qui produit un Critique.
+   Syntaxe des prérequis : groupes séparés par « & » (tous requis), alternatives séparées par « | » (une suffit).
+     t:crit            un déclencheur (t:bleed!Bloody Shadows = sauf celui-là)
+     s:LHSD            une aptitude de la fae sur ces emplacements (L légère, H lourde, S sort, D esquive, P compagnon, U ultime) ;
+                       « Main Slot » du wiki = LHSD (interprétation)
+     s:lugh:LHSD       idem pour une autre fae (duos)
+     n:5               5 bénédictions de la fae (Table ronde, en solo ; 8/10/12 à 2/3/4 joueurs)
+     Nom               une bénédiction précise
+   Chaîne vide : aucun prérequis. Les duos ont parfois deux versions selon la page du wiki ; une seule est retenue ici. */
+const EXTRA_BLESSINGS=[
+  ["oberon","Compounding Flood","standard","Gagner de la Fureur même en Flux"],
+  ["oberon","Enduring Storm","standard","L'Éclair en chaîne rebondit plus de fois"],
+  ["oberon","Hurricane","standard","En Flux, Tourbillons plus rapides et plus nombreux"],
+  ["oberon","Fury Of Blows","roundtable","Vitesse d'attaque de toute l'équipe"],
+  ["titania","Burn Bright","standard","Immolation plus large"],
+  ["titania","Eruption","standard","Subir des dégâts fait exploser les ennemis proches"],
+  ["titania","Proximity Burns","standard","Immolation plus forte au contact de l'ennemi"],
+  ["titania","Wildfire Touch","standard","L'attaque légère garde une 2e charge d'Embrasement, plus de dégâts"],
+  ["titania","Wildfire Strike","standard","L'attaque lourde garde une 2e charge d'Embrasement, plus de dégâts"],
+  ["titania","Wildfire Flourish","standard","Le Sort garde une 2e charge d'Embrasement, plus de dégâts"],
+];
+for(const [f,n,type,e] of EXTRA_BLESSINGS){const id=`${f}:${slug(n)}`;PACK.blessings[id]={id,name:n,fae:[f],type,effect:e}}
+PACK.version="liste : guide Steam et wiki SWORN ; prérequis : wiki SWORN (CC BY-SA)";
+
+const TRIGGERS={crit:"Critique",clover:"Trèfle doré",favor:"Faveur",mark:"Marque",fortune:"Fortune",
+  backstab:"Coup dans le dos",shade:"Ombre",bleed:"Saignement",invis:"Invisibilité",
+  chill:"Froid",nova:"Nova de givre",frostbite:"Morsure du givre",
+  weak:"Faiblesse",missile:"Missile d'âme",spirit:"Charge spirituelle",urn:"Urne",
+  stagger:"Choc",stun:"Étourdissement",quake:"Séisme",shield:"Bouclier",vulnerable:"Vulnérable",
+  venom:"Venin",bile:"Bile",infected:"Infecté",brood:"Mère des couvées",
+  fury:"Fureur",flow:"Flux",whirlwind:"Tourbillon",lightning:"Éclair en chaîne",
+  ignite:"Embrasement",immolate:"Immolation",scorch:"Brûlure"};
+/* Ce que chaque bénédiction déclenche (colonne « Effects » du wiki, complétée par la description). */
+const PROVIDES={
+  badb:{"Shadow Touch":"backstab","Shadow Strike":"backstab","Shadow Flourish":"backstab","Shadow Dash":"shade","The Thing From The Dark":"shade","League of Shadows":"shade",
+    "Bloody Shadows":"shade bleed","Bloody Stabs":"backstab bleed","Deadly Precision":"backstab","Into The Night":"invis","Like A Ghost":"invis","Phantom Step":"invis","Shadow Step":"invis",
+    "Shady Business":"bleed shade","Sling Blades":"shade","Stealth Caster":"invis","Strike From Shadows":"invis","Tragic Aura":"bleed"},
+  beira:{"Chilling Touch":"chill","Chilling Strike":"chill","Chilling Flourish":"chill","Chilling Dash":"nova chill","Arctic Vole":"nova chill","Icy Vortex":"chill",
+    "Bitter End":"frostbite","Bitter Frost":"frostbite","Freezing Chill":"frostbite","Frost Torrent":"nova","Frozen Blood":"nova","Ice Age":"frostbite","Ice Storm":"nova","Seeking Nova":"nova"},
+  cliona:{"Draining Touch":"weak","Draining Strike":"weak","Draining Flourish":"weak","Draining Dash":"missile weak","Banshee":"missile weak","March of Souls":"missile weak",
+    "Accretion":"urn","Overflowing Soul":"urn missile","Soul Burst":"missile weak","Spirit Channeler":"spirit","Spirit Siphon":"spirit","Spirit Thief":"spirit","Splintered Soul":"missile weak","Longing":"weak"},
+  gogmagog:{"Mighty Touch":"stagger","Mighty Strike":"stagger","Mighty Flourish":"stagger","Mighty Dash":"quake stagger","Stony Companion":"quake stagger","Wrath of the Giant":"stagger",
+    "Aftershock":"quake","Armored Skin":"shield","Devastating Quake":"quake","Iron Flesh":"shield","Quaking Stun":"stun quake","Relentless":"stun","Unmatched Power":"stagger",
+    "Fully Armored":"shield","Giant's Vengeance":"quake","Shakedown":"vulnerable","Concussive Slam":"vulnerable","Bastion":"shield","Giant's Protection":"shield","Opportunistic":"stun"},
+  lugh:{"Lucky Touch":"crit","Lucky Strike":"crit","Lucky Flourish":"crit","Lucky Dash":"clover crit","Golden Squirrel":"clover crit","Stroke of Luck":"crit",
+    "Critical Clover":"crit clover","Critical Favor":"favor","Deadly Precision":"crit mark","Endless Fortune":"fortune","Favored Clovers":"favor","First Target":"mark",
+    "Gambler Mentality":"fortune","Golden Mark":"clover mark","Good Fortune":"clover fortune","Lucky Mark":"mark","On The House":"fortune","Royal Treasury":"clover"},
+  mab:{"Venomous Touch":"venom","Venomous Strike":"venom","Venomous Flourish":"venom","Infecting Dash":"infected","Brood Mother":"infected brood","Venomous Demise":"venom bile",
+    "Brood Queen":"brood","Call to Legs":"infected","Lasting Sting":"venom","Toxic Incubation":"infected","Bile Thrower":"bile venom","Waste Not":"venom bile","Chemical X":"bile venom","Caustic Finale":"bile"},
+  oberon:{"Tempest Touch":"fury","Tempest Strike":"fury","Tempest Flourish":"fury","Tempest Dash":"whirlwind","Storm Falcon":"whirlwind","Tempestuous Barrage":"fury",
+    "Closed Circuit":"lightning","Compounding Flood":"fury flow","Ebb and Flow":"flow","Electric Judgement":"lightning","Enduring Storm":"lightning","Flood Meditation":"flow",
+    "Furious Lightning":"lightning","Hurricane":"whirlwind","Last Wind":"whirlwind","Lightning Rod":"lightning","Plentiful Winds":"whirlwind","Rapid Flood":"flow",
+    "Storm Meditation":"lightning","Torrential Flood":"flow","Typhoon":"whirlwind lightning","Whirlwind Shot":"whirlwind"},
+  titania:{"Burning Touch":"ignite","Burning Strike":"ignite","Burning Flourish":"ignite","Burning Dodge":"immolate","Ember Cat":"immolate","Lion Claw":"ignite",
+    "Afterburn":"immolate","Burn Bright":"immolate","Disintegration":"immolate","Ember Core":"immolate","Ember Scorch":"scorch","Enduring Flame":"immolate","Great Ignis":"ignite",
+    "Scorching Aura":"scorch","Scorching Edge":"scorch","Slow Burn":"ignite","Wildfire Touch":"ignite","Wildfire Strike":"ignite","Wildfire Flourish":"ignite","Proximity Burns":"immolate"},
+  duo:{"Fan of Knives":"shade","Helpless Prey":"shade","Channeled Darkness":"backstab","Immolating Shades":"immolate","Icy Hot":"immolate","Nova Surge":"nova chill",
+    "Venom Meditation":"venom lightning","King of Spiders":"stagger","Pyre":"scorch","Detonate":"stun"},
+};
+const REQUIRES={
+  badb:{"Blood Thinner":"t:bleed","Bloody Shadows":"t:shade","Bloody Stabs":"t:backstab","Deadly Precision":"t:backstab","Fleetfooted":"","Grievous Wounds":"t:bleed!Bloody Shadows",
+    "Into The Night":"t:backstab","Like A Ghost":"t:invis","Nimble":"","Phantom Step":"t:invis","Shadow Step":"t:backstab","Shady Business":"t:bleed","Sling Blades":"t:shade",
+    "Slippery Target":"","Stealth Caster":"t:backstab","Strike From Shadows":"t:invis","Swift Assassin":"","Tragic Aura":"t:backstab","Swift Killers":"n:5"},
+  beira:{"Arcane Engine":"","Bitter End":"t:nova","Bitter Frost":"t:frostbite","Cold Snap":"t:nova","Compounding Cold":"t:nova","Frostburn":"s:LHSD","Freezing Chill":"s:LHSD",
+    "Frost Torrent":"Icy Vortex","Frozen Blood":"t:frostbite","Glacial Force":"t:frostbite","Ice Age":"Icy Vortex","Ice Storm":"s:LHSD","Mana Well":"","Nova Burst":"t:nova",
+    "Permafrost":"s:LHSD","Seeking Nova":"t:frostbite","Spell Caster":"","Spell Thief":"","Deep Chill":"n:5"},
+  cliona:{"Inescapable End":"Draining Dash | Banshee","Accretion":"t:weak","Banshee's Offering":"Banshee","Cliona's Favor":"March of Souls","Death Engine":"t:missile","Death Shroud":"",
+    "Fate Breaker":"","Fate Weaver":"","Indomitable Spirit":"t:spirit","Longing":"s:LHSD","Nullify":"","Overflowing Soul":"Accretion","Soul Burst":"t:missile!Overflowing Soul",
+    "Spirit Channeler":"t:spirit","Spirit Siphon":"t:weak","Spirit Thief":"t:weak","Splintered Soul":"t:weak","Untouchable":"n:5"},
+  gogmagog:{"Sturdy Mass":"","Aftershock":"t:quake","Armored Skin":"s:LHSD","Devastating Quake":"t:quake!Giant's Vengeance","Giant Slayer":"s:LHSD","Iron Flesh":"Armored Skin & Fully Armored",
+    "Landslide":"s:LHSD","Opportunistic":"Relentless | Unmatched Power","Plunder":"","Press The Attack":"s:LHSPU","Quaking Stun":"s:LHSD","Relentless":"s:LHSD","Unmatched Power":"s:LHSD",
+    "Fully Armored":"t:shield","Giant's Vengeance":"t:shield!Bastion","Shakedown":"t:shield","Tough Stuff":"","Pillage":"","Concussive Slam":"Relentless | Unmatched Power",
+    "Bastion":"Stony Companion","Flawless":"s:LHSD","Giant's Protection":"Wrath of the Giant","Steel Resolve":"n:5"},
+  lugh:{"Attack of Opportunity":"t:favor","Collector":"","Critical Clover":"t:crit","Critical Favor":"t:crit","Deadly Precision":"t:mark","Death Tax":"",
+    "Endless Fortune":"On The House | Gambler Mentality","Favored Clovers":"s:DP","First Target":"t:crit","Gambler Mentality":"s:LHSDP","Gilded Armor":"","Golden Mark":"Good Fortune",
+    "Good Fortune":"t:clover","Good Investment":"","Greed":"","Heaven's Phalanx":"Stroke of Luck","Lucky Mark":"t:crit","On The House":"s:LHSDP","Royal Treasury":"Favored Clovers | Good Fortune","Treasure Trove":"n:5"},
+  mab:{"Leech":"t:infected","Amassing Brood":"Brood Mother & Bile Thrower | Dividing Daughters | Leech","Brood Queen":"Brood Mother","Call to Legs":"Venomous Demise","Caustic Finale":"t:venom",
+    "Chemical X":"t:venom","Dividing Daughters":"t:infected","Fast Acting":"t:venom","Feast":"","Feeding Frenzy":"Venomous Demise & Infecting Dash | Brood Mother | Call to Legs | Toxic Incubation",
+    "Hibernator":"","Lasting Sting":"t:venom","Lingering Pests":"s:DP","Potent Poison":"t:venom","Regenerative":"","Sharp Fangs":"Brood Mother","Toxic Incubation":"t:venom",
+    "Ultimate Arachnid":"Brood Mother","Bile Thrower":"Brood Mother","Waste Not":"t:venom","We Are Many":"n:5"},
+  oberon:{"Approaching Storm":"","As the Wind":"","Guiding Breeze":"","Swift Killer":"","Arcing Bolts":"t:lightning","Closed Circuit":"t:lightning","Compounding Flood":"Flood Meditation",
+    "Ebb and Flow":"t:fury","Electric Judgement":"Tempestuous Barrage","Enduring Storm":"Storm Meditation","Eye of the Storm":"Storm Falcon","Flood Meditation":"t:fury",
+    "Furious Lightning":"t:fury","Hurricane":"Flood Meditation & t:whirlwind","Last Wind":"t:flow","Lightning Rod":"Storm Falcon","Live in Fury":"s:LHSP","Onslaught":"t:fury",
+    "Plentiful Winds":"t:whirlwind","Rapid Flood":"t:flow","Rising Current":"t:lightning","Storm Meditation":"t:fury","Tailwind":"t:fury","Torrential Flood":"t:flow",
+    "Typhoon":"s:DP","Whirlwind Shot":"t:flow","Go With the Flow":"n:5","Fury Of Blows":"n:5"},
+  titania:{"Strike Back":"Lion Claw","Rising Flame":"Lion Claw","Dying Spark":"","Afterburn":"t:ignite","Burn Bright":"t:immolate","Cauterize":"t:scorch","Disintegration":"t:immolate",
+    "Ember Core":"Ember Cat","Ember Scorch":"Ember Cat","Enduring Flame":"t:ignite","Eruption":"","Fan the Flame":"t:ignite","Feed the Fire":"t:immolate","Great Ignis":"t:ignite",
+    "Greater Ignis":"Great Ignis","Hot Streak":"t:ignite","Lion Spirit":"Lion Claw & t:ignite","Overheat":"t:ignite","Proximity Burns":"t:immolate","Raging Inferno":"t:immolate",
+    "Rapid Burn":"t:ignite","Ring of Fire":"t:ignite","Scorching Aura":"t:immolate","Scorching Edge":"t:ignite","Searing Blaze":"t:scorch","Slow Burn":"t:ignite","Third Degree":"t:scorch",
+    "Volcanic Retaliation":"","Wildfire Flourish":"Burning Flourish","Wildfire Strike":"Burning Strike","Wildfire Touch":"Burning Touch","Heat Wave":"n:5"},
+  duo:{"Fan of Knives":"t:chill & Sling Blades","Helpless Prey":"t:weak & t:shade","Bone Collector":"s:gogmagog:LHSD & s:badb:LHSD","Weak Point":"t:backstab & t:crit",
+    "Salt the Wound":"t:backstab & t:venom","Channeled Darkness":"t:backstab & t:flow","Immolating Shades":"t:shade!Helpless Prey & s:titania:LHSD",
+    "Eternal Sting":"t:chill & Lasting Sting","Grave Weakness":"t:weak & t:venom","King of Spiders":"Brood Mother & t:stagger","Lucky Sting":"t:venom & t:crit",
+    "Venom Meditation":"t:venom & t:lightning","Combustion":"t:venom & t:ignite","Inevitable":"s:cliona:LHSD & s:beira:LHSD","Shatter":"t:frostbite & t:stagger",
+    "Flash Freeze":"Bitter Frost & t:crit","Nova Surge":"t:nova & s:oberon:LHSD","Icy Hot":"t:nova & t:ignite","Bone Breaker":"s:cliona:LHSD & t:stagger",
+    "Easy Targets":"t:weak & t:crit","Spirit of the Wind":"t:fury & t:spirit","Pyre":"t:weak & s:titania:LHSD","Critical Opening":"t:stagger & s:lugh:LHSD",
+    "Berserker":"t:flow & s:gogmagog:LHSD","Detonate":"t:stagger & s:titania:LHSD","Critical Temperature":"t:crit & t:scorch","Flame Meditation":"Flood Meditation & t:ignite",
+    "Wave of Fortune":"t:crit & t:flow"},
+};
+const SLOT_LETTER={L:"light",H:"heavy",S:"spell",D:"dash",P:"companion",U:"ultimate"};
+const SLOT_SHORT={light:"légère",heavy:"lourde",spell:"sort",dash:"esquive",companion:"compagnon",ultimate:"ultime"};
+const norm=s=>s.toLowerCase().replace(/[^a-z0-9]/g,"");
+function findByName(name,fae){
+  const all=Object.values(PACK.blessings).filter(x=>norm(x.name)===norm(name));
+  return all.find(x=>x.fae.includes(fae))||all[0];
+}
+function parseAlt(tok,fae){
+  tok=tok.trim();
+  let m;
+  if((m=tok.match(/^t:(\w+)(?:!(.+))?$/))) return {k:"t",trig:m[1],except:m[2]?findByName(m[2],fae)?.id:null};
+  if((m=tok.match(/^s:(?:(\w+):)?([LHSDPU]+)$/))) return {k:"s",fae:m[1]||fae,slots:[...m[2]].map(c=>SLOT_LETTER[c])};
+  if((m=tok.match(/^n:(\d+)$/))) return {k:"n",fae,count:+m[1]};
+  const x=findByName(tok,fae); if(!x) console.warn("Prérequis inconnu :",tok);
+  return {k:"id",id:x?.id,name:tok};
+}
+for(const [group,map] of Object.entries(PROVIDES)) for(const [name,t] of Object.entries(map)){
+  const x=group==="duo"?Object.values(PACK.blessings).find(b=>b.type==="duo"&&norm(b.name)===norm(name)):findByName(name,group);
+  if(x) x.provides=t.split(" "); else console.warn("Déclencheur sans bénédiction :",name);
+}
+for(const [group,map] of Object.entries(REQUIRES)) for(const [name,req] of Object.entries(map)){
+  const x=group==="duo"?Object.values(PACK.blessings).find(b=>b.type==="duo"&&norm(b.name)===norm(name)):findByName(name,group);
+  if(!x){console.warn("Prérequis sans bénédiction :",name);continue}
+  const home=x.type==="duo"?x.fae[0]:x.fae[0];
+  x.requires=req?req.split("&").map(g=>g.split("|").map(a=>parseAlt(a,home))):[];
+}
+const TYPE_LABEL={ability:"Aptitude",standard:"Standard",roundtable:"Table ronde",duo:"Duo",custom:"Ajoutée"};
+
+/* ===================== État ===================== */
+const KEY="carnet-runs-proto-v1";
+const uid=()=>Math.random().toString(36).slice(2,10);
+const now=()=>new Date().toISOString();
+function sample(){
+  const b1={id:"ex-1",example:true,game:"sworn",name:"Critiques et séismes",mode:"restricted",hero:"vigilante",weapon:"Chakrams",spell:"Shadow Strike",
+    abilities:{light:"lugh:lucky-touch",heavy:"gogmagog:mighty-strike",spell:"lugh:lucky-flourish",dash:"gogmagog:mighty-dash",companion:"",ultimate:"lugh:stroke-of-luck"},
+    targets:[{id:"duo:critical-opening",prio:"core"},{id:"gogmagog:opportunistic",prio:"core"},{id:"lugh:critical-clover",prio:"core"},{id:"gogmagog:unmatched-power",prio:"bonus"},{id:"lugh:collector",prio:"bonus"},{id:"gogmagog:tough-stuff",prio:"bonus"}],
+    notes:"Étourdir puis critiquer. Prendre Lugh en premier si l'offre le permet.",updatedAt:now()};
+  const b2={id:"ex-2",example:true,game:"sworn",name:"Spirale de givre",hero:"monk",weapon:"Tome",spell:"Crystal Turrets",
+    abilities:{light:"",heavy:"",spell:"beira:chilling-flourish",dash:"beira:chilling-dash",companion:"oberon:storm-falcon",ultimate:""},
+    targets:[{id:"beira:spell-caster",prio:"core"},{id:"beira:mana-well",prio:"core"},{id:"duo:nova-surge",prio:"core"},{id:"oberon:onslaught",prio:"bonus"}],
+    notes:"",updatedAt:now()};
+  const run={id:"ex-r1",example:true,buildId:"ex-1",status:"done",startedAt:now(),endedAt:now(),hero:"vigilante",weapon:"Chakrams",spell:"Shadow Strike",
+    picks:["lugh:lucky-touch","lugh:critical-clover","gogmagog:mighty-dash","beira:mana-well","gogmagog:opportunistic","duo:critical-opening"].map(id=>({id,at:now()})),
+    others:[{kind:"merlin",text:"Bénédiction de Merlin (nom à noter)"}],result:{outcome:"loss",reached:"Boss de la 2e zone",notes:"Trop peu de PV"}};
+  return {builds:[b1,b2],runs:[run],custom:[],view:"builds",activeRunId:null,editingId:null};
+}
+let S;
+try{S=JSON.parse(localStorage.getItem(KEY)||"null")}catch{S=null}
+if(!S||!Array.isArray(S.builds)) S=sample();
+S.ui={confirm:null,histFilter:"all",catFae:"all",catQuery:""};
+/* Builds enregistrés avant le mode restreint : ils y passent par défaut. */
+S.builds.forEach(b=>{if(!b.mode)b.mode="restricted"});
+function save(){try{const {ui,...rest}=S;localStorage.setItem(KEY,JSON.stringify(rest))}catch{/* stockage indisponible : l'état reste en mémoire */}}
+const allBlessings=()=>({...PACK.blessings,...Object.fromEntries(S.custom.map(c=>[c.id,c]))});
+const B=id=>allBlessings()[id];
+const build=id=>S.builds.find(b=>b.id===id);
+const activeRun=()=>S.runs.find(r=>r.id===S.activeRunId&&r.status==="active");
+
+/* ===================== Utilitaires d'affichage ===================== */
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const faeDot=b=>b.type==="duo"
+  ?`<span class="duo-dot" style="--c1:var(--f-${b.fae[0]});--c2:var(--f-${b.fae[1]})" aria-hidden="true"></span>`
+  :`<span class="fae dot" data-fae="${b.fae[0]}" aria-hidden="true"></span>`;
+const faeNames=b=>b.fae.map(f=>PACK.fae[f]?.name||"Autre").join(" + ");
+const typeLine=b=>`${TYPE_LABEL[b.type]}${b.slot?" · "+SLOT_LABEL[b.slot]:""} · ${faeNames(b)}`;
+function toast(msg){const t=document.createElement("div");t.className="toast";t.textContent=msg;document.body.append(t);setTimeout(()=>t.remove(),1600)}
+function buildFae(b){const s=new Set();Object.values(b.abilities).forEach(id=>id&&B(id)?.fae.forEach(f=>s.add(f)));b.targets.forEach(t=>B(t.id)?.type!=="duo"&&B(t.id)?.fae.forEach(f=>s.add(f)));return [...s]}
+function heroKit(o){const h=HEROES[o.hero];return h?`${h.name} · ${esc(o.weapon)} · ${esc(o.spell)}`:"Classe à choisir"}
+function reachableDuos(faeSet){return Object.values(allBlessings()).filter(b=>b.type==="duo"&&b.fae.every(f=>faeSet.has(f)))}
+/* Ce que le build possède déjà (aptitudes + bénédictions visées) ; groupes de prérequis non remplis. */
+function owned(b){return new Set([...Object.values(b.abilities).filter(Boolean),...b.targets.map(t=>t.id)])}
+/* Évaluation des prérequis contre un ensemble de bénédictions possédées (build : aptitudes + visées ; run : prises). */
+const CTX=new WeakMap();
+function ctxOf(have){let c=CTX.get(have);if(c)return c;
+  const items=[...have].map(B).filter(Boolean);c={items,count:{}};
+  items.forEach(x=>{if(x.type!=="duo"&&x.type!=="roundtable")x.fae.forEach(f=>c.count[f]=(c.count[f]||0)+1)});CTX.set(have,c);return c}
+function altOk(a,c,self){
+  if(a.k==="id")return c.items.some(x=>x.id===a.id);
+  if(a.k==="t")return c.items.some(x=>x.id!==self&&x.id!==a.except&&x.provides?.includes(a.trig));
+  if(a.k==="s")return c.items.some(x=>x.type==="ability"&&x.fae[0]===a.fae&&a.slots.includes(x.slot));
+  if(a.k==="n")return (c.count[a.fae]||0)>=a.count;
+  return false;
+}
+function missing(x,have){const c=ctxOf(have);return (x.requires||[]).filter(g=>!g.some(a=>altOk(a,c,x.id)))}
+const deFae=f=>{const n=PACK.fae[f]?.name||f;return /^[AEIOU]/.test(n)?`d'${n}`:`de ${n}`};
+function altLabel(a){
+  if(a.k==="id")return B(a.id)?.name||a.name;
+  if(a.k==="t")return `un effet ${TRIGGERS[a.trig]}${a.except?` (hors ${B(a.except)?.name})`:""}`;
+  if(a.k==="s")return `une aptitude ${deFae(a.fae)} (${a.slots.map(x=>SLOT_SHORT[x]).join(", ")})`;
+  if(a.k==="n")return `${a.count} bénédictions ${deFae(a.fae)} (solo)`;
+  return "?";
+}
+function reqLabel(groups){return groups.map(g=>g.map(altLabel).join(" ou ")).join(" et ")}
+/* Prérequis toujours affichés : chaque condition en vert si remplie, en orange sinon. */
+function reqHtml(x,have){
+  if(!x.requires)return "";
+  if(!x.requires.length)return `<div class="req">Aucun prérequis</div>`;
+  const c=ctxOf(have);
+  const parts=x.requires.map(g=>{const ok=g.some(a=>altOk(a,c,x.id));return `<span class="${ok?"req-ok":"req-miss"}">${ok?"✓ ":""}${esc(g.map(altLabel).join(" ou "))}</span>`});
+  return `<div class="req">Prérequis : ${parts.join(" et ")}</div>`;
+}
+const isRestricted=b=>b?.mode==="restricted";
+
+/* ===================== Navigation ===================== */
+function tabs(){
+  const r=activeRun();
+  const items=[["builds","Builds"],["run","Run"],["history","Historique"],["catalog","Catalogue"]];
+  document.getElementById("tabs").innerHTML=items.map(([k,l])=>`<button data-go="${k}" ${S.view===k||(k==="builds"&&S.view==="edit")?'aria-current="page"':""}>${l}${k==="run"&&r?'<span class="live" title="Run en cours"></span>':""}</button>`).join("");
+}
+function go(v){S.view=v;S.ui.confirm=null;render();window.scrollTo(0,0)}
+
+/* ===================== Vues ===================== */
+function vBuilds(){
+  const cards=S.builds.map(b=>{
+    const runs=S.runs.filter(r=>r.buildId===b.id&&r.status==="done");
+    const wins=runs.filter(r=>r.result?.outcome==="win").length;
+    const faes=buildFae(b).map(f=>`<span class="fae chip" data-fae="${f}"><span class="dot"></span>${PACK.fae[f].name}</span>`).join("");
+    const conf=S.ui.confirm===b.id?`<div class="confirm">Supprimer ce build et garder son historique ?<button class="btn small danger" data-act="del-build" data-id="${b.id}">Supprimer</button><button class="btn small ghost" data-act="cancel">Annuler</button></div>`:"";
+    return `<article class="card">
+      <div class="row" style="justify-content:space-between"><h2>${esc(b.name)}</h2>${b.example?'<span class="example">Exemple</span>':""}</div>
+      <div class="kit">${heroKit(b)} · ${isRestricted(b)?"mode restreint":"mode libre"}</div>
+      <div class="faes">${faes||'<span class="muted">Aucune fae choisie</span>'}</div>
+      <div class="stats"><span><b>${b.targets.filter(t=>t.prio==="core").length}</b> essentielles</span><span><b>${b.targets.length}</b> visées</span><span><b>${runs.length}</b> runs · <b>${wins}</b> victoires</span></div>
+      <div class="row"><button class="btn primary small" data-act="start-run" data-id="${b.id}">Lancer un run</button><button class="btn small" data-act="edit" data-id="${b.id}">Modifier</button><button class="btn small ghost" data-act="dup" data-id="${b.id}">Dupliquer</button><button class="btn small ghost danger" data-act="ask-del" data-id="${b.id}">Supprimer</button></div>${conf}
+    </article>`}).join("");
+  return `<section class="view">
+    <div class="row" style="justify-content:space-between"><div><div class="eyebrow">SWORN · bibliothèque</div><h2>Mes builds</h2></div>
+      <div class="row"><button class="btn primary" data-act="new-build">Nouveau build</button><button class="btn" data-act="start-free">Run sans build</button><button class="btn ghost" data-act="io">Importer / exporter</button></div></div>
+    ${S.builds.length?`<div class="cards">${cards}</div>`:'<p class="empty">Aucun build. Créez-en un ou lancez un run sans build.</p>'}
+  </section>`;
+}
+
+function heroFields(o,prefix){
+  const h=HEROES[o.hero];
+  return `<div class="grid-fields">
+    <label class="field">Classe<select id="${prefix}-hero" data-bind="hero">${Object.entries(HEROES).map(([k,v])=>`<option value="${k}" ${o.hero===k?"selected":""}>${v.name}</option>`).join("")}</select></label>
+    <label class="field">Arme<select id="${prefix}-weapon" data-bind="weapon">${h.weapons.map(w=>`<option ${o.weapon===w?"selected":""}>${esc(w)}</option>`).join("")}</select></label>
+    <label class="field">Sort<select id="${prefix}-spell" data-bind="spell">${h.spells.map(w=>`<option ${o.spell===w?"selected":""}>${esc(w)}</option>`).join("")}</select></label>
+  </div>`;
+}
+
+function vEdit(){
+  const b=build(S.editingId); if(!b) return vBuilds();
+  const faes=new Set(buildFae(b));
+  const slotSel=SLOTS.map(([k,l])=>{
+    const opts=Object.values(allBlessings()).filter(x=>x.type==="ability"&&x.slot===k||x.type==="custom"&&x.slot===k);
+    const cur=B(b.abilities[k]);
+    return `<label class="slot ${cur?"filled fae":"empty-slot"}" ${cur?`data-fae="${cur.fae[0]}"`:""}><span class="sl">${l}</span>
+      <select class="slot-select" id="slot-${k}" data-slot="${k}"><option value="">— libre —</option>${opts.map(o=>`<option value="${o.id}" ${b.abilities[k]===o.id?"selected":""}>${esc(PACK.fae[o.fae[0]]?.name||"Autre")} · ${esc(o.name)}</option>`).join("")}</select></label>`}).join("");
+  const have=owned(b);
+  const targets=b.targets.map(t=>{const x=B(t.id);if(!x)return"";const miss=isRestricted(b)?missing(x,have):[];return `<div class="bitem ${miss.length?"warn":""}">${faeDot(x)}<div><div class="bn">${esc(x.name)}</div><div class="be">${esc(x.effect)}</div><div class="bt">${typeLine(x)}</div>${reqHtml(x,have)}</div>
+    <div class="row" style="flex-wrap:nowrap"><button class="prio" data-act="prio" data-id="${x.id}" data-p="${t.prio}" title="Changer la priorité">${t.prio==="core"?"Essentielle":"Bonus"}</button><button class="btn small ghost" data-act="untarget" data-id="${x.id}" aria-label="Retirer ${esc(x.name)}">✕</button></div></div>`}).join("");
+  const duos=reachableDuos(faes).filter(d=>!b.targets.some(t=>t.id===d.id)&&(!isRestricted(b)||!missing(d,have).length));
+  return `<section class="view">
+    <div class="row" style="justify-content:space-between"><div><div class="eyebrow">Mode Création</div><h2>${esc(b.name)}</h2></div>
+      <div class="row"><button class="btn primary" data-act="start-run" data-id="${b.id}">Lancer un run</button><button class="btn ghost" data-act="back">Retour à la bibliothèque</button></div></div>
+    <div class="split">
+      <div style="display:grid;gap:16px;min-width:0">
+        <div class="panel"><h3>Départ</h3>
+          <label class="field">Nom du build<input id="b-name" data-bind="name" value="${esc(b.name)}"></label>
+          ${heroFields(b,"b")}
+          <div class="row"><div class="seg" role="group" aria-label="Mode du build"><button id="mode-free" data-act="build-mode" data-v="free" aria-pressed="${!isRestricted(b)}">Libre</button><button id="mode-restricted" data-act="build-mode" data-v="restricted" aria-pressed="${isRestricted(b)}">Restreint</button></div>
+            <span class="muted" style="font-size:.88rem">${isRestricted(b)?"Seules les bénédictions débloquées par vos aptitudes sont proposées.":"Toutes les bénédictions sont proposées, sans prérequis."}</span></div>
+        </div>
+        <div class="panel"><h3>Aptitudes visées</h3><p class="muted" style="margin:0;font-size:.88rem">Une bénédiction par emplacement. Elle fixe aussi les fae du build.</p><div class="slots">${slotSel}</div></div>
+        <div class="panel"><div class="row" style="justify-content:space-between"><h3>Bénédictions visées</h3><button class="btn small" data-act="pick-target">Ajouter</button></div>
+          <div class="blist">${targets||'<p class="empty">Aucune bénédiction visée. Ajoutez celles qui font tourner le build.</p>'}</div></div>
+      </div>
+      <aside class="side" style="display:grid;gap:16px;min-width:0">
+        <div class="panel"><h3>Fae du build</h3><div class="faes">${[...faes].map(f=>`<span class="fae chip" data-fae="${f}"><span class="dot"></span>${PACK.fae[f].name} · ${PACK.fae[f].status}</span>`).join("")||'<span class="muted">Choisissez une aptitude ou une bénédiction.</span>'}</div></div>
+        <div class="panel"><h3>Duos atteignables</h3>
+          <div class="blist">${duos.length?duos.map(d=>`<div class="bitem">${faeDot(d)}<div><div class="bn">${esc(d.name)}</div><div class="be">${esc(d.effect)}</div></div><button class="btn small" data-act="target" data-id="${d.id}">Viser</button></div>`).join(""):'<p class="empty">Il faut deux fae pour débloquer un duo.</p>'}</div></div>
+      </aside>
+    </div>
+    <div class="panel"><h3>Enclumes · augments de l'arme et du sort</h3>
+      ${anvilsFor(b).map(g=>`<div class="stack-s"><div class="eyebrow">${g.kind} · ${esc(g.item)}</div><div class="aug-grid">${g.list.map(a=>`<button class="aug" data-act="anvil-plan" data-id="${a.id}" aria-pressed="${(b.anvils||[]).includes(a.id)}"><span class="bn">${esc(a.name)}</span><span class="be">${esc(a.effect)}</span></button>`).join("")||'<p class="empty">Aucun augment connu.</p>'}</div></div>`).join("")}
+          <p class="muted" style="margin:0;font-size:.85rem">Touchez un augment pour le viser. Ils changent avec l'arme et le sort choisis.</p></div>
+    <div class="panel"><h3>Notes</h3><label class="field"><span class="muted">Ordre de prise, pièges à éviter…</span><textarea id="b-notes" data-bind="notes">${esc(b.notes)}</textarea></label></div>
+  </section>`;
+}
+
+function vRun(){
+  const r=activeRun();
+  if(!r) return `<section class="view"><div class="panel" style="max-width:560px"><div class="eyebrow">Mode RUN</div><h2>Aucun run en cours</h2>
+    <p class="muted" style="margin:0">Lancez un run depuis un build pour suivre l'écart au plan, ou partez sans build.</p>
+    <div class="row">${S.builds.slice(0,3).map(b=>`<button class="btn" data-act="start-run" data-id="${b.id}">${esc(b.name)}</button>`).join("")}<button class="btn ghost" data-act="start-free">Run sans build</button></div></div></section>`;
+  const b=build(r.buildId);
+  const got=new Set(r.picks.map(p=>p.id));
+  const tg=b?b.targets:[];
+  const planAb=b?Object.values(b.abilities).filter(Boolean):[];
+  const core=tg.filter(t=>t.prio==="core"), coreGot=core.filter(t=>got.has(t.id)).length;
+  const planned=new Set([...tg.map(t=>t.id),...planAb]);
+  const off=r.picks.filter(p=>!planned.has(p.id)).length;
+  const faeSet=new Set(r.picks.flatMap(p=>B(p.id)?.type==="duo"?[]:B(p.id)?.fae||[]));
+  const duos=reachableDuos(faeSet).filter(d=>!got.has(d.id));
+  const curAb={};r.picks.forEach(p=>{const x=B(p.id);if(x?.slot)curAb[x.slot]=x});
+  const slots=SLOTS.map(([k,l])=>{const c=curAb[k],pl=b&&B(b.abilities[k]);const mism=c&&pl&&c.id!==pl.id;
+    return `<div class="slot ${c?"filled fae":"empty-slot"} ${mism?"off":""}" ${c?`data-fae="${c.fae[0]}"`:""}><span class="sl">${l}</span>
+      <span class="sv">${c?`${faeDot(c)}${esc(c.name)}`:"—"}</span>${pl&&(!c||mism)?`<span class="planned">Prévu : ${esc(pl.name)}</span>`:""}</div>`}).join("");
+  const remaining=tg.filter(t=>!got.has(t.id)).map(t=>B(t.id)).filter(Boolean);
+  const log=r.picks.map((p,i)=>{const x=B(p.id);if(!x)return"";const pl=planned.has(x.id);
+    return `<div class="bitem"><span class="n">${i+1}</span>${faeDot(x)}<div><div class="bn">${esc(x.name)}</div><div class="bt">${typeLine(x)}</div></div>
+      <div class="row" style="flex-wrap:nowrap">${b?`<span class="tag ${pl?"plan":"off"}">${pl?"prévue":"hors plan"}</span>`:""}<button class="btn small ghost" data-act="unpick" data-i="${i}" aria-label="Retirer ${esc(x.name)}">✕</button></div></div>`}).join("");
+  const others=r.others.map((o,i)=>`<div class="bitem"><span class="tag">${esc(OTHER_KINDS.find(k=>k[0]===o.kind)?.[1]||o.kind)}</span><div class="bn">${esc(o.text)}</div><button class="btn small ghost" data-act="unother" data-i="${i}" aria-label="Retirer">✕</button></div>`).join("");
+  const endForm=S.ui.confirm==="end-run"?`<div class="panel"><h3>Fin du run</h3>
+      <div class="seg" role="group" aria-label="Résultat"><button id="out-win" data-act="outcome" data-v="win" aria-pressed="${S.ui.outcome==="win"}">Victoire</button><button id="out-loss" data-act="outcome" data-v="loss" aria-pressed="${S.ui.outcome!=="win"}">Défaite</button></div>
+      <label class="field">Jusqu'où ?<input id="end-reached" placeholder="Ex. boss de la 2e zone"></label>
+      <label class="field">Notes<textarea id="end-notes" placeholder="Ce qui a marché, ce qui a manqué"></textarea></label>
+      <div class="row"><button class="btn primary" data-act="end-run">Enregistrer dans l'historique</button><button class="btn ghost" data-act="cancel">Continuer le run</button><button class="btn ghost danger" data-act="abandon">Abandonner sans enregistrer</button></div></div>`:"";
+  return `<section class="view">
+    <div class="runhead"><div class="eyebrow">Mode RUN · commencé à ${new Date(r.startedAt).toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"})}</div>
+      <div class="row" style="justify-content:space-between"><h2>${b?esc(b.name):"Run libre"}</h2><button class="btn small" data-act="ask-end">Terminer le run</button></div>
+      <div class="kit">${heroKit(r)}</div>
+      <details><summary class="muted">Changer la classe, l'arme ou le sort de ce run</summary><div style="margin-top:8px">${heroFields(r,"r")}</div></details></div>
+    ${endForm}
+    ${b?`<div class="meter"><div class="k-core"><b>${coreGot}/${core.length}</b><span>Essentielles</span></div><div><b>${r.picks.length}</b><span>Prises</span></div><div class="k-off"><b>${off}</b><span>Hors plan</span></div></div>
+      <div class="bar" aria-hidden="true"><i style="width:${core.length?Math.round(coreGot/core.length*100):0}%"></i></div>`:""}
+    <div class="split">
+      <div style="display:grid;gap:16px;min-width:0">
+        <div class="panel"><h3>Aptitudes</h3><div class="slots">${slots}</div></div>
+        <div class="panel"><h3>Prises, dans l'ordre</h3><div class="blist log">${log||'<p class="empty">Rien pour l\'instant. Touchez « + Bénédiction » à chaque choix en jeu.</p>'}</div></div>
+        <div class="panel"><h3>Enclumes · ${(r.anvils||[]).length} pris</h3>
+          ${anvilsFor(r).map(g=>`<div class="stack-s"><div class="eyebrow">${g.kind} · ${esc(g.item)}</div><div class="aug-grid">${g.list.map(a=>{const pl=b&&(b.anvils||[]).includes(a.id);return `<button class="aug ${pl?"planned":""}" data-act="anvil-take" data-id="${a.id}" aria-pressed="${(r.anvils||[]).includes(a.id)}"><span class="bn">${esc(a.name)}</span><span class="be">${esc(a.effect)}</span>${pl?'<span class="tag plan">prévu</span>':""}</button>`}).join("")}</div></div>`).join("")}</div>
+        <div class="panel"><div class="row" style="justify-content:space-between"><h3>Autres choix du run</h3></div>
+          <div class="row">${OTHER_KINDS.map(([k,l])=>`<button class="btn small" data-act="add-other" data-k="${k}">+ ${l.split(" (")[0]}</button>`).join("")}</div>
+          ${S.ui.otherKind?`<div class="row"><label class="field" style="flex:1">${esc(OTHER_KINDS.find(k=>k[0]===S.ui.otherKind)[1])}<input id="other-text" placeholder="Nom ou effet"></label><button class="btn primary small" data-act="save-other">Ajouter</button><button class="btn ghost small" data-act="cancel-other">Annuler</button></div>`:""}
+          <div class="blist">${others}</div></div>
+      </div>
+      <aside class="side" style="display:grid;gap:16px;min-width:0">
+        ${b?`<div class="panel"><h3>Encore à trouver</h3><div class="blist">${remaining.length?remaining.map(x=>`<div class="bitem">${faeDot(x)}<div><div class="bn">${esc(x.name)}</div><div class="bt">${typeLine(x)}</div></div>${tg.find(t=>t.id===x.id).prio==="core"?'<span class="tag plan">essentielle</span>':'<span class="tag">bonus</span>'}</div>`).join(""):'<p class="empty">Tout le plan est pris.</p>'}</div></div>`:""}
+        <div class="panel"><h3>Duos atteignables maintenant</h3><div class="blist">${duos.length?duos.map(d=>`<div class="bitem">${faeDot(d)}<div><div class="bn">${esc(d.name)}</div><div class="be">${esc(d.effect)}</div></div>${planned.has(d.id)?'<span class="tag plan">prévu</span>':'<span class="tag duo">ouvert</span>'}</div>`).join(""):'<p class="empty">Prenez une bénédiction de deux fae différentes.</p>'}</div></div>
+        ${b&&b.notes?`<div class="panel"><h3>Notes du build</h3><p style="margin:0">${esc(b.notes)}</p></div>`:""}
+      </aside>
+    </div>
+    <button class="btn primary fab" data-act="pick-run">+ Bénédiction</button>
+  </section>`;
+}
+
+function vHistory(){
+  const done=S.runs.filter(r=>r.status==="done"&&(S.ui.histFilter==="all"||r.buildId===S.ui.histFilter)).sort((a,b)=>b.endedAt.localeCompare(a.endedAt));
+  const wins=done.filter(r=>r.result?.outcome==="win").length;
+  return `<section class="view">
+    <div class="row" style="justify-content:space-between"><div><div class="eyebrow">Historique</div><h2>Runs terminés</h2></div>
+      <label class="field" style="min-width:200px">Build<select id="hist-filter" data-act-change="hist-filter"><option value="all">Tous</option>${S.builds.map(b=>`<option value="${b.id}" ${S.ui.histFilter===b.id?"selected":""}>${esc(b.name)}</option>`).join("")}</select></label></div>
+    <div class="meter" style="max-width:480px"><div><b>${done.length}</b><span>Runs</span></div><div class="k-core"><b>${wins}</b><span>Victoires</span></div><div><b>${done.length?Math.round(wins/done.length*100):0}%</b><span>Réussite</span></div></div>
+    ${done.length?`<div class="tablewrap panel" style="padding:0"><table class="hist"><thead><tr><th>Date</th><th>Build</th><th>Départ</th><th>Résultat</th><th>Prises</th><th>Notes</th></tr></thead><tbody>
+      ${done.map(r=>{const b=build(r.buildId);return `<tr><td class="mono">${new Date(r.endedAt).toLocaleDateString("fr-FR")}</td><td>${b?esc(b.name):"Run libre"}${r.example?' <span class="example">Exemple</span>':""}</td><td>${heroKit(r)}</td>
+        <td><span class="outcome ${r.result.outcome}">${r.result.outcome==="win"?"Victoire":"Défaite"}</span><br><span class="muted">${esc(r.result.reached)}</span></td>
+        <td><div class="faes">${r.picks.map(p=>B(p.id)).filter(Boolean).map(x=>`<span title="${esc(x.name)}">${faeDot(x)}</span>`).join("")}</div><span class="mono muted">${r.picks.length}</span></td><td>${esc(r.result.notes)}</td></tr>`}).join("")}
+    </tbody></table></div>`:'<p class="empty">Aucun run terminé pour ce filtre.</p>'}
+  </section>`;
+}
+
+function vCatalog(){
+  const q=S.ui.catQuery.toLowerCase(), f=S.ui.catFae;
+  const list=Object.values(allBlessings()).filter(b=>(f==="all"||b.fae.includes(f))&&(!q||b.name.toLowerCase().includes(q)||b.effect.toLowerCase().includes(q)));
+  const counts=Object.values(allBlessings()).length;
+  return `<section class="view">
+    <div><div class="eyebrow">Catalogue SWORN · ${counts} bénédictions · source ${esc(PACK.version)}</div><h2>Bénédictions</h2></div>
+    <div class="faes"><button class="chip fae" aria-pressed="${f==="all"}" data-act="cat-fae" data-f="all">Toutes</button>${Object.values(PACK.fae).map(x=>`<button class="chip fae" data-fae="${x.id}" aria-pressed="${f===x.id}" data-act="cat-fae" data-f="${x.id}"><span class="dot"></span>${x.name}</button>`).join("")}</div>
+    <input class="search" id="cat-q" placeholder="Chercher un nom ou un effet" value="${esc(S.ui.catQuery)}">
+    <div class="split"><div class="blist" style="min-width:0">${list.map(b=>`<div class="bitem">${faeDot(b)}<div><div class="bn">${esc(b.name)}</div><div class="be">${esc(b.effect)}</div><div class="bt">${typeLine(b)}</div>${b.requires?`<div class="bt">${b.requires.length?`Prérequis : ${esc(reqLabel(b.requires))}`:"Aucun prérequis"}</div>`:""}</div>${b.type==="custom"?`<button class="btn small ghost danger" data-act="del-custom" data-id="${b.id}">Retirer</button>`:""}</div>`).join("")||'<p class="empty">Aucun résultat.</p>'}</div>
+      <aside class="side panel"><h3>Ajouter une bénédiction manquante</h3><p class="muted" style="margin:0;font-size:.88rem">Pour une bénédiction ajoutée par un patch ou absente de la source.</p>
+        <label class="field">Nom<input id="c-name"></label>
+        <div class="grid-fields"><label class="field">Fae<select id="c-fae">${Object.values(PACK.fae).map(x=>`<option value="${x.id}">${x.name}</option>`).join("")}<option value="other">Autre</option></select></label>
+        <label class="field">Emplacement<select id="c-slot"><option value="">Standard</option>${SLOTS.map(([k,l])=>`<option value="${k}">${l}</option>`).join("")}</select></label></div>
+        <label class="field">Effet<input id="c-effect"></label>
+        <button class="btn primary" data-act="add-custom">Ajouter au catalogue</button></aside></div>
+  </section>`;
+}
+
+/* ===================== Feuilles ===================== */
+function openPicker(mode){S.ui.picker={mode,q:"",fae:"all"};renderLayer()}
+function renderLayer(){
+  const L=document.getElementById("layer");
+  if(S.ui.picker) return L.innerHTML=pickerHtml(),L.querySelector("#pick-q")?.focus({preventScroll:true});
+  if(S.ui.io) return L.innerHTML=ioHtml();
+  L.innerHTML="";
+}
+function pickerHtml(){
+  const p=S.ui.picker, r=activeRun(), b=p.mode==="run"?build(r?.buildId):build(S.editingId);
+  const got=new Set(p.mode==="run"?r.picks.map(x=>x.id):b.targets.map(t=>t.id).concat(Object.values(b.abilities)));
+  const planned=new Set(b?b.targets.map(t=>t.id).concat(Object.values(b.abilities).filter(Boolean)):[]);
+  const q=p.q.toLowerCase();
+  const all=Object.values(allBlessings()).filter(x=>(p.fae==="all"||x.fae.includes(p.fae))&&(!q||x.name.toLowerCase().includes(q)||x.effect.toLowerCase().includes(q)));
+  /* Mode restreint (création) : les bénédictions verrouillées ne se choisissent pas. En RUN : signalées, mais choisissables (le jeu fait foi). */
+  const restricted=p.mode==="build"&&isRestricted(b);
+  const have=p.mode==="run"?new Set(r.picks.map(x=>x.id)):owned(b);
+  const miss=x=>missing(x,have);
+  const item=x=>{const m=(restricted||p.mode==="run")?miss(x):[];
+    const req=reqHtml(x,have);
+    const body=`${faeDot(x)}<div><div class="bn">${esc(x.name)}</div><div class="be">${esc(x.effect)}</div><div class="bt">${typeLine(x)}</div>${req}</div>${p.mode==="run"&&planned.has(x.id)?'<span class="tag plan">prévue</span>':""}`;
+    return restricted&&m.length?`<div class="bitem locked" aria-disabled="true">${body}</div>`:`<button class="bitem ${got.has(x.id)?"got":""} ${m.length?"dim":""}" data-act="choose" data-id="${x.id}">${body}</button>`};
+  const prevues=p.mode==="run"&&b&&!q?all.filter(x=>planned.has(x.id)&&!got.has(x.id)):[];
+  const others=all.filter(x=>!prevues.includes(x));
+  const open=others.filter(x=>!miss(x).length), locked=others.filter(x=>miss(x).length);
+  const rest=restricted?open:(p.mode==="run"?[...open,...locked]:others);
+  return `<div class="sheet-scrim" data-act="close-sheet"><div class="sheet" role="dialog" aria-modal="true" aria-label="Choisir une bénédiction">
+    <div class="row" style="justify-content:space-between"><h2>${p.mode==="run"?"Bénédiction prise":"Viser une bénédiction"}</h2>${p.mode==="build"?`<div class="seg" role="group" aria-label="Mode du build"><button data-act="build-mode" data-v="free" aria-pressed="${!restricted}">Libre</button><button data-act="build-mode" data-v="restricted" aria-pressed="${restricted}">Restreint</button></div>`:""}<button class="btn small ghost" data-act="close-sheet">Fermer</button></div>
+    <div style="display:grid;gap:8px"><input class="search" id="pick-q" placeholder="Taper les premières lettres" value="${esc(p.q)}">
+      <div class="faes"><button class="chip fae" aria-pressed="${p.fae==="all"}" data-act="pick-fae" data-f="all">Toutes</button>${Object.values(PACK.fae).map(x=>`<button class="chip fae" data-fae="${x.id}" aria-pressed="${p.fae===x.id}" data-act="pick-fae" data-f="${x.id}"><span class="dot"></span>${x.name}</button>`).join("")}</div></div>
+    <div class="scroll">${prevues.length?`<div class="blist"><h3>Prévues dans le build</h3>${prevues.map(item).join("")}</div>`:""}
+      <div class="blist">${prevues.length?"<h3>Toutes</h3>":""}${restricted?`<h3>Disponibles · ${open.length}</h3>`:""}${rest.slice(0,120).map(item).join("")||(restricted?'<p class="empty">Rien de débloqué ici. Choisissez d\'abord une aptitude de cette fae.</p>':'<p class="empty">Aucun résultat. Ajoutez-la depuis le Catalogue.</p>')}</div>
+      ${restricted&&locked.length?`<details class="blist" open><summary class="muted">Verrouillées · ${locked.length} (il manque une aptitude)</summary><div class="blist" style="margin-top:6px">${locked.slice(0,120).map(item).join("")}</div></details>`:""}</div>
+  </div></div>`;
+}
+function ioHtml(){
+  const {ui,view,activeRunId,editingId,...data}=S;
+  const json=JSON.stringify({format:"rogue-planner",version:1,game:"sworn",...data},null,2);
+  return `<div class="sheet-scrim" data-act="close-io"><div class="sheet" role="dialog" aria-modal="true" aria-label="Importer ou exporter">
+    <div class="row" style="justify-content:space-between"><h2>Importer / exporter</h2><button class="btn small ghost" data-act="close-io">Fermer</button></div>
+    <p class="muted" style="margin:0">L'export contient builds, runs et bénédictions ajoutées. L'import fusionne : les éléments de même identifiant sont remplacés, les autres sont ajoutés.</p>
+    <div class="scroll"><div class="panel"><div class="row" style="justify-content:space-between"><h3>Export</h3><button class="btn small" data-act="copy-json">Copier</button></div><pre class="json" id="json-out">${esc(json)}</pre></div>
+      <div class="panel"><h3>Import</h3><label class="field">Fichier JSON<input type="file" id="imp-file" accept="application/json,.json"></label>
+        <label class="field">Ou coller le JSON<textarea id="imp-text" rows="5"></textarea></label><button class="btn primary" data-act="do-import">Importer par fusion</button><p id="imp-msg" class="muted" style="margin:0"></p></div></div>
+  </div></div>`;
+}
+
+/* ===================== Actions ===================== */
+function startRun(bid){
+  const old=activeRun(); if(old){old.status="abandoned"}
+  const b=build(bid);
+  const r={id:uid(),buildId:b?b.id:null,status:"active",startedAt:now(),hero:b?.hero||"vigilante",weapon:b?.weapon||HEROES.vigilante.weapons[0],spell:b?.spell||HEROES.vigilante.spells[0],picks:[],others:[],result:null};
+  S.runs.push(r);S.activeRunId=r.id;save();go("run");
+}
+function importMerge(text){
+  let j;try{j=JSON.parse(text)}catch{return "Ce texte n'est pas un JSON valide."}
+  if(j?.format!=="rogue-planner"&&j?.format!=="carnet-runs") return "Ce fichier ne vient pas de Rogue Planner : le champ « format » est absent.";
+  let n=0;for(const k of ["builds","runs","custom"]){for(const it of j[k]||[]){if(!it?.id)continue;const i=S[k].findIndex(x=>x.id===it.id);i>=0?S[k][i]=it:S[k].push(it);n++}}
+  save();return `${n} élément${n>1?"s":""} importé${n>1?"s":""}.`;
+}
+document.addEventListener("click",async e=>{
+  const go_=e.target.closest("[data-go]");if(go_)return go(go_.dataset.go);
+  const el=e.target.closest("[data-act]");if(!el)return;
+  const a=el.dataset.act,id=el.dataset.id;
+  if((a==="close-sheet"||a==="close-io")&&e.target!==el&&!e.target.closest("button"))return;
+  switch(a){
+    case "new-build":{const b={id:uid(),game:"sworn",name:"Nouveau build",hero:"vigilante",weapon:"Sword",spell:"Shadow Strike",abilities:Object.fromEntries(SLOTS.map(s=>[s[0],""])),targets:[],notes:"",mode:"restricted",updatedAt:now()};S.builds.unshift(b);S.editingId=b.id;save();return go("edit")}
+    case "edit":S.editingId=id;return go("edit");
+    case "back":return go("builds");
+    case "dup":{const b=structuredClone(build(id));b.id=uid();b.name+=" (copie)";delete b.example;S.builds.unshift(b);save();toast("Build dupliqué");return render()}
+    case "ask-del":S.ui.confirm=id;return render();
+    case "cancel":S.ui.confirm=null;return render();
+    case "del-build":S.builds=S.builds.filter(b=>b.id!==id);S.ui.confirm=null;save();toast("Build supprimé");return render();
+    case "start-run":return startRun(id);
+    case "start-free":return startRun(null);
+    case "build-mode":{const b=build(S.editingId);b.mode=el.dataset.v;b.updatedAt=now();save();toast(b.mode==="restricted"?"Mode restreint":"Mode libre");render();return renderLayer()}
+    case "anvil-plan":{const b=build(S.editingId);b.anvils=b.anvils||[];b.anvils=b.anvils.includes(id)?b.anvils.filter(x=>x!==id):[...b.anvils,id];b.updatedAt=now();save();return render()}
+    case "anvil-take":{const r=activeRun();r.anvils=r.anvils||[];const had=r.anvils.includes(id);r.anvils=had?r.anvils.filter(x=>x!==id):[...r.anvils,id];save();toast(had?"Augment retiré":"Augment pris");return render()}
+    case "pick-target":return openPicker("build");
+    case "pick-run":return openPicker("run");
+    case "close-sheet":S.ui.picker=null;return renderLayer();
+    case "pick-fae":S.ui.picker.fae=el.dataset.f;return renderLayer();
+    case "choose":{
+      const x=B(id);
+      if(S.ui.picker.mode==="build"){const b=build(S.editingId);
+        if(x.type==="ability"||x.slot){b.abilities[x.slot]=x.id}else if(!b.targets.some(t=>t.id===id))b.targets.push({id,prio:"bonus"});
+        b.updatedAt=now();save();S.ui.picker=null;renderLayer();toast(`${x.name} visée`);return render()}
+      const r=activeRun();
+      if(x.slot){const i=r.picks.findIndex(p=>B(p.id)?.slot===x.slot);if(i>=0)r.picks.splice(i,1)}
+      r.picks.push({id,at:now()});save();S.ui.picker=null;renderLayer();toast(`${x.name} ajoutée`);return render()}
+    case "target":{const b=build(S.editingId);b.targets.push({id,prio:"bonus"});save();return render()}
+    case "untarget":{const b=build(S.editingId);b.targets=b.targets.filter(t=>t.id!==id);save();return render()}
+    case "prio":{const t=build(S.editingId).targets.find(t=>t.id===id);t.prio=t.prio==="core"?"bonus":"core";save();return render()}
+    case "unpick":{activeRun().picks.splice(+el.dataset.i,1);save();return render()}
+    case "add-other":S.ui.otherKind=el.dataset.k;render();return document.getElementById("other-text")?.focus();
+    case "cancel-other":S.ui.otherKind=null;return render();
+    case "save-other":{const t=document.getElementById("other-text").value.trim();if(!t)return;activeRun().others.push({kind:S.ui.otherKind,text:t});S.ui.otherKind=null;save();return render()}
+    case "unother":{activeRun().others.splice(+el.dataset.i,1);save();return render()}
+    case "ask-end":S.ui.confirm="end-run";S.ui.outcome="loss";render();return window.scrollTo(0,0);
+    case "outcome":S.ui.outcome=el.dataset.v;document.getElementById("out-win").setAttribute("aria-pressed",S.ui.outcome==="win");document.getElementById("out-loss").setAttribute("aria-pressed",S.ui.outcome!=="win");return;
+    case "end-run":{const r=activeRun();r.status="done";r.endedAt=now();r.result={outcome:S.ui.outcome||"loss",reached:document.getElementById("end-reached").value.trim(),notes:document.getElementById("end-notes").value.trim()};S.activeRunId=null;S.ui.confirm=null;save();toast("Run enregistré");return go("history")}
+    case "abandon":{const r=activeRun();S.runs=S.runs.filter(x=>x!==r);S.activeRunId=null;S.ui.confirm=null;save();return go("builds")}
+    case "cat-fae":S.ui.catFae=el.dataset.f;return render();
+    case "add-custom":{const name=document.getElementById("c-name").value.trim();if(!name)return toast("Donnez un nom");const fae=document.getElementById("c-fae").value,slot=document.getElementById("c-slot").value;
+      S.custom.push({id:`custom:${slug(name)}-${uid().slice(0,4)}`,name,fae:[fae],type:"custom",slot:slot||undefined,effect:document.getElementById("c-effect").value.trim()||"Effet à préciser"});save();toast(`${name} ajoutée`);return render()}
+    case "del-custom":S.custom=S.custom.filter(c=>c.id!==id);save();return render();
+    case "io":S.ui.io=true;return renderLayer();
+    case "close-io":S.ui.io=false;return renderLayer();
+    case "copy-json":{const t=document.getElementById("json-out");try{await navigator.clipboard.writeText(t.textContent);toast("JSON copié")}catch{const s=getSelection(),rg=document.createRange();rg.selectNodeContents(t);s.removeAllRanges();s.addRange(rg);toast("Texte sélectionné : copiez-le")}return}
+    case "do-import":{const f=document.getElementById("imp-file").files[0];const txt=f?await f.text():document.getElementById("imp-text").value;document.getElementById("imp-msg").textContent=importMerge(txt);return render()}
+  }
+});
+document.addEventListener("input",e=>{
+  const t=e.target;
+  if(t.id==="pick-q"){S.ui.picker.q=t.value;const pos=t.selectionStart;renderLayer();const n=document.getElementById("pick-q");n.setSelectionRange(pos,pos);return}
+  if(t.id==="cat-q"){S.ui.catQuery=t.value;render();const n=document.getElementById("cat-q");n.focus();n.setSelectionRange(t.value.length,t.value.length);return}
+  if(S.view==="edit"&&t.dataset.bind&&t.tagName!=="SELECT"){const b=build(S.editingId);b[t.dataset.bind]=t.value;b.updatedAt=now();save()}
+});
+document.addEventListener("change",e=>{
+  const t=e.target;
+  if(t.id==="hist-filter"){S.ui.histFilter=t.value;return render()}
+  if(S.view==="run"&&t.dataset.bind&&activeRun()){const r=activeRun();
+    if(t.dataset.bind==="hero"){r.hero=t.value;r.weapon=HEROES[t.value].weapons[0];r.spell=HEROES[t.value].spells[0]}else r[t.dataset.bind]=t.value;save();return render()}
+  if(S.view==="edit"){const b=build(S.editingId);
+    if(t.dataset.slot!==undefined){b.abilities[t.dataset.slot]=t.value;save();return render()}
+    if(t.dataset.bind==="hero"){b.hero=t.value;b.weapon=HEROES[t.value].weapons[0];b.spell=HEROES[t.value].spells[0];save();return render()}
+    if(t.dataset.bind){b[t.dataset.bind]=t.value;save();return render()}}
+});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&(S.ui.picker||S.ui.io)){S.ui.picker=null;S.ui.io=false;renderLayer()}});
+
+/* Thème : auto → clair → sombre */
+let theme=(()=>{try{return localStorage.getItem(KEY+"-theme")||"auto"}catch{return"auto"}})();
+function applyTheme(){if(theme==="auto")document.documentElement.removeAttribute("data-theme");else document.documentElement.setAttribute("data-theme",theme);document.getElementById("themeBtn").title=`Thème : ${{auto:"auto",light:"clair",dark:"sombre"}[theme]}`}
+document.getElementById("themeBtn").onclick=()=>{theme={auto:"light",light:"dark",dark:"auto"}[theme];try{localStorage.setItem(KEY+"-theme",theme)}catch{}applyTheme()};
+
+function render(){
+  tabs();
+  const v={builds:vBuilds,edit:vEdit,run:vRun,history:vHistory,catalog:vCatalog}[S.view]||vBuilds;
+  document.getElementById("app").innerHTML=v();
+}
+applyTheme();render();
+</script>
+

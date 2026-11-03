@@ -1,0 +1,5889 @@
+{
+  "$schema": "rogue-planner/pack@1",
+  "format": "rogue-planner-pack",
+  "version": 1,
+  "game": {
+    "id": "sworn",
+    "name": "SWORN",
+    "dataVersion": "2026.11.03",
+    "sources": [
+      {
+        "what": "Liste des bénédictions (accès anticipé)",
+        "name": "SWORN: All Blessings Guide (Steam)",
+        "url": "https://steamcommunity.com/sharedfiles/filedetails/?id=3432002004"
+      },
+      {
+        "what": "Prérequis, effets produits, bénédictions ajoutées, augments",
+        "name": "SWORN Wiki (Fandom)",
+        "url": "https://sworn-game.fandom.com/",
+        "license": "CC BY-SA 3.0"
+      }
+    ]
+  },
+  "labels": {
+    "family": "Fae",
+    "families": "Fae",
+    "item": "Bénédiction",
+    "items": "Bénédictions",
+    "augment": "Enclume",
+    "augments": "Enclumes",
+    "loadoutHero": "Classe",
+    "loadoutWeapon": "Arme",
+    "loadoutSpell": "Sort"
+  },
+  "slots": [
+    {
+      "id": "light",
+      "label": "Attaque légère"
+    },
+    {
+      "id": "heavy",
+      "label": "Attaque lourde"
+    },
+    {
+      "id": "spell",
+      "label": "Sort"
+    },
+    {
+      "id": "dash",
+      "label": "Esquive"
+    },
+    {
+      "id": "companion",
+      "label": "Compagnon"
+    },
+    {
+      "id": "ultimate",
+      "label": "Ultime"
+    }
+  ],
+  "kinds": [
+    {
+      "id": "ability",
+      "label": "Aptitude"
+    },
+    {
+      "id": "standard",
+      "label": "Standard"
+    },
+    {
+      "id": "duo",
+      "label": "Duo"
+    },
+    {
+      "id": "roundtable",
+      "label": "Table ronde"
+    }
+  ],
+  "families": [
+    {
+      "id": "badb",
+      "name": "Badb",
+      "title": "Le Sombre Présage",
+      "status": "Coup dans le dos",
+      "color": {
+        "light": "#7d3a90",
+        "dark": "#c886d9"
+      }
+    },
+    {
+      "id": "beira",
+      "name": "Beira",
+      "title": "La Sorcière Gelée",
+      "status": "Froid",
+      "color": {
+        "light": "#1d6a8d",
+        "dark": "#8fd0ee"
+      }
+    },
+    {
+      "id": "cliona",
+      "name": "Cliona",
+      "title": "Mère des Banshees",
+      "status": "Faiblesse",
+      "color": {
+        "light": "#1b7462",
+        "dark": "#7fd6c0"
+      }
+    },
+    {
+      "id": "gogmagog",
+      "name": "Gogmagog",
+      "title": "Le Dernier Géant",
+      "status": "Choc",
+      "color": {
+        "light": "#7a5734",
+        "dark": "#cdae88"
+      }
+    },
+    {
+      "id": "lugh",
+      "name": "Lugh",
+      "title": "La Main du Destin",
+      "status": "Critique",
+      "color": {
+        "light": "#856700",
+        "dark": "#ecc95a"
+      }
+    },
+    {
+      "id": "mab",
+      "name": "Mab",
+      "title": "Reine des Araignées",
+      "status": "Venin",
+      "color": {
+        "light": "#4a7612",
+        "dark": "#a9d861"
+      }
+    },
+    {
+      "id": "oberon",
+      "name": "Oberon",
+      "title": "Roi des Fae",
+      "status": "Fureur",
+      "color": {
+        "light": "#344fae",
+        "dark": "#95abf5"
+      }
+    },
+    {
+      "id": "titania",
+      "name": "Titania",
+      "title": "Reine des Fae",
+      "status": "Embrasement",
+      "color": {
+        "light": "#ab4616",
+        "dark": "#f29d6c"
+      }
+    }
+  ],
+  "triggers": [
+    {
+      "id": "crit",
+      "label": "Critique"
+    },
+    {
+      "id": "clover",
+      "label": "Trèfle doré"
+    },
+    {
+      "id": "favor",
+      "label": "Faveur"
+    },
+    {
+      "id": "mark",
+      "label": "Marque"
+    },
+    {
+      "id": "fortune",
+      "label": "Fortune"
+    },
+    {
+      "id": "backstab",
+      "label": "Coup dans le dos"
+    },
+    {
+      "id": "shade",
+      "label": "Ombre"
+    },
+    {
+      "id": "bleed",
+      "label": "Saignement"
+    },
+    {
+      "id": "invis",
+      "label": "Invisibilité"
+    },
+    {
+      "id": "chill",
+      "label": "Froid"
+    },
+    {
+      "id": "nova",
+      "label": "Nova de givre"
+    },
+    {
+      "id": "frostbite",
+      "label": "Morsure du givre"
+    },
+    {
+      "id": "weak",
+      "label": "Faiblesse"
+    },
+    {
+      "id": "missile",
+      "label": "Missile d'âme"
+    },
+    {
+      "id": "spirit",
+      "label": "Charge spirituelle"
+    },
+    {
+      "id": "urn",
+      "label": "Urne"
+    },
+    {
+      "id": "stagger",
+      "label": "Choc"
+    },
+    {
+      "id": "stun",
+      "label": "Étourdissement"
+    },
+    {
+      "id": "quake",
+      "label": "Séisme"
+    },
+    {
+      "id": "shield",
+      "label": "Bouclier"
+    },
+    {
+      "id": "vulnerable",
+      "label": "Vulnérable"
+    },
+    {
+      "id": "venom",
+      "label": "Venin"
+    },
+    {
+      "id": "bile",
+      "label": "Bile"
+    },
+    {
+      "id": "infected",
+      "label": "Infecté"
+    },
+    {
+      "id": "brood",
+      "label": "Mère des couvées"
+    },
+    {
+      "id": "fury",
+      "label": "Fureur"
+    },
+    {
+      "id": "flow",
+      "label": "Flux"
+    },
+    {
+      "id": "whirlwind",
+      "label": "Tourbillon"
+    },
+    {
+      "id": "lightning",
+      "label": "Éclair en chaîne"
+    },
+    {
+      "id": "ignite",
+      "label": "Embrasement"
+    },
+    {
+      "id": "immolate",
+      "label": "Immolation"
+    },
+    {
+      "id": "scorch",
+      "label": "Brûlure"
+    }
+  ],
+  "loadouts": [
+    {
+      "id": "vigilante",
+      "name": "Vigilante",
+      "weapons": [
+        "Sword",
+        "Bow",
+        "Bo Staff",
+        "Chakrams"
+      ],
+      "spells": [
+        "Shadow Strike",
+        "Assassin Dagger",
+        "Blade Rush",
+        "Dagger Flurry"
+      ]
+    },
+    {
+      "id": "monk",
+      "name": "Monk",
+      "weapons": [
+        "Tome",
+        "Chimes",
+        "Magic Staff",
+        "Mace"
+      ],
+      "spells": [
+        "Crystal Turrets",
+        "Storm Call",
+        "Arcane Shield",
+        "Black Hole"
+      ]
+    },
+    {
+      "id": "specter",
+      "name": "Specter",
+      "weapons": [
+        "Armillary Sphere",
+        "Scythe",
+        "Claws",
+        "Arcane Blade"
+      ],
+      "spells": [
+        "Spirit Guardians",
+        "Mystic Beam",
+        "Dragon Dive",
+        "Blink"
+      ]
+    },
+    {
+      "id": "rook",
+      "name": "Rook",
+      "weapons": [
+        "Great Hammer",
+        "Halberd",
+        "Gauntlets",
+        "Hand Cannon"
+      ],
+      "spells": [
+        "Counter",
+        "Sky Drop",
+        "Commander's Shield",
+        "Bull Rush"
+      ]
+    }
+  ],
+  "items": [
+    {
+      "id": "badb:shadow-touch",
+      "name": "Shadow Touch",
+      "kind": "ability",
+      "families": [
+        "badb"
+      ],
+      "slot": "light",
+      "effect": "Attaque légère : peut frapper dans le dos",
+      "provides": [
+        "backstab"
+      ],
+      "requires": []
+    },
+    {
+      "id": "badb:shadow-strike",
+      "name": "Shadow Strike",
+      "kind": "ability",
+      "families": [
+        "badb"
+      ],
+      "slot": "heavy",
+      "effect": "Attaque lourde : peut frapper dans le dos",
+      "provides": [
+        "backstab"
+      ],
+      "requires": []
+    },
+    {
+      "id": "badb:shadow-flourish",
+      "name": "Shadow Flourish",
+      "kind": "ability",
+      "families": [
+        "badb"
+      ],
+      "slot": "spell",
+      "effect": "Sort : peut frapper dans le dos",
+      "provides": [
+        "backstab"
+      ],
+      "requires": []
+    },
+    {
+      "id": "badb:shadow-dash",
+      "name": "Shadow Dash",
+      "kind": "ability",
+      "families": [
+        "badb"
+      ],
+      "slot": "dash",
+      "effect": "Laisse une Ombre derrière vous",
+      "provides": [
+        "shade"
+      ],
+      "requires": []
+    },
+    {
+      "id": "badb:the-thing-from-the-dark",
+      "name": "The Thing From The Dark",
+      "kind": "ability",
+      "families": [
+        "badb"
+      ],
+      "slot": "companion",
+      "effect": "Le compagnon lance des Ombres",
+      "provides": [
+        "shade"
+      ],
+      "requires": []
+    },
+    {
+      "id": "badb:league-of-shadows",
+      "name": "League of Shadows",
+      "kind": "ability",
+      "families": [
+        "badb"
+      ],
+      "slot": "ultimate",
+      "effect": "Invoque des Ombres autour des ennemis",
+      "provides": [
+        "shade"
+      ],
+      "requires": []
+    },
+    {
+      "id": "badb:blood-thinner",
+      "name": "Blood Thinner",
+      "kind": "standard",
+      "families": [
+        "badb"
+      ],
+      "effect": "Moins de Saignement requis pour l'Hémorragie",
+      "requires": [
+        [
+          {
+            "trigger": "bleed"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "badb:bloody-shadows",
+      "name": "Bloody Shadows",
+      "kind": "standard",
+      "families": [
+        "badb"
+      ],
+      "effect": "Les Ombres infligent Saignement",
+      "provides": [
+        "shade",
+        "bleed"
+      ],
+      "requires": [
+        [
+          {
+            "trigger": "shade"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "badb:bloody-stabs",
+      "name": "Bloody Stabs",
+      "kind": "standard",
+      "families": [
+        "badb"
+      ],
+      "effect": "Les coups dans le dos infligent Saignement",
+      "provides": [
+        "backstab",
+        "bleed"
+      ],
+      "requires": [
+        [
+          {
+            "trigger": "backstab"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "badb:deadly-precision",
+      "name": "Deadly Precision",
+      "kind": "standard",
+      "families": [
+        "badb"
+      ],
+      "effect": "Coups dans le dos plus forts",
+      "provides": [
+        "backstab"
+      ],
+      "requires": [
+        [
+          {
+            "trigger": "backstab"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "badb:fleetfooted",
+      "name": "Fleetfooted",
+      "kind": "standard",
+      "families": [
+        "badb"
+      ],
+      "effect": "Esquive qui recharge plus vite",
+      "requires": []
+    },
+    {
+      "id": "badb:grievous-wounds",
+      "name": "Grievous Wounds",
+      "kind": "standard",
+      "families": [
+        "badb"
+      ],
+      "effect": "L'Hémorragie frappe en % de vie max",
+      "requires": [
+        [
+          {
+            "trigger": "bleed",
+            "except": "badb:bloody-shadows"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "badb:into-the-night",
+      "name": "Into The Night",
+      "kind": "standard",
+      "families": [
+        "badb"
+      ],
+      "effect": "Invisibilité après un ennemi tué",
+      "provides": [
+        "invis"
+      ],
+      "requires": [
+        [
+          {
+            "trigger": "backstab"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "badb:like-a-ghost",
+      "name": "Like A Ghost",
+      "kind": "standard",
+      "families": [
+        "badb"
+      ],
+      "effect": "Esquive automatique en étant invisible",
+      "provides": [
+        "invis"
+      ],
+      "requires": [
+        [
+          {
+            "trigger": "invis"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "badb:nimble",
+      "name": "Nimble",
+      "kind": "standard",
+      "families": [
+        "badb"
+      ],
+      "effect": "Charge d'esquive en plus",
+      "requires": []
+    },
+    {
+      "id": "badb:phantom-step",
+      "name": "Phantom Step",
+      "kind": "standard",
+      "families": [
+        "badb"
+      ],
+      "effect": "Plus rapide en étant invisible",
+      "provides": [
+        "invis"
+      ],
+      "requires": [
+        [
+          {
+            "trigger": "invis"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "badb:shadow-step",
+      "name": "Shadow Step",
+      "kind": "standard",
+      "families": [
+        "badb"
+      ],
+      "effect": "Une esquive sur 5 rend invisible",
+      "provides": [
+        "invis"
+      ],
+      "requires": [
+        [
+          {
+            "trigger": "backstab"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "badb:shady-business",
+      "name": "Shady Business",
+      "kind": "standard",
+      "families": [
+        "badb"
+      ],
+      "effect": "L'Hémorragie envoie des Ombres",
+      "provides": [
+        "bleed",
+        "shade"
+      ],
+      "requires": [
+        [
+          {
+            "trigger": "bleed"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "badb:sling-blades",
+      "name": "Sling Blades",
+      "kind": "standard",
+      "families": [
+        "badb"
+      ],
+      "effect": "Les Ombres lancent des dagues",
+      "provides": [
+        "shade"
+      ],
+      "requires": [
+        [
+          {
+            "trigger": "shade"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "badb:slippery-target",
+      "name": "Slippery Target",
+      "kind": "standard",
+      "families": [
+        "badb"
+      ],
+      "effect": "Chance d'esquiver un coup",
+      "requires": []
+    },
+    {
+      "id": "badb:stealth-caster",
+      "name": "Stealth Caster",
+      "kind": "standard",
+      "families": [
+        "badb"
+      ],
+      "effect": "Le Sort rend invisible",
+      "provides": [
+        "invis"
+      ],
+      "requires": [
+        [
+          {
+            "trigger": "backstab"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "badb:strike-from-shadows",
+      "name": "Strike From Shadows",
+      "kind": "standard",
+      "families": [
+        "badb"
+      ],
+      "effect": "Bonus en sortant de l'invisibilité",
+      "provides": [
+        "invis"
+      ],
+      "requires": [
+        [
+          {
+            "trigger": "invis"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "badb:swift-assassin",
+      "name": "Swift Assassin",
+      "kind": "standard",
+      "families": [
+        "badb"
+      ],
+      "effect": "Vitesse de déplacement",
+      "requires": []
+    },
+    {
+      "id": "badb:tragic-aura",
+      "name": "Tragic Aura",
+      "kind": "standard",
+      "families": [
+        "badb"
+      ],
+      "effect": "Aura qui inflige Saignement",
+      "provides": [
+        "bleed"
+      ],
+      "requires": [
+        [
+          {
+            "trigger": "backstab"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "badb:swift-killers",
+      "name": "Swift Killers",
+      "kind": "roundtable",
+      "families": [
+        "badb"
+      ],
+      "effect": "Vitesse de déplacement de l'équipe",
+      "requires": [
+        [
+          {
+            "count": {
+              "family": "badb",
+              "min": 5
+            }
+          }
+        ]
+      ]
+    },
+    {
+      "id": "beira:chilling-touch",
+      "name": "Chilling Touch",
+      "kind": "ability",
+      "families": [
+        "beira"
+      ],
+      "slot": "light",
+      "effect": "Attaque légère : inflige Froid",
+      "provides": [
+        "chill"
+      ],
+      "requires": []
+    },
+    {
+      "id": "beira:chilling-strike",
+      "name": "Chilling Strike",
+      "kind": "ability",
+      "families": [
+        "beira"
+      ],
+      "slot": "heavy",
+      "effect": "Attaque lourde : inflige Froid",
+      "provides": [
+        "chill"
+      ],
+      "requires": []
+    },
+    {
+      "id": "beira:chilling-flourish",
+      "name": "Chilling Flourish",
+      "kind": "ability",
+      "families": [
+        "beira"
+      ],
+      "slot": "spell",
+      "effect": "Sort : inflige Froid",
+      "provides": [
+        "chill"
+      ],
+      "requires": []
+    },
+    {
+      "id": "beira:chilling-dash",
+      "name": "Chilling Dash",
+      "kind": "ability",
+      "families": [
+        "beira"
+      ],
+      "slot": "dash",
+      "effect": "Laisse une Nova de givre",
+      "provides": [
+        "nova",
+        "chill"
+      ],
+      "requires": []
+    },
+    {
+      "id": "beira:arctic-vole",
+      "name": "Arctic Vole",
+      "kind": "ability",
+      "families": [
+        "beira"
+      ],
+      "slot": "companion",
+      "effect": "Le campagnol lance des Novas de givre",
+      "provides": [
+        "nova",
+        "chill"
+      ],
+      "requires": []
+    },
+    {
+      "id": "beira:icy-vortex",
+      "name": "Icy Vortex",
+      "kind": "ability",
+      "families": [
+        "beira"
+      ],
+      "slot": "ultimate",
+      "effect": "Déchaîne des rafales glacées",
+      "provides": [
+        "chill"
+      ],
+      "requires": []
+    },
+    {
+      "id": "beira:arcane-engine",
+      "name": "Arcane Engine",
+      "kind": "standard",
+      "families": [
+        "beira"
+      ],
+      "effect": "Mana qui se régénère plus vite",
+      "requires": []
+    },
+    {
+      "id": "beira:bitter-end",
+      "name": "Bitter End",
+      "kind": "standard",
+      "families": [
+        "beira"
+      ],
+      "effect": "Les Novas infligent beaucoup de Morsure du givre",
+      "provides": [
+        "frostbite"
+      ],
+      "requires": [
+        [
+          {
+            "trigger": "nova"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "beira:bitter-frost",
+      "name": "Bitter Frost",
+      "kind": "standard",
+      "families": [
+        "beira"
+      ],
+      "effect": "Morsure du givre qui monte plus vite",
+      "provides": [
+        "frostbite"
+      ],
+      "requires": [
+        [
+          {
+            "trigger": "frostbite"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "beira:cold-snap",
+      "name": "Cold Snap",
+      "kind": "standard",
+      "families": [
+        "beira"
+      ],
+      "effect": "Les Novas explosent tout de suite",
+      "requires": [
+        [
+          {
+            "trigger": "nova"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "beira:compounding-cold",
+      "name": "Compounding Cold",
+      "kind": "standard",
+      "families": [
+        "beira"
+      ],
+      "effect": "Novas plus fortes par cumul de Froid",
+      "requires": [
+        [
+          {
+            "trigger": "nova"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "beira:freezing-chill",
+      "name": "Freezing Chill",
+      "kind": "standard",
+      "families": [
+        "beira"
+      ],
+      "effect": "Le Froid ajoute de la Morsure du givre",
+      "provides": [
+        "frostbite"
+      ],
+      "requires": [
+        [
+          {
+            "slot": {
+              "family": "beira",
+              "slots": [
+                "light",
+                "heavy",
+                "spell",
+                "dash"
+              ]
+            }
+          }
+        ]
+      ]
+    },
+    {
+      "id": "beira:frost-torrent",
+      "name": "Frost Torrent",
+      "kind": "standard",
+      "families": [
+        "beira"
+      ],
+      "effect": "L'Ultime lâche des Novas",
+      "provides": [
+        "nova"
+      ],
+      "requires": [
+        [
+          {
+            "item": "beira:icy-vortex"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "beira:frostburn",
+      "name": "Frostburn",
+      "kind": "standard",
+      "families": [
+        "beira"
+      ],
+      "effect": "Dégâts sur la durée au-delà de 5 Froid",
+      "requires": [
+        [
+          {
+            "slot": {
+              "family": "beira",
+              "slots": [
+                "light",
+                "heavy",
+                "spell",
+                "dash"
+              ]
+            }
+          }
+        ]
+      ]
+    },
+    {
+      "id": "beira:frozen-blood",
+      "name": "Frozen Blood",
+      "kind": "standard",
+      "families": [
+        "beira"
+      ],
+      "effect": "Le Gel crée une Nova",
+      "provides": [
+        "nova"
+      ],
+      "requires": [
+        [
+          {
+            "trigger": "frostbite"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "beira:glacial-force",
+      "name": "Glacial Force",
+      "kind": "standard",
+      "families": [
+        "beira"
+      ],
+      "effect": "Gel plus long",
+      "requires": [
+        [
+          {
+            "trigger": "frostbite"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "beira:ice-age",
+      "name": "Ice Age",
+      "kind": "standard",
+      "families": [
+        "beira"
+      ],
+      "effect": "L'Ultime inflige une forte Morsure du givre",
+      "provides": [
+        "frostbite"
+      ],
+      "requires": [
+        [
+          {
+            "item": "beira:icy-vortex"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "beira:ice-storm",
+      "name": "Ice Storm",
+      "kind": "standard",
+      "families": [
+        "beira"
+      ],
+      "effect": "Les attaques de Froid peuvent créer des Novas",
+      "provides": [
+        "nova"
+      ],
+      "requires": [
+        [
+          {
+            "slot": {
+              "family": "beira",
+              "slots": [
+                "light",
+                "heavy",
+                "spell",
+                "dash"
+              ]
+            }
+          }
+        ]
+      ]
+    },
+    {
+      "id": "beira:mana-well",
+      "name": "Mana Well",
+      "kind": "standard",
+      "families": [
+        "beira"
+      ],
+      "effect": "Charge de Mana en plus",
+      "requires": []
+    },
+    {
+      "id": "beira:nova-burst",
+      "name": "Nova Burst",
+      "kind": "standard",
+      "families": [
+        "beira"
+      ],
+      "effect": "Novas plus grandes et plus fortes",
+      "requires": [
+        [
+          {
+            "trigger": "nova"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "beira:permafrost",
+      "name": "Permafrost",
+      "kind": "standard",
+      "families": [
+        "beira"
+      ],
+      "effect": "Le Froid retombe moins vite",
+      "requires": [
+        [
+          {
+            "slot": {
+              "family": "beira",
+              "slots": [
+                "light",
+                "heavy",
+                "spell",
+                "dash"
+              ]
+            }
+          }
+        ]
+      ]
+    },
+    {
+      "id": "beira:seeking-nova",
+      "name": "Seeking Nova",
+      "kind": "standard",
+      "families": [
+        "beira"
+      ],
+      "effect": "Tuer un ennemi gelé envoie une Nova",
+      "provides": [
+        "nova"
+      ],
+      "requires": [
+        [
+          {
+            "trigger": "frostbite"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "beira:spell-caster",
+      "name": "Spell Caster",
+      "kind": "standard",
+      "families": [
+        "beira"
+      ],
+      "effect": "Sort plus fort",
+      "requires": []
+    },
+    {
+      "id": "beira:spell-thief",
+      "name": "Spell Thief",
+      "kind": "standard",
+      "families": [
+        "beira"
+      ],
+      "effect": "Les attaques rendent du Mana",
+      "requires": []
+    },
+    {
+      "id": "beira:deep-chill",
+      "name": "Deep Chill",
+      "kind": "roundtable",
+      "families": [
+        "beira"
+      ],
+      "effect": "Froid maximal plus haut pour l'équipe",
+      "requires": [
+        [
+          {
+            "count": {
+              "family": "beira",
+              "min": 5
+            }
+          }
+        ]
+      ]
+    },
+    {
+      "id": "cliona:draining-touch",
+      "name": "Draining Touch",
+      "kind": "ability",
+      "families": [
+        "cliona"
+      ],
+      "slot": "light",
+      "effect": "Attaque légère : inflige Faiblesse",
+      "provides": [
+        "weak"
+      ],
+      "requires": []
+    },
+    {
+      "id": "cliona:draining-strike",
+      "name": "Draining Strike",
+      "kind": "ability",
+      "families": [
+        "cliona"
+      ],
+      "slot": "heavy",
+      "effect": "Attaque lourde : inflige Faiblesse",
+      "provides": [
+        "weak"
+      ],
+      "requires": []
+    },
+    {
+      "id": "cliona:draining-flourish",
+      "name": "Draining Flourish",
+      "kind": "ability",
+      "families": [
+        "cliona"
+      ],
+      "slot": "spell",
+      "effect": "Sort : inflige Faiblesse",
+      "provides": [
+        "weak"
+      ],
+      "requires": []
+    },
+    {
+      "id": "cliona:draining-dash",
+      "name": "Draining Dash",
+      "kind": "ability",
+      "families": [
+        "cliona"
+      ],
+      "slot": "dash",
+      "effect": "Tire un Missile d'âme derrière vous",
+      "provides": [
+        "missile",
+        "weak"
+      ],
+      "requires": []
+    },
+    {
+      "id": "cliona:banshee",
+      "name": "Banshee",
+      "kind": "ability",
+      "families": [
+        "cliona"
+      ],
+      "slot": "companion",
+      "effect": "La Banshee tire des Missiles d'âme",
+      "provides": [
+        "missile",
+        "weak"
+      ],
+      "requires": []
+    },
+    {
+      "id": "cliona:march-of-souls",
+      "name": "March of Souls",
+      "kind": "ability",
+      "families": [
+        "cliona"
+      ],
+      "slot": "ultimate",
+      "effect": "Lance une nuée de Missiles d'âme",
+      "provides": [
+        "missile",
+        "weak"
+      ],
+      "requires": []
+    },
+    {
+      "id": "cliona:inescapable-end",
+      "name": "Inescapable End",
+      "kind": "standard",
+      "families": [
+        "cliona"
+      ],
+      "effect": "Missiles sur tous les ennemis affaiblis de la salle",
+      "requires": [
+        [
+          {
+            "item": "cliona:draining-dash"
+          },
+          {
+            "item": "cliona:banshee"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "cliona:accretion",
+      "name": "Accretion",
+      "kind": "standard",
+      "families": [
+        "cliona"
+      ],
+      "effect": "La Faiblesse donne des Âmes capturées",
+      "provides": [
+        "urn"
+      ],
+      "requires": [
+        [
+          {
+            "trigger": "weak"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "cliona:banshee-s-offering",
+      "name": "Banshee's Offering",
+      "kind": "standard",
+      "families": [
+        "cliona"
+      ],
+      "effect": "La Banshee invoque parfois une Urne",
+      "requires": [
+        [
+          {
+            "item": "cliona:banshee"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "cliona:cliona-s-favor",
+      "name": "Cliona's Favor",
+      "kind": "standard",
+      "families": [
+        "cliona"
+      ],
+      "effect": "L'Ultime invoque deux Urnes",
+      "requires": [
+        [
+          {
+            "item": "cliona:march-of-souls"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "cliona:death-engine",
+      "name": "Death Engine",
+      "kind": "standard",
+      "families": [
+        "cliona"
+      ],
+      "effect": "Les Missiles d'âme donnent des Âmes capturées",
+      "requires": [
+        [
+          {
+            "trigger": "missile"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "cliona:death-shroud",
+      "name": "Death Shroud",
+      "kind": "standard",
+      "families": [
+        "cliona"
+      ],
+      "effect": "Moins de dégâts subis",
+      "requires": []
+    },
+    {
+      "id": "cliona:fate-breaker",
+      "name": "Fate Breaker",
+      "kind": "standard",
+      "families": [
+        "cliona"
+      ],
+      "effect": "Survit à un coup mortel par salle",
+      "requires": []
+    },
+    {
+      "id": "cliona:fate-weaver",
+      "name": "Fate Weaver",
+      "kind": "standard",
+      "families": [
+        "cliona"
+      ],
+      "effect": "Un choix de récompense en moins, rareté plus haute",
+      "requires": []
+    },
+    {
+      "id": "cliona:indomitable-spirit",
+      "name": "Indomitable Spirit",
+      "kind": "standard",
+      "families": [
+        "cliona"
+      ],
+      "effect": "Déchirure d'âme plus forte",
+      "requires": [
+        [
+          {
+            "trigger": "spirit"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "cliona:longing",
+      "name": "Longing",
+      "kind": "standard",
+      "families": [
+        "cliona"
+      ],
+      "effect": "Faiblesse plus longue",
+      "provides": [
+        "weak"
+      ],
+      "requires": [
+        [
+          {
+            "slot": {
+              "family": "cliona",
+              "slots": [
+                "light",
+                "heavy",
+                "spell",
+                "dash"
+              ]
+            }
+          }
+        ]
+      ]
+    },
+    {
+      "id": "cliona:nullify",
+      "name": "Nullify",
+      "kind": "standard",
+      "families": [
+        "cliona"
+      ],
+      "effect": "Moins de dégâts des pièges",
+      "requires": []
+    },
+    {
+      "id": "cliona:overflowing-soul",
+      "name": "Overflowing Soul",
+      "kind": "standard",
+      "families": [
+        "cliona"
+      ],
+      "effect": "Les Urnes tirent en continu",
+      "provides": [
+        "urn",
+        "missile"
+      ],
+      "requires": [
+        [
+          {
+            "item": "cliona:accretion"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "cliona:soul-burst",
+      "name": "Soul Burst",
+      "kind": "standard",
+      "families": [
+        "cliona"
+      ],
+      "effect": "Missiles d'âme en plus",
+      "provides": [
+        "missile",
+        "weak"
+      ],
+      "requires": [
+        [
+          {
+            "trigger": "missile",
+            "except": "cliona:overflowing-soul"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "cliona:spirit-channeler",
+      "name": "Spirit Channeler",
+      "kind": "standard",
+      "families": [
+        "cliona"
+      ],
+      "effect": "Déchirure d'âme moins chère",
+      "provides": [
+        "spirit"
+      ],
+      "requires": [
+        [
+          {
+            "trigger": "spirit"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "cliona:spirit-siphon",
+      "name": "Spirit Siphon",
+      "kind": "standard",
+      "families": [
+        "cliona"
+      ],
+      "effect": "Charge spirituelle sur les affaiblis",
+      "provides": [
+        "spirit"
+      ],
+      "requires": [
+        [
+          {
+            "trigger": "weak"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "cliona:spirit-thief",
+      "name": "Spirit Thief",
+      "kind": "standard",
+      "families": [
+        "cliona"
+      ],
+      "effect": "Charge spirituelle quand un affaibli meurt",
+      "provides": [
+        "spirit"
+      ],
+      "requires": [
+        [
+          {
+            "trigger": "weak"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "cliona:splintered-soul",
+      "name": "Splintered Soul",
+      "kind": "standard",
+      "families": [
+        "cliona"
+      ],
+      "effect": "La Faiblesse libère un Missile",
+      "provides": [
+        "missile",
+        "weak"
+      ],
+      "requires": [
+        [
+          {
+            "trigger": "weak"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "cliona:untouchable",
+      "name": "Untouchable",
+      "kind": "roundtable",
+      "families": [
+        "cliona"
+      ],
+      "effect": "Équipe invulnérable en début de salle",
+      "requires": [
+        [
+          {
+            "count": {
+              "family": "cliona",
+              "min": 5
+            }
+          }
+        ]
+      ]
+    },
+    {
+      "id": "gogmagog:mighty-touch",
+      "name": "Mighty Touch",
+      "kind": "ability",
+      "families": [
+        "gogmagog"
+      ],
+      "slot": "light",
+      "effect": "Attaque légère : inflige Choc",
+      "provides": [
+        "stagger"
+      ],
+      "requires": []
+    },
+    {
+      "id": "gogmagog:mighty-strike",
+      "name": "Mighty Strike",
+      "kind": "ability",
+      "families": [
+        "gogmagog"
+      ],
+      "slot": "heavy",
+      "effect": "Attaque lourde : inflige Choc",
+      "provides": [
+        "stagger"
+      ],
+      "requires": []
+    },
+    {
+      "id": "gogmagog:mighty-flourish",
+      "name": "Mighty Flourish",
+      "kind": "ability",
+      "families": [
+        "gogmagog"
+      ],
+      "slot": "spell",
+      "effect": "Sort : inflige Choc",
+      "provides": [
+        "stagger"
+      ],
+      "requires": []
+    },
+    {
+      "id": "gogmagog:mighty-dash",
+      "name": "Mighty Dash",
+      "kind": "ability",
+      "families": [
+        "gogmagog"
+      ],
+      "slot": "dash",
+      "effect": "Crée un Séisme",
+      "provides": [
+        "quake",
+        "stagger"
+      ],
+      "requires": []
+    },
+    {
+      "id": "gogmagog:stony-companion",
+      "name": "Stony Companion",
+      "kind": "ability",
+      "families": [
+        "gogmagog"
+      ],
+      "slot": "companion",
+      "effect": "Le Golem de pierre crée des Séismes",
+      "provides": [
+        "quake",
+        "stagger"
+      ],
+      "requires": []
+    },
+    {
+      "id": "gogmagog:wrath-of-the-giant",
+      "name": "Wrath of the Giant",
+      "kind": "ability",
+      "families": [
+        "gogmagog"
+      ],
+      "slot": "ultimate",
+      "effect": "Vous incarnez Gogmagog et pilonnez",
+      "provides": [
+        "stagger"
+      ],
+      "requires": []
+    },
+    {
+      "id": "gogmagog:aftershock",
+      "name": "Aftershock",
+      "kind": "standard",
+      "families": [
+        "gogmagog"
+      ],
+      "effect": "Séismes doublés, zone plus grande",
+      "provides": [
+        "quake"
+      ],
+      "requires": [
+        [
+          {
+            "trigger": "quake"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "gogmagog:armored-skin",
+      "name": "Armored Skin",
+      "kind": "standard",
+      "families": [
+        "gogmagog"
+      ],
+      "effect": "Bouclier en début de salle",
+      "provides": [
+        "shield"
+      ],
+      "requires": [
+        [
+          {
+            "slot": {
+              "family": "gogmagog",
+              "slots": [
+                "light",
+                "heavy",
+                "spell",
+                "dash"
+              ]
+            }
+          }
+        ]
+      ]
+    },
+    {
+      "id": "gogmagog:bastion",
+      "name": "Bastion",
+      "kind": "standard",
+      "families": [
+        "gogmagog"
+      ],
+      "effect": "Le Golem donne un Bouclier aux alliés",
+      "provides": [
+        "shield"
+      ],
+      "requires": [
+        [
+          {
+            "item": "gogmagog:stony-companion"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "gogmagog:concussive-slam",
+      "name": "Concussive Slam",
+      "kind": "standard",
+      "families": [
+        "gogmagog"
+      ],
+      "effect": "Vulnérable après l'Étourdissement",
+      "provides": [
+        "vulnerable"
+      ],
+      "requires": [
+        [
+          {
+            "item": "gogmagog:relentless"
+          },
+          {
+            "item": "gogmagog:unmatched-power"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "gogmagog:devastating-quake",
+      "name": "Devastating Quake",
+      "kind": "standard",
+      "families": [
+        "gogmagog"
+      ],
+      "effect": "Séismes plus forts",
+      "provides": [
+        "quake"
+      ],
+      "requires": [
+        [
+          {
+            "trigger": "quake",
+            "except": "gogmagog:giant-s-vengeance"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "gogmagog:flawless",
+      "name": "Flawless",
+      "kind": "standard",
+      "families": [
+        "gogmagog"
+      ],
+      "effect": "Choc en plus sans dégât subi depuis 3 s",
+      "requires": [
+        [
+          {
+            "slot": {
+              "family": "gogmagog",
+              "slots": [
+                "light",
+                "heavy",
+                "spell",
+                "dash"
+              ]
+            }
+          }
+        ]
+      ]
+    },
+    {
+      "id": "gogmagog:fully-armored",
+      "name": "Fully Armored",
+      "kind": "standard",
+      "families": [
+        "gogmagog"
+      ],
+      "effect": "Bouclier cumulable jusqu'à 3",
+      "provides": [
+        "shield"
+      ],
+      "requires": [
+        [
+          {
+            "trigger": "shield"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "gogmagog:giant-slayer",
+      "name": "Giant Slayer",
+      "kind": "standard",
+      "families": [
+        "gogmagog"
+      ],
+      "effect": "Choc en plus contre élites et boss",
+      "requires": [
+        [
+          {
+            "slot": {
+              "family": "gogmagog",
+              "slots": [
+                "light",
+                "heavy",
+                "spell",
+                "dash"
+              ]
+            }
+          }
+        ]
+      ]
+    },
+    {
+      "id": "gogmagog:giant-s-protection",
+      "name": "Giant's Protection",
+      "kind": "standard",
+      "families": [
+        "gogmagog"
+      ],
+      "effect": "L'Ultime remplit le Bouclier",
+      "provides": [
+        "shield"
+      ],
+      "requires": [
+        [
+          {
+            "item": "gogmagog:wrath-of-the-giant"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "gogmagog:giant-s-vengeance",
+      "name": "Giant's Vengeance",
+      "kind": "standard",
+      "families": [
+        "gogmagog"
+      ],
+      "effect": "Bouclier brisé : 6 Séismes",
+      "provides": [
+        "quake"
+      ],
+      "requires": [
+        [
+          {
+            "trigger": "shield",
+            "except": "gogmagog:bastion"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "gogmagog:iron-flesh",
+      "name": "Iron Flesh",
+      "kind": "standard",
+      "families": [
+        "gogmagog"
+      ],
+      "effect": "Bouclier de départ en plus",
+      "provides": [
+        "shield"
+      ],
+      "requires": [
+        [
+          {
+            "item": "gogmagog:armored-skin"
+          }
+        ],
+        [
+          {
+            "item": "gogmagog:fully-armored"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "gogmagog:landslide",
+      "name": "Landslide",
+      "kind": "standard",
+      "families": [
+        "gogmagog"
+      ],
+      "effect": "Repousse plus loin les ennemis mineurs",
+      "requires": [
+        [
+          {
+            "slot": {
+              "family": "gogmagog",
+              "slots": [
+                "light",
+                "heavy",
+                "spell",
+                "dash"
+              ]
+            }
+          }
+        ]
+      ]
+    },
+    {
+      "id": "gogmagog:opportunistic",
+      "name": "Opportunistic",
+      "kind": "standard",
+      "families": [
+        "gogmagog"
+      ],
+      "effect": "Étourdissement plus long",
+      "provides": [
+        "stun"
+      ],
+      "requires": [
+        [
+          {
+            "item": "gogmagog:relentless"
+          },
+          {
+            "item": "gogmagog:unmatched-power"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "gogmagog:pillage",
+      "name": "Pillage",
+      "kind": "standard",
+      "families": [
+        "gogmagog"
+      ],
+      "effect": "Les ennemis lâchent de la monnaie",
+      "requires": []
+    },
+    {
+      "id": "gogmagog:plunder",
+      "name": "Plunder",
+      "kind": "standard",
+      "families": [
+        "gogmagog"
+      ],
+      "effect": "Plus de monnaie sur certaines récompenses",
+      "requires": []
+    },
+    {
+      "id": "gogmagog:press-the-attack",
+      "name": "Press The Attack",
+      "kind": "standard",
+      "families": [
+        "gogmagog"
+      ],
+      "effect": "Choc en plus sans esquive depuis 3 s",
+      "requires": [
+        [
+          {
+            "slot": {
+              "family": "gogmagog",
+              "slots": [
+                "light",
+                "heavy",
+                "spell",
+                "companion",
+                "ultimate"
+              ]
+            }
+          }
+        ]
+      ]
+    },
+    {
+      "id": "gogmagog:quaking-stun",
+      "name": "Quaking Stun",
+      "kind": "standard",
+      "families": [
+        "gogmagog"
+      ],
+      "effect": "L'Étourdissement crée 6 Séismes",
+      "provides": [
+        "stun",
+        "quake"
+      ],
+      "requires": [
+        [
+          {
+            "slot": {
+              "family": "gogmagog",
+              "slots": [
+                "light",
+                "heavy",
+                "spell",
+                "dash"
+              ]
+            }
+          }
+        ]
+      ]
+    },
+    {
+      "id": "gogmagog:relentless",
+      "name": "Relentless",
+      "kind": "standard",
+      "families": [
+        "gogmagog"
+      ],
+      "effect": "Choc en plus contre les étourdis",
+      "provides": [
+        "stun"
+      ],
+      "requires": [
+        [
+          {
+            "slot": {
+              "family": "gogmagog",
+              "slots": [
+                "light",
+                "heavy",
+                "spell",
+                "dash"
+              ]
+            }
+          }
+        ]
+      ]
+    },
+    {
+      "id": "gogmagog:shakedown",
+      "name": "Shakedown",
+      "kind": "standard",
+      "families": [
+        "gogmagog"
+      ],
+      "effect": "Bouclier brisé : Vulnérable",
+      "provides": [
+        "vulnerable"
+      ],
+      "requires": [
+        [
+          {
+            "trigger": "shield"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "gogmagog:sturdy-mass",
+      "name": "Sturdy Mass",
+      "kind": "standard",
+      "families": [
+        "gogmagog"
+      ],
+      "effect": "Réduction de dégâts par ennemi proche (25 % max)",
+      "requires": []
+    },
+    {
+      "id": "gogmagog:tough-stuff",
+      "name": "Tough Stuff",
+      "kind": "standard",
+      "families": [
+        "gogmagog"
+      ],
+      "effect": "1 dégât de moins par coup",
+      "requires": []
+    },
+    {
+      "id": "gogmagog:unmatched-power",
+      "name": "Unmatched Power",
+      "kind": "standard",
+      "families": [
+        "gogmagog"
+      ],
+      "effect": "Plus de Choc infligé",
+      "provides": [
+        "stagger"
+      ],
+      "requires": [
+        [
+          {
+            "slot": {
+              "family": "gogmagog",
+              "slots": [
+                "light",
+                "heavy",
+                "spell",
+                "dash"
+              ]
+            }
+          }
+        ]
+      ]
+    },
+    {
+      "id": "gogmagog:steel-resolve",
+      "name": "Steel Resolve",
+      "kind": "roundtable",
+      "families": [
+        "gogmagog"
+      ],
+      "effect": "Bouclier qui se régénère pour chaque joueur",
+      "requires": [
+        [
+          {
+            "count": {
+              "family": "gogmagog",
+              "min": 5
+            }
+          }
+        ]
+      ]
+    },
+    {
+      "id": "lugh:lucky-touch",
+      "name": "Lucky Touch",
+      "kind": "ability",
+      "families": [
+        "lugh"
+      ],
+      "slot": "light",
+      "effect": "Attaque légère : peut faire un coup critique",
+      "provides": [
+        "crit"
+      ],
+      "requires": []
+    },
+    {
+      "id": "lugh:lucky-strike",
+      "name": "Lucky Strike",
+      "kind": "ability",
+      "families": [
+        "lugh"
+      ],
+      "slot": "heavy",
+      "effect": "Attaque lourde : peut faire un coup critique",
+      "provides": [
+        "crit"
+      ],
+      "requires": []
+    },
+    {
+      "id": "lugh:lucky-flourish",
+      "name": "Lucky Flourish",
+      "kind": "ability",
+      "families": [
+        "lugh"
+      ],
+      "slot": "spell",
+      "effect": "Sort : peut faire un coup critique",
+      "provides": [
+        "crit"
+      ],
+      "requires": []
+    },
+    {
+      "id": "lugh:lucky-dash",
+      "name": "Lucky Dash",
+      "kind": "ability",
+      "families": [
+        "lugh"
+      ],
+      "slot": "dash",
+      "effect": "Tire un Trèfle doré",
+      "provides": [
+        "clover",
+        "crit"
+      ],
+      "requires": []
+    },
+    {
+      "id": "lugh:golden-squirrel",
+      "name": "Golden Squirrel",
+      "kind": "ability",
+      "families": [
+        "lugh"
+      ],
+      "slot": "companion",
+      "effect": "L'écureuil doré lance des Trèfles",
+      "provides": [
+        "clover",
+        "crit"
+      ],
+      "requires": []
+    },
+    {
+      "id": "lugh:stroke-of-luck",
+      "name": "Stroke of Luck",
+      "kind": "ability",
+      "families": [
+        "lugh"
+      ],
+      "slot": "ultimate",
+      "effect": "Lance une javeline à chance de critique",
+      "provides": [
+        "crit"
+      ],
+      "requires": []
+    },
+    {
+      "id": "lugh:attack-of-opportunity",
+      "name": "Attack of Opportunity",
+      "kind": "standard",
+      "families": [
+        "lugh"
+      ],
+      "effect": "La Javeline dorée peut faire un critique",
+      "requires": [
+        [
+          {
+            "trigger": "favor"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "lugh:collector",
+      "name": "Collector",
+      "kind": "standard",
+      "families": [
+        "lugh"
+      ],
+      "effect": "Meilleures récompenses",
+      "requires": []
+    },
+    {
+      "id": "lugh:critical-clover",
+      "name": "Critical Clover",
+      "kind": "standard",
+      "families": [
+        "lugh"
+      ],
+      "effect": "Un critique lance un Trèfle",
+      "provides": [
+        "crit",
+        "clover"
+      ],
+      "requires": [
+        [
+          {
+            "trigger": "crit"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "lugh:critical-favor",
+      "name": "Critical Favor",
+      "kind": "standard",
+      "families": [
+        "lugh"
+      ],
+      "effect": "Les attaques critiques montent la Faveur",
+      "provides": [
+        "favor"
+      ],
+      "requires": [
+        [
+          {
+            "trigger": "crit"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "lugh:deadly-precision",
+      "name": "Deadly Precision",
+      "kind": "standard",
+      "families": [
+        "lugh"
+      ],
+      "effect": "Plus de dégâts contre les Marqués",
+      "provides": [
+        "crit",
+        "mark"
+      ],
+      "requires": [
+        [
+          {
+            "trigger": "mark"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "lugh:death-tax",
+      "name": "Death Tax",
+      "kind": "standard",
+      "families": [
+        "lugh"
+      ],
+      "effect": "Les ennemis lâchent de la monnaie",
+      "requires": []
+    },
+    {
+      "id": "lugh:endless-fortune",
+      "name": "Endless Fortune",
+      "kind": "standard",
+      "families": [
+        "lugh"
+      ],
+      "effect": "Fortune maximale plus haute",
+      "provides": [
+        "fortune"
+      ],
+      "requires": [
+        [
+          {
+            "item": "lugh:on-the-house"
+          },
+          {
+            "item": "lugh:gambler-mentality"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "lugh:favored-clovers",
+      "name": "Favored Clovers",
+      "kind": "standard",
+      "families": [
+        "lugh"
+      ],
+      "effect": "Les Trèfles donnent de la Faveur",
+      "provides": [
+        "favor"
+      ],
+      "requires": [
+        [
+          {
+            "slot": {
+              "family": "lugh",
+              "slots": [
+                "dash",
+                "companion"
+              ]
+            }
+          }
+        ]
+      ]
+    },
+    {
+      "id": "lugh:first-target",
+      "name": "First Target",
+      "kind": "standard",
+      "families": [
+        "lugh"
+      ],
+      "effect": "Un ennemi Marqué en début de salle",
+      "provides": [
+        "mark"
+      ],
+      "requires": [
+        [
+          {
+            "trigger": "crit"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "lugh:gambler-mentality",
+      "name": "Gambler Mentality",
+      "kind": "standard",
+      "families": [
+        "lugh"
+      ],
+      "effect": "Un critique raté donne de la Fortune",
+      "provides": [
+        "fortune"
+      ],
+      "requires": [
+        [
+          {
+            "slot": {
+              "family": "lugh",
+              "slots": [
+                "light",
+                "heavy",
+                "spell",
+                "dash",
+                "companion"
+              ]
+            }
+          }
+        ]
+      ]
+    },
+    {
+      "id": "lugh:gilded-armor",
+      "name": "Gilded Armor",
+      "kind": "standard",
+      "families": [
+        "lugh"
+      ],
+      "effect": "Payer de la monnaie pour 50 % de résistance",
+      "requires": []
+    },
+    {
+      "id": "lugh:golden-mark",
+      "name": "Golden Mark",
+      "kind": "standard",
+      "families": [
+        "lugh"
+      ],
+      "effect": "Attraper un Trèfle peut Marquer",
+      "provides": [
+        "clover",
+        "mark"
+      ],
+      "requires": [
+        [
+          {
+            "item": "lugh:good-fortune"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "lugh:good-fortune",
+      "name": "Good Fortune",
+      "kind": "standard",
+      "families": [
+        "lugh"
+      ],
+      "effect": "Les Trèfles donnent de la Fortune",
+      "provides": [
+        "clover",
+        "fortune"
+      ],
+      "requires": [
+        [
+          {
+            "trigger": "clover"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "lugh:good-investment",
+      "name": "Good Investment",
+      "kind": "standard",
+      "families": [
+        "lugh"
+      ],
+      "effect": "Monnaie à chaque salle tant qu'on ne dépense pas",
+      "requires": []
+    },
+    {
+      "id": "lugh:greed",
+      "name": "Greed",
+      "kind": "standard",
+      "families": [
+        "lugh"
+      ],
+      "effect": "Dégâts selon la monnaie détenue",
+      "requires": []
+    },
+    {
+      "id": "lugh:heaven-s-phalanx",
+      "name": "Heaven's Phalanx",
+      "kind": "standard",
+      "families": [
+        "lugh"
+      ],
+      "effect": "L'Ultime frappe avec des Javelines",
+      "requires": [
+        [
+          {
+            "item": "lugh:stroke-of-luck"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "lugh:lucky-mark",
+      "name": "Lucky Mark",
+      "kind": "standard",
+      "families": [
+        "lugh"
+      ],
+      "effect": "Un critique Marque un ennemi proche",
+      "provides": [
+        "mark"
+      ],
+      "requires": [
+        [
+          {
+            "trigger": "crit"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "lugh:on-the-house",
+      "name": "On The House",
+      "kind": "standard",
+      "families": [
+        "lugh"
+      ],
+      "effect": "La Fortune monte en combat",
+      "provides": [
+        "fortune"
+      ],
+      "requires": [
+        [
+          {
+            "slot": {
+              "family": "lugh",
+              "slots": [
+                "light",
+                "heavy",
+                "spell",
+                "dash",
+                "companion"
+              ]
+            }
+          }
+        ]
+      ]
+    },
+    {
+      "id": "lugh:royal-treasury",
+      "name": "Royal Treasury",
+      "kind": "standard",
+      "families": [
+        "lugh"
+      ],
+      "effect": "Trèfles plus forts, 3 lancés au lieu d'1",
+      "provides": [
+        "clover"
+      ],
+      "requires": [
+        [
+          {
+            "item": "lugh:favored-clovers"
+          },
+          {
+            "item": "lugh:good-fortune"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "lugh:treasure-trove",
+      "name": "Treasure Trove",
+      "kind": "roundtable",
+      "families": [
+        "lugh"
+      ],
+      "effect": "Meilleures chances de rareté pour l'équipe",
+      "requires": [
+        [
+          {
+            "count": {
+              "family": "lugh",
+              "min": 5
+            }
+          }
+        ]
+      ]
+    },
+    {
+      "id": "mab:venomous-touch",
+      "name": "Venomous Touch",
+      "kind": "ability",
+      "families": [
+        "mab"
+      ],
+      "slot": "light",
+      "effect": "Attaque légère : inflige Venin",
+      "provides": [
+        "venom"
+      ],
+      "requires": []
+    },
+    {
+      "id": "mab:venomous-strike",
+      "name": "Venomous Strike",
+      "kind": "ability",
+      "families": [
+        "mab"
+      ],
+      "slot": "heavy",
+      "effect": "Attaque lourde : inflige Venin",
+      "provides": [
+        "venom"
+      ],
+      "requires": []
+    },
+    {
+      "id": "mab:venomous-flourish",
+      "name": "Venomous Flourish",
+      "kind": "ability",
+      "families": [
+        "mab"
+      ],
+      "slot": "spell",
+      "effect": "Sort : inflige Venin",
+      "provides": [
+        "venom"
+      ],
+      "requires": []
+    },
+    {
+      "id": "mab:infecting-dash",
+      "name": "Infecting Dash",
+      "kind": "ability",
+      "families": [
+        "mab"
+      ],
+      "slot": "dash",
+      "effect": "Fin d'esquive : inflige Infecté",
+      "provides": [
+        "infected"
+      ],
+      "requires": []
+    },
+    {
+      "id": "mab:brood-mother",
+      "name": "Brood Mother",
+      "kind": "ability",
+      "families": [
+        "mab"
+      ],
+      "slot": "companion",
+      "effect": "Le compagnon est une araignée géante",
+      "provides": [
+        "infected",
+        "brood"
+      ],
+      "requires": []
+    },
+    {
+      "id": "mab:venomous-demise",
+      "name": "Venomous Demise",
+      "kind": "ability",
+      "families": [
+        "mab"
+      ],
+      "slot": "ultimate",
+      "effect": "Vous incarnez Mab et crachez de la Bile",
+      "provides": [
+        "venom",
+        "bile"
+      ],
+      "requires": []
+    },
+    {
+      "id": "mab:amassing-brood",
+      "name": "Amassing Brood",
+      "kind": "standard",
+      "families": [
+        "mab"
+      ],
+      "effect": "Une attaque sur 3 invoque une Araignée",
+      "requires": [
+        [
+          {
+            "item": "mab:brood-mother"
+          }
+        ],
+        [
+          {
+            "item": "mab:bile-thrower"
+          },
+          {
+            "item": "mab:dividing-daughters"
+          },
+          {
+            "item": "mab:leech"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "mab:bile-thrower",
+      "name": "Bile Thrower",
+      "kind": "standard",
+      "families": [
+        "mab"
+      ],
+      "effect": "La Mère des couvées crache de la Bile",
+      "provides": [
+        "bile",
+        "venom"
+      ],
+      "requires": [
+        [
+          {
+            "item": "mab:brood-mother"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "mab:brood-queen",
+      "name": "Brood Queen",
+      "kind": "standard",
+      "families": [
+        "mab"
+      ],
+      "effect": "Une Mère des couvées en plus",
+      "provides": [
+        "brood"
+      ],
+      "requires": [
+        [
+          {
+            "item": "mab:brood-mother"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "mab:call-to-legs",
+      "name": "Call to Legs",
+      "kind": "standard",
+      "families": [
+        "mab"
+      ],
+      "effect": "L'Ultime invoque 8 Araignées",
+      "provides": [
+        "infected"
+      ],
+      "requires": [
+        [
+          {
+            "item": "mab:venomous-demise"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "mab:caustic-finale",
+      "name": "Caustic Finale",
+      "kind": "standard",
+      "families": [
+        "mab"
+      ],
+      "effect": "Mort sous Venin : jet de Bile",
+      "provides": [
+        "bile"
+      ],
+      "requires": [
+        [
+          {
+            "trigger": "venom"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "mab:chemical-x",
+      "name": "Chemical X",
+      "kind": "standard",
+      "families": [
+        "mab"
+      ],
+      "effect": "Crache de la Bile régulièrement",
+      "provides": [
+        "bile",
+        "venom"
+      ],
+      "requires": [
+        [
+          {
+            "trigger": "venom"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "mab:dividing-daughters",
+      "name": "Dividing Daughters",
+      "kind": "standard",
+      "families": [
+        "mab"
+      ],
+      "effect": "Un Infecté mort peut donner 2 Araignées",
+      "requires": [
+        [
+          {
+            "trigger": "infected"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "mab:fast-acting",
+      "name": "Fast Acting",
+      "kind": "standard",
+      "families": [
+        "mab"
+      ],
+      "effect": "Le Venin agit plus vite",
+      "requires": [
+        [
+          {
+            "trigger": "venom"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "mab:feast",
+      "name": "Feast",
+      "kind": "standard",
+      "families": [
+        "mab"
+      ],
+      "effect": "Les éliminations montent la vie max (plafonné)",
+      "requires": []
+    },
+    {
+      "id": "mab:feeding-frenzy",
+      "name": "Feeding Frenzy",
+      "kind": "standard",
+      "families": [
+        "mab"
+      ],
+      "effect": "L'Ultime accélère vos araignées",
+      "requires": [
+        [
+          {
+            "item": "mab:venomous-demise"
+          }
+        ],
+        [
+          {
+            "item": "mab:infecting-dash"
+          },
+          {
+            "item": "mab:brood-mother"
+          },
+          {
+            "item": "mab:call-to-legs"
+          },
+          {
+            "item": "mab:toxic-incubation"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "mab:hibernator",
+      "name": "Hibernator",
+      "kind": "standard",
+      "families": [
+        "mab"
+      ],
+      "effect": "Soin en fin de salle",
+      "requires": []
+    },
+    {
+      "id": "mab:lasting-sting",
+      "name": "Lasting Sting",
+      "kind": "standard",
+      "families": [
+        "mab"
+      ],
+      "effect": "Venin plus long et plus fort",
+      "provides": [
+        "venom"
+      ],
+      "requires": [
+        [
+          {
+            "trigger": "venom"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "mab:leech",
+      "name": "Leech",
+      "kind": "standard",
+      "families": [
+        "mab"
+      ],
+      "effect": "Soin en tuant un Infecté",
+      "requires": [
+        [
+          {
+            "trigger": "infected"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "mab:lingering-pests",
+      "name": "Lingering Pests",
+      "kind": "standard",
+      "families": [
+        "mab"
+      ],
+      "effect": "Araignées qui restent plus longtemps",
+      "requires": [
+        [
+          {
+            "slot": {
+              "family": "mab",
+              "slots": [
+                "dash",
+                "companion"
+              ]
+            }
+          }
+        ]
+      ]
+    },
+    {
+      "id": "mab:potent-poison",
+      "name": "Potent Poison",
+      "kind": "standard",
+      "families": [
+        "mab"
+      ],
+      "effect": "Venin maximal plus haut",
+      "requires": [
+        [
+          {
+            "trigger": "venom"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "mab:regenerative",
+      "name": "Regenerative",
+      "kind": "standard",
+      "families": [
+        "mab"
+      ],
+      "effect": "Soins plus forts (25 PV)",
+      "requires": []
+    },
+    {
+      "id": "mab:sharp-fangs",
+      "name": "Sharp Fangs",
+      "kind": "standard",
+      "families": [
+        "mab"
+      ],
+      "effect": "Compagnons plus forts",
+      "requires": [
+        [
+          {
+            "item": "mab:brood-mother"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "mab:toxic-incubation",
+      "name": "Toxic Incubation",
+      "kind": "standard",
+      "families": [
+        "mab"
+      ],
+      "effect": "5 Venin ou plus : Infecté",
+      "provides": [
+        "infected"
+      ],
+      "requires": [
+        [
+          {
+            "trigger": "venom"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "mab:ultimate-arachnid",
+      "name": "Ultimate Arachnid",
+      "kind": "standard",
+      "families": [
+        "mab"
+      ],
+      "effect": "Infectés tués : dégâts permanents de la couvée",
+      "requires": [
+        [
+          {
+            "item": "mab:brood-mother"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "mab:waste-not",
+      "name": "Waste Not",
+      "kind": "standard",
+      "families": [
+        "mab"
+      ],
+      "effect": "Le Venin projette de la Bile sur un autre ennemi",
+      "provides": [
+        "venom",
+        "bile"
+      ],
+      "requires": [
+        [
+          {
+            "trigger": "venom"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "mab:we-are-many",
+      "name": "We Are Many",
+      "kind": "roundtable",
+      "families": [
+        "mab"
+      ],
+      "effect": "Les compagnons font double dégâts",
+      "requires": [
+        [
+          {
+            "count": {
+              "family": "mab",
+              "min": 5
+            }
+          }
+        ]
+      ]
+    },
+    {
+      "id": "oberon:tempest-touch",
+      "name": "Tempest Touch",
+      "kind": "ability",
+      "families": [
+        "oberon"
+      ],
+      "slot": "light",
+      "effect": "Attaque légère : donne de la Fureur au contact",
+      "provides": [
+        "fury"
+      ],
+      "requires": []
+    },
+    {
+      "id": "oberon:tempest-strike",
+      "name": "Tempest Strike",
+      "kind": "ability",
+      "families": [
+        "oberon"
+      ],
+      "slot": "heavy",
+      "effect": "Attaque lourde : donne de la Fureur au contact",
+      "provides": [
+        "fury"
+      ],
+      "requires": []
+    },
+    {
+      "id": "oberon:tempest-flourish",
+      "name": "Tempest Flourish",
+      "kind": "ability",
+      "families": [
+        "oberon"
+      ],
+      "slot": "spell",
+      "effect": "Sort : donne de la Fureur au contact",
+      "provides": [
+        "fury"
+      ],
+      "requires": []
+    },
+    {
+      "id": "oberon:tempest-dash",
+      "name": "Tempest Dash",
+      "kind": "ability",
+      "families": [
+        "oberon"
+      ],
+      "slot": "dash",
+      "effect": "Invoque un Tourbillon",
+      "provides": [
+        "whirlwind"
+      ],
+      "requires": []
+    },
+    {
+      "id": "oberon:storm-falcon",
+      "name": "Storm Falcon",
+      "kind": "ability",
+      "families": [
+        "oberon"
+      ],
+      "slot": "companion",
+      "effect": "Le faucon tire des Tourbillons",
+      "provides": [
+        "whirlwind"
+      ],
+      "requires": []
+    },
+    {
+      "id": "oberon:tempestuous-barrage",
+      "name": "Tempestuous Barrage",
+      "kind": "ability",
+      "families": [
+        "oberon"
+      ],
+      "slot": "ultimate",
+      "effect": "Déchaîne des coups de Fureur",
+      "provides": [
+        "fury"
+      ],
+      "requires": []
+    },
+    {
+      "id": "oberon:approaching-storm",
+      "name": "Approaching Storm",
+      "kind": "standard",
+      "families": [
+        "oberon"
+      ],
+      "effect": "Dégâts selon le nombre d'ennemis proches",
+      "requires": []
+    },
+    {
+      "id": "oberon:arcing-bolts",
+      "name": "Arcing Bolts",
+      "kind": "standard",
+      "families": [
+        "oberon"
+      ],
+      "effect": "Éclair en chaîne plus loin et plus fort",
+      "requires": [
+        [
+          {
+            "trigger": "lightning"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "oberon:as-the-wind",
+      "name": "As the Wind",
+      "kind": "standard",
+      "families": [
+        "oberon"
+      ],
+      "effect": "Esquive 25 % plus longue",
+      "requires": []
+    },
+    {
+      "id": "oberon:closed-circuit",
+      "name": "Closed Circuit",
+      "kind": "standard",
+      "families": [
+        "oberon"
+      ],
+      "effect": "Plus de rebonds d'Éclair en chaîne",
+      "provides": [
+        "lightning"
+      ],
+      "requires": [
+        [
+          {
+            "trigger": "lightning"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "oberon:ebb-and-flow",
+      "name": "Ebb and Flow",
+      "kind": "standard",
+      "families": [
+        "oberon"
+      ],
+      "effect": "Le Flux monte doucement en combat",
+      "provides": [
+        "flow"
+      ],
+      "requires": [
+        [
+          {
+            "trigger": "fury"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "oberon:electric-judgement",
+      "name": "Electric Judgement",
+      "kind": "standard",
+      "families": [
+        "oberon"
+      ],
+      "effect": "Éclairs rapides pendant l'Ultime",
+      "provides": [
+        "lightning"
+      ],
+      "requires": [
+        [
+          {
+            "item": "oberon:tempestuous-barrage"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "oberon:eye-of-the-storm",
+      "name": "Eye of the Storm",
+      "kind": "standard",
+      "families": [
+        "oberon"
+      ],
+      "effect": "Le faucon garde deux Tourbillons",
+      "requires": [
+        [
+          {
+            "item": "oberon:storm-falcon"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "oberon:flood-meditation",
+      "name": "Flood Meditation",
+      "kind": "standard",
+      "families": [
+        "oberon"
+      ],
+      "effect": "Les attaques de Fureur montent le Flux",
+      "provides": [
+        "flow"
+      ],
+      "requires": [
+        [
+          {
+            "trigger": "fury"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "oberon:furious-lightning",
+      "name": "Furious Lightning",
+      "kind": "standard",
+      "families": [
+        "oberon"
+      ],
+      "effect": "Les attaques de Fureur lancent des Éclairs",
+      "provides": [
+        "lightning"
+      ],
+      "requires": [
+        [
+          {
+            "trigger": "fury"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "oberon:guiding-breeze",
+      "name": "Guiding Breeze",
+      "kind": "standard",
+      "families": [
+        "oberon"
+      ],
+      "effect": "Vitesse quand on subit des dégâts",
+      "requires": []
+    },
+    {
+      "id": "oberon:last-wind",
+      "name": "Last Wind",
+      "kind": "standard",
+      "families": [
+        "oberon"
+      ],
+      "effect": "Entrer en Flux lance des Tourbillons",
+      "provides": [
+        "whirlwind"
+      ],
+      "requires": [
+        [
+          {
+            "trigger": "flow"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "oberon:lightning-rod",
+      "name": "Lightning Rod",
+      "kind": "standard",
+      "families": [
+        "oberon"
+      ],
+      "effect": "Le faucon tire des Éclairs en chaîne",
+      "provides": [
+        "lightning"
+      ],
+      "requires": [
+        [
+          {
+            "item": "oberon:storm-falcon"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "oberon:live-in-fury",
+      "name": "Live in Fury",
+      "kind": "standard",
+      "families": [
+        "oberon"
+      ],
+      "effect": "Fureur plus longue",
+      "requires": [
+        [
+          {
+            "slot": {
+              "family": "oberon",
+              "slots": [
+                "light",
+                "heavy",
+                "spell",
+                "companion"
+              ]
+            }
+          }
+        ]
+      ]
+    },
+    {
+      "id": "oberon:onslaught",
+      "name": "Onslaught",
+      "kind": "standard",
+      "families": [
+        "oberon"
+      ],
+      "effect": "Fureur maximale plus haute",
+      "requires": [
+        [
+          {
+            "trigger": "fury"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "oberon:plentiful-winds",
+      "name": "Plentiful Winds",
+      "kind": "standard",
+      "families": [
+        "oberon"
+      ],
+      "effect": "Un Tourbillon en plus",
+      "provides": [
+        "whirlwind"
+      ],
+      "requires": [
+        [
+          {
+            "trigger": "whirlwind"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "oberon:rapid-flood",
+      "name": "Rapid Flood",
+      "kind": "standard",
+      "families": [
+        "oberon"
+      ],
+      "effect": "Bonus de vitesse du Flux plus forts",
+      "provides": [
+        "flow"
+      ],
+      "requires": [
+        [
+          {
+            "trigger": "flow"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "oberon:rising-current",
+      "name": "Rising Current",
+      "kind": "standard",
+      "families": [
+        "oberon"
+      ],
+      "effect": "Éclairs plus forts selon la Fureur",
+      "requires": [
+        [
+          {
+            "trigger": "lightning"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "oberon:storm-meditation",
+      "name": "Storm Meditation",
+      "kind": "standard",
+      "families": [
+        "oberon"
+      ],
+      "effect": "10 Fureur ou plus : Éclairs réguliers",
+      "provides": [
+        "lightning"
+      ],
+      "requires": [
+        [
+          {
+            "trigger": "fury"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "oberon:swift-killer",
+      "name": "Swift Killer",
+      "kind": "standard",
+      "families": [
+        "oberon"
+      ],
+      "effect": "Bonus de dégâts en esquivant",
+      "requires": []
+    },
+    {
+      "id": "oberon:tailwind",
+      "name": "Tailwind",
+      "kind": "standard",
+      "families": [
+        "oberon"
+      ],
+      "effect": "+1 Fureur max par Tourbillon actif",
+      "requires": [
+        [
+          {
+            "trigger": "fury"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "oberon:torrential-flood",
+      "name": "Torrential Flood",
+      "kind": "standard",
+      "families": [
+        "oberon"
+      ],
+      "effect": "Flux plus long",
+      "provides": [
+        "flow"
+      ],
+      "requires": [
+        [
+          {
+            "trigger": "flow"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "oberon:typhoon",
+      "name": "Typhoon",
+      "kind": "standard",
+      "families": [
+        "oberon"
+      ],
+      "effect": "Les Tourbillons tirent des Éclairs",
+      "provides": [
+        "whirlwind",
+        "lightning"
+      ],
+      "requires": [
+        [
+          {
+            "slot": {
+              "family": "oberon",
+              "slots": [
+                "dash",
+                "companion"
+              ]
+            }
+          }
+        ]
+      ]
+    },
+    {
+      "id": "oberon:whirlwind-shot",
+      "name": "Whirlwind Shot",
+      "kind": "standard",
+      "families": [
+        "oberon"
+      ],
+      "effect": "En Flux, la Fureur lance des Tourbillons",
+      "provides": [
+        "whirlwind"
+      ],
+      "requires": [
+        [
+          {
+            "trigger": "flow"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "oberon:go-with-the-flow",
+      "name": "Go With the Flow",
+      "kind": "roundtable",
+      "families": [
+        "oberon"
+      ],
+      "effect": "L'équipe monte doucement en Flux",
+      "requires": [
+        [
+          {
+            "count": {
+              "family": "oberon",
+              "min": 5
+            }
+          }
+        ]
+      ]
+    },
+    {
+      "id": "titania:burning-touch",
+      "name": "Burning Touch",
+      "kind": "ability",
+      "families": [
+        "titania"
+      ],
+      "slot": "light",
+      "effect": "Attaque légère : embrase toutes les 8 s",
+      "provides": [
+        "ignite"
+      ],
+      "requires": []
+    },
+    {
+      "id": "titania:burning-strike",
+      "name": "Burning Strike",
+      "kind": "ability",
+      "families": [
+        "titania"
+      ],
+      "slot": "heavy",
+      "effect": "Attaque lourde : embrase toutes les 8 s",
+      "provides": [
+        "ignite"
+      ],
+      "requires": []
+    },
+    {
+      "id": "titania:burning-flourish",
+      "name": "Burning Flourish",
+      "kind": "ability",
+      "families": [
+        "titania"
+      ],
+      "slot": "spell",
+      "effect": "Sort : embrase toutes les 8 s",
+      "provides": [
+        "ignite"
+      ],
+      "requires": []
+    },
+    {
+      "id": "titania:burning-dodge",
+      "name": "Burning Dodge",
+      "kind": "ability",
+      "families": [
+        "titania"
+      ],
+      "slot": "dash",
+      "effect": "Immolation toutes les 6 s",
+      "provides": [
+        "immolate"
+      ],
+      "requires": []
+    },
+    {
+      "id": "titania:ember-cat",
+      "name": "Ember Cat",
+      "kind": "ability",
+      "families": [
+        "titania"
+      ],
+      "slot": "companion",
+      "effect": "Le chat de braise tire des boules de feu",
+      "provides": [
+        "immolate"
+      ],
+      "requires": []
+    },
+    {
+      "id": "titania:lion-claw",
+      "name": "Lion Claw",
+      "kind": "ability",
+      "families": [
+        "titania"
+      ],
+      "slot": "ultimate",
+      "effect": "Lance un chat de braise qui embrase",
+      "provides": [
+        "ignite"
+      ],
+      "requires": []
+    },
+    {
+      "id": "titania:afterburn",
+      "name": "Afterburn",
+      "kind": "standard",
+      "families": [
+        "titania"
+      ],
+      "effect": "Frapper un embrasé cause l'Immolation",
+      "provides": [
+        "immolate"
+      ],
+      "requires": [
+        [
+          {
+            "trigger": "ignite"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "titania:cauterize",
+      "name": "Cauterize",
+      "kind": "standard",
+      "families": [
+        "titania"
+      ],
+      "effect": "L'Immolation peut déclencher Brûlure",
+      "requires": [
+        [
+          {
+            "trigger": "scorch"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "titania:disintegration",
+      "name": "Disintegration",
+      "kind": "standard",
+      "families": [
+        "titania"
+      ],
+      "effect": "Immolation de plus en plus forte",
+      "provides": [
+        "immolate"
+      ],
+      "requires": [
+        [
+          {
+            "trigger": "immolate"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "titania:dying-spark",
+      "name": "Dying Spark",
+      "kind": "standard",
+      "families": [
+        "titania"
+      ],
+      "effect": "Plus de dégâts sous 35 % de vie",
+      "requires": []
+    },
+    {
+      "id": "titania:ember-core",
+      "name": "Ember Core",
+      "kind": "standard",
+      "families": [
+        "titania"
+      ],
+      "effect": "Le chat s'immole régulièrement",
+      "provides": [
+        "immolate"
+      ],
+      "requires": [
+        [
+          {
+            "item": "titania:ember-cat"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "titania:ember-scorch",
+      "name": "Ember Scorch",
+      "kind": "standard",
+      "families": [
+        "titania"
+      ],
+      "effect": "Les boules de feu infligent Brûlure",
+      "provides": [
+        "scorch"
+      ],
+      "requires": [
+        [
+          {
+            "item": "titania:ember-cat"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "titania:enduring-flame",
+      "name": "Enduring Flame",
+      "kind": "standard",
+      "families": [
+        "titania"
+      ],
+      "effect": "Frapper un embrasé cause l'Immolation",
+      "provides": [
+        "immolate"
+      ],
+      "requires": [
+        [
+          {
+            "trigger": "ignite"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "titania:fan-the-flame",
+      "name": "Fan the Flame",
+      "kind": "standard",
+      "families": [
+        "titania"
+      ],
+      "effect": "Embrasement plus rapide pendant l'Immolation",
+      "requires": [
+        [
+          {
+            "trigger": "ignite"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "titania:feed-the-fire",
+      "name": "Feed the Fire",
+      "kind": "standard",
+      "families": [
+        "titania"
+      ],
+      "effect": "Immolation plus longue",
+      "requires": [
+        [
+          {
+            "trigger": "immolate"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "titania:great-ignis",
+      "name": "Great Ignis",
+      "kind": "standard",
+      "families": [
+        "titania"
+      ],
+      "effect": "Charge d'Embrasement en plus",
+      "provides": [
+        "ignite"
+      ],
+      "requires": [
+        [
+          {
+            "trigger": "ignite"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "titania:greater-ignis",
+      "name": "Greater Ignis",
+      "kind": "standard",
+      "families": [
+        "titania"
+      ],
+      "effect": "Autre charge d'Embrasement en plus",
+      "requires": [
+        [
+          {
+            "item": "titania:great-ignis"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "titania:hot-streak",
+      "name": "Hot Streak",
+      "kind": "standard",
+      "families": [
+        "titania"
+      ],
+      "effect": "Tuer un embrasé recharge en partie",
+      "requires": [
+        [
+          {
+            "trigger": "ignite"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "titania:lion-spirit",
+      "name": "Lion Spirit",
+      "kind": "standard",
+      "families": [
+        "titania"
+      ],
+      "effect": "L'Ultime rend les charges d'Embrasement",
+      "requires": [
+        [
+          {
+            "item": "titania:lion-claw"
+          }
+        ],
+        [
+          {
+            "trigger": "ignite"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "titania:overheat",
+      "name": "Overheat",
+      "kind": "standard",
+      "families": [
+        "titania"
+      ],
+      "effect": "Bonus pendant la recharge d'Embrasement",
+      "requires": [
+        [
+          {
+            "trigger": "ignite"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "titania:raging-inferno",
+      "name": "Raging Inferno",
+      "kind": "standard",
+      "families": [
+        "titania"
+      ],
+      "effect": "Immolation plus fréquente",
+      "requires": [
+        [
+          {
+            "trigger": "immolate"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "titania:rapid-burn",
+      "name": "Rapid Burn",
+      "kind": "standard",
+      "families": [
+        "titania"
+      ],
+      "effect": "Embrasement qui recharge plus vite",
+      "requires": [
+        [
+          {
+            "trigger": "ignite"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "titania:ring-of-fire",
+      "name": "Ring of Fire",
+      "kind": "standard",
+      "families": [
+        "titania"
+      ],
+      "effect": "Embrasement plus fort sur les immolés",
+      "requires": [
+        [
+          {
+            "trigger": "ignite"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "titania:rising-flame",
+      "name": "Rising Flame",
+      "kind": "standard",
+      "families": [
+        "titania"
+      ],
+      "effect": "Ultime qui se recharge seul",
+      "requires": [
+        [
+          {
+            "item": "titania:lion-claw"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "titania:scorching-aura",
+      "name": "Scorching Aura",
+      "kind": "standard",
+      "families": [
+        "titania"
+      ],
+      "effect": "2 s d'Immolation : Brûlure",
+      "provides": [
+        "scorch"
+      ],
+      "requires": [
+        [
+          {
+            "trigger": "immolate"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "titania:scorching-edge",
+      "name": "Scorching Edge",
+      "kind": "standard",
+      "families": [
+        "titania"
+      ],
+      "effect": "L'Embrasement inflige Brûlure",
+      "provides": [
+        "scorch"
+      ],
+      "requires": [
+        [
+          {
+            "trigger": "ignite"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "titania:searing-blaze",
+      "name": "Searing Blaze",
+      "kind": "standard",
+      "families": [
+        "titania"
+      ],
+      "effect": "Brûlure plus longue",
+      "requires": [
+        [
+          {
+            "trigger": "scorch"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "titania:slow-burn",
+      "name": "Slow Burn",
+      "kind": "standard",
+      "families": [
+        "titania"
+      ],
+      "effect": "Embrasement plus fort, recharge plus lente",
+      "provides": [
+        "ignite"
+      ],
+      "requires": [
+        [
+          {
+            "trigger": "ignite"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "titania:strike-back",
+      "name": "Strike Back",
+      "kind": "standard",
+      "families": [
+        "titania"
+      ],
+      "effect": "Ultime gagné en subissant des dégâts",
+      "requires": [
+        [
+          {
+            "item": "titania:lion-claw"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "titania:third-degree",
+      "name": "Third Degree",
+      "kind": "standard",
+      "families": [
+        "titania"
+      ],
+      "effect": "Brûlure plus forte",
+      "requires": [
+        [
+          {
+            "trigger": "scorch"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "titania:volcanic-retaliation",
+      "name": "Volcanic Retaliation",
+      "kind": "standard",
+      "families": [
+        "titania"
+      ],
+      "effect": "Subir des dégâts crée une Éruption",
+      "requires": []
+    },
+    {
+      "id": "titania:heat-wave",
+      "name": "Heat Wave",
+      "kind": "roundtable",
+      "families": [
+        "titania"
+      ],
+      "effect": "Les ennemis apparaissent brûlés",
+      "requires": [
+        [
+          {
+            "count": {
+              "family": "titania",
+              "min": 5
+            }
+          }
+        ]
+      ]
+    },
+    {
+      "id": "duo:fan-of-knives",
+      "name": "Fan of Knives",
+      "kind": "duo",
+      "families": [
+        "badb",
+        "beira"
+      ],
+      "effect": "Les Ombres lancent des dagues sur les ennemis gelés",
+      "provides": [
+        "shade"
+      ],
+      "requires": [
+        [
+          {
+            "trigger": "chill"
+          }
+        ],
+        [
+          {
+            "item": "badb:sling-blades"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "duo:helpless-prey",
+      "name": "Helpless Prey",
+      "kind": "duo",
+      "families": [
+        "badb",
+        "cliona"
+      ],
+      "effect": "Une Ombre frappe les affaiblis",
+      "provides": [
+        "shade"
+      ],
+      "requires": [
+        [
+          {
+            "trigger": "weak"
+          }
+        ],
+        [
+          {
+            "trigger": "shade"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "duo:bone-collector",
+      "name": "Bone Collector",
+      "kind": "duo",
+      "families": [
+        "badb",
+        "gogmagog"
+      ],
+      "effect": "Les éliminations donnent des dégâts (15 max par salle)",
+      "requires": [
+        [
+          {
+            "slot": {
+              "family": "gogmagog",
+              "slots": [
+                "light",
+                "heavy",
+                "spell",
+                "dash"
+              ]
+            }
+          }
+        ],
+        [
+          {
+            "slot": {
+              "family": "badb",
+              "slots": [
+                "light",
+                "heavy",
+                "spell",
+                "dash"
+              ]
+            }
+          }
+        ]
+      ]
+    },
+    {
+      "id": "duo:weak-point",
+      "name": "Weak Point",
+      "kind": "duo",
+      "families": [
+        "badb",
+        "lugh"
+      ],
+      "effect": "Meilleur critique dans le dos",
+      "requires": [
+        [
+          {
+            "trigger": "backstab"
+          }
+        ],
+        [
+          {
+            "trigger": "crit"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "duo:salt-the-wound",
+      "name": "Salt the Wound",
+      "kind": "duo",
+      "families": [
+        "badb",
+        "mab"
+      ],
+      "effect": "Les coups dans le dos font agir le Venin",
+      "requires": [
+        [
+          {
+            "trigger": "backstab"
+          }
+        ],
+        [
+          {
+            "trigger": "venom"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "duo:channeled-darkness",
+      "name": "Channeled Darkness",
+      "kind": "duo",
+      "families": [
+        "badb",
+        "oberon"
+      ],
+      "effect": "En Flux, la Fureur frappe dans le dos",
+      "provides": [
+        "backstab"
+      ],
+      "requires": [
+        [
+          {
+            "trigger": "backstab"
+          }
+        ],
+        [
+          {
+            "trigger": "flow"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "duo:immolating-shades",
+      "name": "Immolating Shades",
+      "kind": "duo",
+      "families": [
+        "badb",
+        "titania"
+      ],
+      "effect": "Les Ombres laissent l'Immolation",
+      "provides": [
+        "immolate"
+      ],
+      "requires": [
+        [
+          {
+            "trigger": "shade",
+            "except": "duo:helpless-prey"
+          }
+        ],
+        [
+          {
+            "slot": {
+              "family": "titania",
+              "slots": [
+                "light",
+                "heavy",
+                "spell",
+                "dash"
+              ]
+            }
+          }
+        ]
+      ]
+    },
+    {
+      "id": "duo:eternal-sting",
+      "name": "Eternal Sting",
+      "kind": "duo",
+      "families": [
+        "mab",
+        "beira"
+      ],
+      "effect": "Le Venin ne retombe pas sur les gelés",
+      "requires": [
+        [
+          {
+            "trigger": "chill"
+          }
+        ],
+        [
+          {
+            "item": "mab:lasting-sting"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "duo:grave-weakness",
+      "name": "Grave Weakness",
+      "kind": "duo",
+      "families": [
+        "mab",
+        "cliona"
+      ],
+      "effect": "La Faiblesse réduit plus les dégâts ennemis",
+      "requires": [
+        [
+          {
+            "trigger": "weak"
+          }
+        ],
+        [
+          {
+            "trigger": "venom"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "duo:king-of-spiders",
+      "name": "King of Spiders",
+      "kind": "duo",
+      "families": [
+        "mab",
+        "gogmagog"
+      ],
+      "effect": "La Mère des couvées grandit et inflige Choc",
+      "provides": [
+        "stagger"
+      ],
+      "requires": [
+        [
+          {
+            "item": "mab:brood-mother"
+          }
+        ],
+        [
+          {
+            "trigger": "stagger"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "duo:lucky-sting",
+      "name": "Lucky Sting",
+      "kind": "duo",
+      "families": [
+        "mab",
+        "lugh"
+      ],
+      "effect": "Le Venin peut ajouter 2 cumuls",
+      "requires": [
+        [
+          {
+            "trigger": "venom"
+          }
+        ],
+        [
+          {
+            "trigger": "crit"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "duo:venom-meditation",
+      "name": "Venom Meditation",
+      "kind": "duo",
+      "families": [
+        "mab",
+        "oberon"
+      ],
+      "effect": "Les Éclairs en chaîne infligent Venin",
+      "provides": [
+        "venom",
+        "lightning"
+      ],
+      "requires": [
+        [
+          {
+            "trigger": "venom"
+          }
+        ],
+        [
+          {
+            "trigger": "lightning"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "duo:combustion",
+      "name": "Combustion",
+      "kind": "duo",
+      "families": [
+        "mab",
+        "titania"
+      ],
+      "effect": "L'Embrasement fait exploser le Venin",
+      "requires": [
+        [
+          {
+            "trigger": "venom"
+          }
+        ],
+        [
+          {
+            "trigger": "ignite"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "duo:inevitable",
+      "name": "Inevitable",
+      "kind": "duo",
+      "families": [
+        "beira",
+        "cliona"
+      ],
+      "effect": "Dégâts de base en hausse après 30 s de combat",
+      "requires": [
+        [
+          {
+            "slot": {
+              "family": "cliona",
+              "slots": [
+                "light",
+                "heavy",
+                "spell",
+                "dash"
+              ]
+            }
+          }
+        ],
+        [
+          {
+            "slot": {
+              "family": "beira",
+              "slots": [
+                "light",
+                "heavy",
+                "spell",
+                "dash"
+              ]
+            }
+          }
+        ]
+      ]
+    },
+    {
+      "id": "duo:shatter",
+      "name": "Shatter",
+      "kind": "duo",
+      "families": [
+        "beira",
+        "gogmagog"
+      ],
+      "effect": "Le Choc brise les ennemis gelés",
+      "requires": [
+        [
+          {
+            "trigger": "frostbite"
+          }
+        ],
+        [
+          {
+            "trigger": "stagger"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "duo:flash-freeze",
+      "name": "Flash Freeze",
+      "kind": "duo",
+      "families": [
+        "beira",
+        "lugh"
+      ],
+      "effect": "Le Froid peut geler net",
+      "requires": [
+        [
+          {
+            "item": "beira:bitter-frost"
+          }
+        ],
+        [
+          {
+            "trigger": "crit"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "duo:nova-surge",
+      "name": "Nova Surge",
+      "kind": "duo",
+      "families": [
+        "beira",
+        "oberon"
+      ],
+      "effect": "Les Novas éclatent trois fois",
+      "provides": [
+        "nova",
+        "chill"
+      ],
+      "requires": [
+        [
+          {
+            "trigger": "nova"
+          }
+        ],
+        [
+          {
+            "slot": {
+              "family": "oberon",
+              "slots": [
+                "light",
+                "heavy",
+                "spell",
+                "dash"
+              ]
+            }
+          }
+        ]
+      ]
+    },
+    {
+      "id": "duo:icy-hot",
+      "name": "Icy Hot",
+      "kind": "duo",
+      "families": [
+        "beira",
+        "titania"
+      ],
+      "effect": "Les Novas laissent l'Immolation",
+      "provides": [
+        "immolate"
+      ],
+      "requires": [
+        [
+          {
+            "trigger": "nova"
+          }
+        ],
+        [
+          {
+            "trigger": "ignite"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "duo:bone-breaker",
+      "name": "Bone Breaker",
+      "kind": "duo",
+      "families": [
+        "cliona",
+        "gogmagog"
+      ],
+      "effect": "Plus de Choc sur les affaiblis",
+      "requires": [
+        [
+          {
+            "slot": {
+              "family": "cliona",
+              "slots": [
+                "light",
+                "heavy",
+                "spell",
+                "dash"
+              ]
+            }
+          }
+        ],
+        [
+          {
+            "trigger": "stagger"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "duo:easy-targets",
+      "name": "Easy Targets",
+      "kind": "duo",
+      "families": [
+        "cliona",
+        "lugh"
+      ],
+      "effect": "Critiques plus forts sur les affaiblis",
+      "requires": [
+        [
+          {
+            "trigger": "weak"
+          }
+        ],
+        [
+          {
+            "trigger": "crit"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "duo:spirit-of-the-wind",
+      "name": "Spirit of the Wind",
+      "kind": "duo",
+      "families": [
+        "cliona",
+        "oberon"
+      ],
+      "effect": "Perdre de la Fureur donne de la Charge spirituelle",
+      "requires": [
+        [
+          {
+            "trigger": "fury"
+          }
+        ],
+        [
+          {
+            "trigger": "spirit"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "duo:pyre",
+      "name": "Pyre",
+      "kind": "duo",
+      "families": [
+        "cliona",
+        "titania"
+      ],
+      "effect": "Les affaiblis se brûlent eux-mêmes",
+      "provides": [
+        "scorch"
+      ],
+      "requires": [
+        [
+          {
+            "trigger": "weak"
+          }
+        ],
+        [
+          {
+            "slot": {
+              "family": "titania",
+              "slots": [
+                "light",
+                "heavy",
+                "spell",
+                "dash"
+              ]
+            }
+          }
+        ]
+      ]
+    },
+    {
+      "id": "duo:critical-opening",
+      "name": "Critical Opening",
+      "kind": "duo",
+      "families": [
+        "gogmagog",
+        "lugh"
+      ],
+      "effect": "Meilleur critique sur les étourdis",
+      "requires": [
+        [
+          {
+            "trigger": "stagger"
+          }
+        ],
+        [
+          {
+            "slot": {
+              "family": "lugh",
+              "slots": [
+                "light",
+                "heavy",
+                "spell",
+                "dash"
+              ]
+            }
+          }
+        ]
+      ]
+    },
+    {
+      "id": "duo:berserker",
+      "name": "Berserker",
+      "kind": "duo",
+      "families": [
+        "gogmagog",
+        "oberon"
+      ],
+      "effect": "Réduction de dégâts en Flux",
+      "requires": [
+        [
+          {
+            "trigger": "flow"
+          }
+        ],
+        [
+          {
+            "slot": {
+              "family": "gogmagog",
+              "slots": [
+                "light",
+                "heavy",
+                "spell",
+                "dash"
+              ]
+            }
+          }
+        ]
+      ]
+    },
+    {
+      "id": "duo:detonate",
+      "name": "Detonate",
+      "kind": "duo",
+      "families": [
+        "gogmagog",
+        "titania"
+      ],
+      "effect": "Les Étourdissements créent des Éruptions",
+      "provides": [
+        "stun"
+      ],
+      "requires": [
+        [
+          {
+            "trigger": "stagger"
+          }
+        ],
+        [
+          {
+            "slot": {
+              "family": "titania",
+              "slots": [
+                "light",
+                "heavy",
+                "spell",
+                "dash"
+              ]
+            }
+          }
+        ]
+      ]
+    },
+    {
+      "id": "duo:critical-temperature",
+      "name": "Critical Temperature",
+      "kind": "duo",
+      "families": [
+        "titania",
+        "lugh"
+      ],
+      "effect": "Meilleur critique sur les brûlés",
+      "requires": [
+        [
+          {
+            "trigger": "crit"
+          }
+        ],
+        [
+          {
+            "trigger": "scorch"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "duo:flame-meditation",
+      "name": "Flame Meditation",
+      "kind": "duo",
+      "families": [
+        "titania",
+        "oberon"
+      ],
+      "effect": "Pas de recharge d'Embrasement en Flux",
+      "requires": [
+        [
+          {
+            "item": "oberon:flood-meditation"
+          }
+        ],
+        [
+          {
+            "trigger": "ignite"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "duo:wave-of-fortune",
+      "name": "Wave of Fortune",
+      "kind": "duo",
+      "families": [
+        "lugh",
+        "oberon"
+      ],
+      "effect": "Critique bien meilleur en Flux",
+      "requires": [
+        [
+          {
+            "trigger": "crit"
+          }
+        ],
+        [
+          {
+            "trigger": "flow"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "oberon:compounding-flood",
+      "name": "Compounding Flood",
+      "kind": "standard",
+      "families": [
+        "oberon"
+      ],
+      "effect": "Gagner de la Fureur même en Flux",
+      "provides": [
+        "fury",
+        "flow"
+      ],
+      "requires": [
+        [
+          {
+            "item": "oberon:flood-meditation"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "oberon:enduring-storm",
+      "name": "Enduring Storm",
+      "kind": "standard",
+      "families": [
+        "oberon"
+      ],
+      "effect": "L'Éclair en chaîne rebondit plus de fois",
+      "provides": [
+        "lightning"
+      ],
+      "requires": [
+        [
+          {
+            "item": "oberon:storm-meditation"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "oberon:hurricane",
+      "name": "Hurricane",
+      "kind": "standard",
+      "families": [
+        "oberon"
+      ],
+      "effect": "En Flux, Tourbillons plus rapides et plus nombreux",
+      "provides": [
+        "whirlwind"
+      ],
+      "requires": [
+        [
+          {
+            "item": "oberon:flood-meditation"
+          }
+        ],
+        [
+          {
+            "trigger": "whirlwind"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "oberon:fury-of-blows",
+      "name": "Fury Of Blows",
+      "kind": "roundtable",
+      "families": [
+        "oberon"
+      ],
+      "effect": "Vitesse d'attaque de toute l'équipe",
+      "requires": [
+        [
+          {
+            "count": {
+              "family": "oberon",
+              "min": 5
+            }
+          }
+        ]
+      ]
+    },
+    {
+      "id": "titania:burn-bright",
+      "name": "Burn Bright",
+      "kind": "standard",
+      "families": [
+        "titania"
+      ],
+      "effect": "Immolation plus large",
+      "provides": [
+        "immolate"
+      ],
+      "requires": [
+        [
+          {
+            "trigger": "immolate"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "titania:eruption",
+      "name": "Eruption",
+      "kind": "standard",
+      "families": [
+        "titania"
+      ],
+      "effect": "Subir des dégâts fait exploser les ennemis proches",
+      "requires": []
+    },
+    {
+      "id": "titania:proximity-burns",
+      "name": "Proximity Burns",
+      "kind": "standard",
+      "families": [
+        "titania"
+      ],
+      "effect": "Immolation plus forte au contact de l'ennemi",
+      "provides": [
+        "immolate"
+      ],
+      "requires": [
+        [
+          {
+            "trigger": "immolate"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "titania:wildfire-touch",
+      "name": "Wildfire Touch",
+      "kind": "standard",
+      "families": [
+        "titania"
+      ],
+      "effect": "L'attaque légère garde une 2e charge d'Embrasement, plus de dégâts",
+      "provides": [
+        "ignite"
+      ],
+      "requires": [
+        [
+          {
+            "item": "titania:burning-touch"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "titania:wildfire-strike",
+      "name": "Wildfire Strike",
+      "kind": "standard",
+      "families": [
+        "titania"
+      ],
+      "effect": "L'attaque lourde garde une 2e charge d'Embrasement, plus de dégâts",
+      "provides": [
+        "ignite"
+      ],
+      "requires": [
+        [
+          {
+            "item": "titania:burning-strike"
+          }
+        ]
+      ]
+    },
+    {
+      "id": "titania:wildfire-flourish",
+      "name": "Wildfire Flourish",
+      "kind": "standard",
+      "families": [
+        "titania"
+      ],
+      "effect": "Le Sort garde une 2e charge d'Embrasement, plus de dégâts",
+      "provides": [
+        "ignite"
+      ],
+      "requires": [
+        [
+          {
+            "item": "titania:burning-flourish"
+          }
+        ]
+      ]
+    }
+  ],
+  "augments": [
+    {
+      "for": "Sword",
+      "options": [
+        {
+          "id": "sword:acceleration",
+          "name": "Acceleration",
+          "effect": "+10 % de vitesse, attaque légère 30 % plus rapide"
+        },
+        {
+          "id": "sword:blade-wave",
+          "name": "Blade Wave",
+          "effect": "Les 2 premiers coups légers lancent des vagues"
+        },
+        {
+          "id": "sword:cursed-blade",
+          "name": "Cursed Blade",
+          "effect": "Jusqu'à +90 % de dégâts selon votre malédiction"
+        },
+        {
+          "id": "sword:double-edge",
+          "name": "Double Edge",
+          "effect": "Attaque lourde −25 %, mais utilisable deux fois de suite"
+        },
+        {
+          "id": "sword:honed-echo",
+          "name": "Honed Echo",
+          "effect": "L'attaque lourde libère une onde"
+        },
+        {
+          "id": "sword:hurricane",
+          "name": "Hurricane",
+          "effect": "L'attaque lourde crée un vortex qui blesse sur la durée"
+        },
+        {
+          "id": "sword:magnesis",
+          "name": "Magnesis",
+          "effect": "Attaque lourde +30 %, attire les ennemis"
+        }
+      ]
+    },
+    {
+      "for": "Bow",
+      "options": [
+        {
+          "id": "bow:focus-fire",
+          "name": "Focus Fire",
+          "effect": "Attaque lourde : +10 dégâts par flèche"
+        },
+        {
+          "id": "bow:heavy-draw",
+          "name": "Heavy Draw",
+          "effect": "Attaque légère chargée 25 % plus lentement, +50 % de dégâts"
+        },
+        {
+          "id": "bow:rain-of-arrows",
+          "name": "Rain Of Arrows",
+          "effect": "Attaque lourde : 2 flèches en plus"
+        },
+        {
+          "id": "bow:rapid-fire",
+          "name": "Rapid Fire",
+          "effect": "Attaque légère chargée 80 % plus vite"
+        },
+        {
+          "id": "bow:skyfall",
+          "name": "Skyfall",
+          "effect": "Attaque lourde 30 % plus rapide, +30 % de dégâts"
+        },
+        {
+          "id": "bow:triple-shot",
+          "name": "Triple Shot",
+          "effect": "Attaque légère : 3 flèches en éventail, −40 % de dégâts"
+        }
+      ]
+    },
+    {
+      "for": "Bo Staff",
+      "options": [
+        {
+          "id": "bo-staff:above-it-all",
+          "name": "Above it All",
+          "effect": "Invulnérable un instant pendant l'attaque lourde"
+        },
+        {
+          "id": "bo-staff:fivefold-strike",
+          "name": "Fivefold Strike",
+          "effect": "Si les 4 premiers coups légers touchent, le dernier double ses dégâts"
+        },
+        {
+          "id": "bo-staff:heavy-impact",
+          "name": "Heavy Impact",
+          "effect": "Attaque lourde : plus de recul, écrase contre les murs"
+        },
+        {
+          "id": "bo-staff:helm-splitter",
+          "name": "Helm Splitter",
+          "effect": "Attaque lourde +40 % au centre de l'impact"
+        },
+        {
+          "id": "bo-staff:light-impact",
+          "name": "Light Impact",
+          "effect": "Attaque légère : léger recul, +25 % de dégâts"
+        },
+        {
+          "id": "bo-staff:unending-torrent",
+          "name": "Unending Torrent",
+          "effect": "Après le Sort, attaque légère +40 % de vitesse pendant 3 s"
+        }
+      ]
+    },
+    {
+      "for": "Chakrams",
+      "options": [
+        {
+          "id": "chakrams:great-razors",
+          "name": "Great Razors",
+          "effect": "Chakrams 50 % plus grands, +30 % de dégâts"
+        },
+        {
+          "id": "chakrams:razor-dance",
+          "name": "Razor Dance",
+          "effect": "+50 % de vitesse et un tour de plus pendant l'attaque lourde"
+        },
+        {
+          "id": "chakrams:razor-vortex",
+          "name": "Razor Vortex",
+          "effect": "Attaque lourde 50 % plus grande, +30 % de dégâts"
+        },
+        {
+          "id": "chakrams:spare-blade",
+          "name": "Spare Blade",
+          "effect": "Un chakram de plus à lancer"
+        },
+        {
+          "id": "chakrams:streamline",
+          "name": "Streamline",
+          "effect": "Chakrams lancés 40 % plus loin et plus vite"
+        }
+      ]
+    },
+    {
+      "for": "Assassin Dagger",
+      "options": [
+        {
+          "id": "assassin-dagger:ricochet-blade",
+          "name": "Ricochet Blade",
+          "effect": "+25 % de dégâts, ricoche (3 rebonds)"
+        },
+        {
+          "id": "assassin-dagger:veteran-s-blade",
+          "name": "Veteran's Blade",
+          "effect": "+1 dégât par ennemi tué au Sort, pour tout le run (max +150)"
+        },
+        {
+          "id": "assassin-dagger:vigilante-s-mark",
+          "name": "Vigilante's Mark",
+          "effect": "Marque : +25 % de dégâts subis pendant 3 s"
+        }
+      ]
+    },
+    {
+      "for": "Blade Rush",
+      "options": [
+        {
+          "id": "blade-rush:cutpurse-dash",
+          "name": "Cutpurse Dash",
+          "effect": "5 pièces d'or par ennemi tué au Sort"
+        },
+        {
+          "id": "blade-rush:triple-slash",
+          "name": "Triple Slash",
+          "effect": "Trois ruées rapides, −20 % de dégâts"
+        },
+        {
+          "id": "blade-rush:vampire-dash",
+          "name": "Vampire Dash",
+          "effect": "1 PV par ennemi traversé"
+        }
+      ]
+    },
+    {
+      "for": "Dagger Flurry",
+      "options": [
+        {
+          "id": "dagger-flurry:fan-of-knives",
+          "name": "Fan of Knives",
+          "effect": "5 lames en plus"
+        },
+        {
+          "id": "dagger-flurry:killing-throw",
+          "name": "Killing Throw",
+          "effect": "Achève les ennemis mineurs sous 20 % de vie, +3 PV"
+        },
+        {
+          "id": "dagger-flurry:splintering-blades",
+          "name": "Splintering Blades",
+          "effect": "Les lames éclatent en couteaux à l'impact"
+        }
+      ]
+    },
+    {
+      "for": "Shadow Strike",
+      "options": [
+        {
+          "id": "shadow-strike:marked-for-death",
+          "name": "Marked for Death",
+          "effect": "Marque : +25 % de dégâts subis, +3 PV par ennemi tué"
+        },
+        {
+          "id": "shadow-strike:omnislash",
+          "name": "Omnislash",
+          "effect": "+25 % de dégâts, frappe tous les ennemis d'une zone"
+        },
+        {
+          "id": "shadow-strike:shadow-dancer",
+          "name": "Shadow Dancer",
+          "effect": "Après le Sort, +50 % d'esquive pendant 3 s"
+        }
+      ]
+    },
+    {
+      "for": "Mace",
+      "options": [
+        {
+          "id": "mace:discharge",
+          "name": "Discharge",
+          "effect": "L'attaque légère en esquive crée un Éclair"
+        },
+        {
+          "id": "mace:greater-smite",
+          "name": "Greater Smite",
+          "effect": "Éclairs 20 % plus grands, +20 % de dégâts"
+        },
+        {
+          "id": "mace:holy-fervor",
+          "name": "Holy Fervor",
+          "effect": "−40 % de dégâts subis pendant l'attaque légère"
+        },
+        {
+          "id": "mace:morningstar",
+          "name": "Morningstar",
+          "effect": "Attaque légère +40 % avec la pointe de l'arme"
+        },
+        {
+          "id": "mace:thunderous-call",
+          "name": "Thunderous Call",
+          "effect": "Chaque salve d'Éclairs en tire un de plus"
+        }
+      ]
+    },
+    {
+      "for": "Magic Staff",
+      "options": [
+        {
+          "id": "magic-staff:cubic-spread",
+          "name": "Cubic Spread",
+          "effect": "Attaque légère : 3 projectiles en cône, −40 % chacun"
+        },
+        {
+          "id": "magic-staff:magic-guard",
+          "name": "Magic Guard",
+          "effect": "Forte réduction de dégâts en chargeant l'attaque lourde, +50 % si touché"
+        },
+        {
+          "id": "magic-staff:shaping-slam",
+          "name": "Shaping Slam",
+          "effect": "L'attaque lourde tire aussi 4 projectiles"
+        }
+      ]
+    },
+    {
+      "for": "Tome",
+      "options": [
+        {
+          "id": "tome:anticipation",
+          "name": "Anticipation",
+          "effect": "Petits projectiles pendant la visée de l'attaque lourde"
+        },
+        {
+          "id": "tome:leaden-pages",
+          "name": "Leaden Pages",
+          "effect": "Attaque lourde +25 % de dégâts, zone +40 %"
+        },
+        {
+          "id": "tome:lengthy-text",
+          "name": "Lengthy Text",
+          "effect": "Attaque légère : un projectile de plus"
+        },
+        {
+          "id": "tome:paper-storm",
+          "name": "Paper Storm",
+          "effect": "Attaque lourde −40 %, mais 3 projectiles"
+        },
+        {
+          "id": "tome:reading-backwards",
+          "name": "Reading Backwards",
+          "effect": "Attaque légère étroite, puis large en chargeant"
+        },
+        {
+          "id": "tome:scholarly-focus",
+          "name": "Scholarly Focus",
+          "effect": "Attaque légère +20 % de dégâts et de portée"
+        }
+      ]
+    },
+    {
+      "for": "Chimes",
+      "options": [
+        {
+          "id": "chimes:capriccio",
+          "name": "Capriccio",
+          "effect": "Attaque légère : une Note de plus sur un ennemi proche"
+        },
+        {
+          "id": "chimes:coda",
+          "name": "Coda",
+          "effect": "Le dernier coup léger devient un final puissant"
+        },
+        {
+          "id": "chimes:echoing-notes",
+          "name": "Echoing Notes",
+          "effect": "Les Notes légères explosent une 2e fois (−35 %)"
+        },
+        {
+          "id": "chimes:grazioso",
+          "name": "Grazioso",
+          "effect": "L'attaque lourde se guide vers l'ennemi, +50 %"
+        },
+        {
+          "id": "chimes:reverberate",
+          "name": "Reverberate",
+          "effect": "L'attaque lourde rebondit et explose deux fois"
+        }
+      ]
+    },
+    {
+      "for": "Storm Call",
+      "options": [
+        {
+          "id": "storm-call:maelstrom",
+          "name": "Maelstrom",
+          "effect": "+20 % de dégâts, zone +50 %"
+        },
+        {
+          "id": "storm-call:pursuing-storm",
+          "name": "Pursuing Storm",
+          "effect": "Le Sort suit lentement l'ennemi le plus proche"
+        },
+        {
+          "id": "storm-call:storm-surge",
+          "name": "Storm Surge",
+          "effect": "Chaque frappe est plus rapide et plus forte (+5)"
+        }
+      ]
+    },
+    {
+      "for": "Crystal Turrets",
+      "options": [
+        {
+          "id": "crystal-turrets:dual-core",
+          "name": "Dual Core",
+          "effect": "Dure 75 % plus longtemps et tire plus"
+        },
+        {
+          "id": "crystal-turrets:piercing-shards",
+          "name": "Piercing Shards",
+          "effect": "+25 % de dégâts, transperce"
+        },
+        {
+          "id": "crystal-turrets:rapid-fire",
+          "name": "Rapid Fire",
+          "effect": "Cadence +200 %, −25 % de dégâts"
+        }
+      ]
+    },
+    {
+      "for": "Black Hole",
+      "options": [
+        {
+          "id": "black-hole:collapse",
+          "name": "Collapse",
+          "effect": "+15 dégâts par ennemi pris dedans"
+        },
+        {
+          "id": "black-hole:event-horizon",
+          "name": "Event Horizon",
+          "effect": "Se déclenche une 2e fois (−20 %)"
+        },
+        {
+          "id": "black-hole:supermassive",
+          "name": "Supermassive",
+          "effect": "Zone +25 %, dégâts +25 %"
+        }
+      ]
+    },
+    {
+      "for": "Arcane Shield",
+      "options": [
+        {
+          "id": "arcane-shield:arcane-power",
+          "name": "Arcane Power",
+          "effect": "+15 % de dégâts aux joueurs protégés"
+        },
+        {
+          "id": "arcane-shield:divine-shielding",
+          "name": "Divine Shielding",
+          "effect": "Bloque entièrement un coup"
+        },
+        {
+          "id": "arcane-shield:midnight-pulse",
+          "name": "Midnight Pulse",
+          "effect": "Le bouclier pulse toutes les 1,5 s (25 dégâts)"
+        }
+      ]
+    },
+    {
+      "for": "Great Hammer",
+      "options": [
+        {
+          "id": "great-hammer:axis-of-rotation",
+          "name": "Axis of Rotation",
+          "effect": "Attaque lourde jusqu'à +50 % au plus près"
+        },
+        {
+          "id": "great-hammer:bludgeon",
+          "name": "Bludgeon",
+          "effect": "Attaque légère : recul +400 %, écrase contre les murs (60)"
+        },
+        {
+          "id": "great-hammer:fully-wound",
+          "name": "Fully Wound",
+          "effect": "Attaque lourde +30 %, +1 charge de rotation"
+        },
+        {
+          "id": "great-hammer:inertial-strength",
+          "name": "Inertial Strength",
+          "effect": "Attaque lourde : tourne et charge 50 % plus vite"
+        },
+        {
+          "id": "great-hammer:let-it-rip",
+          "name": "Let It Rip",
+          "effect": "Charge deux fois plus longue, deux fois plus de rotations"
+        },
+        {
+          "id": "great-hammer:solid-foundation",
+          "name": "Solid Foundation",
+          "effect": "+1 rotation à l'attaque lourde, chargée ou non"
+        },
+        {
+          "id": "great-hammer:spinning-lunge",
+          "name": "Spinning Lunge",
+          "effect": "L'attaque légère en esquive devient une rotation"
+        },
+        {
+          "id": "great-hammer:spring-loaded",
+          "name": "Spring Loaded",
+          "effect": "Charge plus vite, +1 rotation à pleine charge"
+        },
+        {
+          "id": "great-hammer:star-swinger",
+          "name": "Star Swinger",
+          "effect": "Attaque légère 40 % plus rapide, +15 %"
+        },
+        {
+          "id": "great-hammer:top-heavy",
+          "name": "Top Heavy",
+          "effect": "Attaque légère +40 % avec la tête du marteau"
+        }
+      ]
+    },
+    {
+      "for": "Hand Cannon",
+      "options": [
+        {
+          "id": "hand-cannon:direct-hit",
+          "name": "Direct Hit",
+          "effect": "Attaque légère +40 % en touche directe"
+        },
+        {
+          "id": "hand-cannon:hot-barrel",
+          "name": "Hot Barrel",
+          "effect": "Attaque lourde +40 % à portée maximale"
+        },
+        {
+          "id": "hand-cannon:splash-damage",
+          "name": "Splash Damage",
+          "effect": "Explosion de l'attaque légère 50 % plus grande, +20 %"
+        },
+        {
+          "id": "hand-cannon:triple-barrage",
+          "name": "Triple Barrage",
+          "effect": "Attaque légère : 3 projectiles (dégâts divisés par 3)"
+        }
+      ]
+    },
+    {
+      "for": "Halberd",
+      "options": [
+        {
+          "id": "halberd:focus",
+          "name": "Focus",
+          "effect": "Attaque légère chargée 30 % plus vite"
+        },
+        {
+          "id": "halberd:hefty-momentum",
+          "name": "Hefty Momentum",
+          "effect": "+5 dégâts par attaque pleinement chargée d'affilée (max 10)"
+        },
+        {
+          "id": "halberd:lock-in",
+          "name": "Lock In",
+          "effect": "Esquiver après une charge complète la conserve"
+        },
+        {
+          "id": "halberd:stinger",
+          "name": "Stinger",
+          "effect": "Attaque lourde à 120 %, portée plus longue"
+        }
+      ]
+    },
+    {
+      "for": "Gauntlets",
+      "options": [
+        {
+          "id": "gauntlets:barraging-beatdown",
+          "name": "Barraging Beatdown",
+          "effect": "+300 % au 5e coup léger consécutif"
+        },
+        {
+          "id": "gauntlets:faithful-fighter",
+          "name": "Faithful Fighter",
+          "effect": "Les attaques remplissent l'Ultime 30 % plus vite"
+        },
+        {
+          "id": "gauntlets:furious-fists",
+          "name": "Furious Fists",
+          "effect": "Attaque légère 50 % plus rapide"
+        },
+        {
+          "id": "gauntlets:haymaker",
+          "name": "Haymaker",
+          "effect": "Attaque lourde en esquive : gros recul, écrase contre les murs"
+        },
+        {
+          "id": "gauntlets:heavy-hitter",
+          "name": "Heavy Hitter",
+          "effect": "Attaque lourde : recul et +30 %"
+        },
+        {
+          "id": "gauntlets:soften-them-up",
+          "name": "Soften Them Up",
+          "effect": "Attaque légère : +30 % de dégâts subis pendant 1 s"
+        },
+        {
+          "id": "gauntlets:sucker-punch",
+          "name": "Sucker Punch",
+          "effect": "Attaque lourde +150 % sur un ennemi en pleine santé"
+        }
+      ]
+    },
+    {
+      "for": "Bull Rush",
+      "options": [
+        {
+          "id": "bull-rush:finale",
+          "name": "Finale",
+          "effect": "Impact au sol à la fin du Sort (75)"
+        },
+        {
+          "id": "bull-rush:raging-bull",
+          "name": "Raging Bull",
+          "effect": "+30 dégâts par coup consécutif"
+        },
+        {
+          "id": "bull-rush:the-horns",
+          "name": "The Horns",
+          "effect": "Recul +50 %, écrase contre les murs (100)"
+        }
+      ]
+    },
+    {
+      "for": "Counter",
+      "options": [
+        {
+          "id": "counter:adrenaline",
+          "name": "Adrenaline",
+          "effect": "Après un contre : +20 % de dégâts, +35 % de vitesse d'attaque"
+        },
+        {
+          "id": "counter:blood-lust",
+          "name": "Blood Lust",
+          "effect": "Après un contre : vol de vie (+1 PV par coup, 4 s)"
+        },
+        {
+          "id": "counter:revenge",
+          "name": "Revenge",
+          "effect": "L'ennemi contré subit +20 % de dégâts de toutes sources"
+        }
+      ]
+    },
+    {
+      "for": "Commander's Shield",
+      "options": [
+        {
+          "id": "commander-s-shield:feared-aegis",
+          "name": "Feared Aegis",
+          "effect": "Ennemis dans la zone : +25 % de dégâts subis"
+        },
+        {
+          "id": "commander-s-shield:healing-crest",
+          "name": "Healing Crest",
+          "effect": "1 PV à tous les joueurs par ennemi tué dans la zone"
+        },
+        {
+          "id": "commander-s-shield:righteous-iron",
+          "name": "Righteous Iron",
+          "effect": "Zone +30 %, protège les joueurs"
+        }
+      ]
+    },
+    {
+      "for": "Sky Drop",
+      "options": [
+        {
+          "id": "sky-drop:bullseye",
+          "name": "Bullseye",
+          "effect": "Centre de l'impact +125 %"
+        },
+        {
+          "id": "sky-drop:debris-launcher",
+          "name": "Debris Launcher",
+          "effect": "Débris au départ et à l'atterrissage (45)"
+        },
+        {
+          "id": "sky-drop:massive-impact",
+          "name": "Massive Impact",
+          "effect": "+25 % de dégâts, zone +45 %"
+        }
+      ]
+    },
+    {
+      "for": "Armillary Sphere",
+      "options": [
+        {
+          "id": "armillary-sphere:arcane-bombardment",
+          "name": "Arcane Bombardment",
+          "effect": "Attaque lourde : 3 projectiles, −25 %"
+        },
+        {
+          "id": "armillary-sphere:arcane-chaos",
+          "name": "Arcane Chaos",
+          "effect": "Attaque légère : 2 traits de plus, dispersion +100 %"
+        },
+        {
+          "id": "armillary-sphere:gravity-well",
+          "name": "Gravity Well",
+          "effect": "Attaque lourde : attire les ennemis mineurs, +30 %"
+        },
+        {
+          "id": "armillary-sphere:overflowing-bolts",
+          "name": "Overflowing Bolts",
+          "effect": "Attaque légère : 2 traits de plus"
+        },
+        {
+          "id": "armillary-sphere:plentiful-bolts",
+          "name": "Plentiful Bolts",
+          "effect": "Attaque légère : 1 trait de plus"
+        },
+        {
+          "id": "armillary-sphere:spread-bolts",
+          "name": "Spread Bolts",
+          "effect": "Attaque légère : deux fois plus de projectiles, plus dispersés"
+        }
+      ]
+    },
+    {
+      "for": "Scythe",
+      "options": [
+        {
+          "id": "scythe:deathly-caster",
+          "name": "Deathly Caster",
+          "effect": "Après un Sort, la prochaine attaque lourde double ses dégâts"
+        },
+        {
+          "id": "scythe:energy-drain",
+          "name": "Energy Drain",
+          "effect": "Tuer à l'attaque lourde rend 1 Mana"
+        },
+        {
+          "id": "scythe:malice",
+          "name": "Malice",
+          "effect": "Tuer à l'attaque lourde : +40 % de vitesse d'attaque pendant 3 s"
+        },
+        {
+          "id": "scythe:razor-s-edge",
+          "name": "Razor's Edge",
+          "effect": "Attaque légère +40 % à portée maximale"
+        },
+        {
+          "id": "scythe:serrated-edge",
+          "name": "Serrated Edge",
+          "effect": "Attaque légère : bonus de dégâts, effets au contact appliqués deux fois"
+        },
+        {
+          "id": "scythe:swift-death",
+          "name": "Swift Death",
+          "effect": "Attaque légère +20 %, plus mobile"
+        }
+      ]
+    },
+    {
+      "for": "Arcane Blade",
+      "options": [
+        {
+          "id": "arcane-blade:arcane-recall",
+          "name": "Arcane Recall",
+          "effect": "Les lames légères reviennent quand elles se rechargent"
+        },
+        {
+          "id": "arcane-blade:blade-mass",
+          "name": "Blade Mass",
+          "effect": "Attaque lourde plus grande, environ +30 %"
+        },
+        {
+          "id": "arcane-blade:blade-torrent",
+          "name": "Blade Torrent",
+          "effect": "Le projectile lourd frappe 50 % plus souvent"
+        },
+        {
+          "id": "arcane-blade:deadly-duo",
+          "name": "Deadly Duo",
+          "effect": "Attaque légère : +2 dégâts et +2 lames"
+        },
+        {
+          "id": "arcane-blade:embedding-strikes",
+          "name": "Embedding Strikes",
+          "effect": "Attaque légère +100 %, mais ne transperce plus"
+        },
+        {
+          "id": "arcane-blade:mystic-smash",
+          "name": "Mystic Smash",
+          "effect": "L'attaque lourde invoque un marteau (120)"
+        },
+        {
+          "id": "arcane-blade:spell-weaver",
+          "name": "Spell Weaver",
+          "effect": "+20 % à l'attaque lourde par Sort lancé (max 5)"
+        },
+        {
+          "id": "arcane-blade:triple-finale",
+          "name": "Triple Finale",
+          "effect": "La dernière lame légère est tirée trois fois"
+        },
+        {
+          "id": "arcane-blade:weaving-slashes",
+          "name": "Weaving Slashes",
+          "effect": "Attaque lourde : un coup de plus, dégâts réduits"
+        }
+      ]
+    },
+    {
+      "for": "Claws",
+      "options": [
+        {
+          "id": "claws:air-slash",
+          "name": "Air Slash",
+          "effect": "Attaque légère 50 % plus grande, +20 %"
+        },
+        {
+          "id": "claws:berserker",
+          "name": "Berserker",
+          "effect": "Attaque lourde +100 %, mais coûte 1 PV si elle touche"
+        },
+        {
+          "id": "claws:death-lust",
+          "name": "Death Lust",
+          "effect": "Tuer à l'attaque légère : +20 % de vitesse (cumulable 3 fois)"
+        },
+        {
+          "id": "claws:demonic-ritual",
+          "name": "Demonic Ritual",
+          "effect": "L'attaque lourde coûte 5 PV, puis l'attaque légère soigne"
+        },
+        {
+          "id": "claws:sacrificial-power",
+          "name": "Sacrificial Power",
+          "effect": "Jusqu'à +100 % selon la vie manquante"
+        }
+      ]
+    },
+    {
+      "for": "Mystic Beam",
+      "options": [
+        {
+          "id": "mystic-beam:focusing-crystal",
+          "name": "Focusing Crystal",
+          "effect": "+10 par coup consécutif sur la même cible"
+        },
+        {
+          "id": "mystic-beam:life-drain",
+          "name": "Life Drain",
+          "effect": "Vol de vie, mais −60 % de vie max"
+        },
+        {
+          "id": "mystic-beam:piercing-beam",
+          "name": "Piercing Beam",
+          "effect": "Transperce, +15 %"
+        }
+      ]
+    },
+    {
+      "for": "Blink",
+      "options": [
+        {
+          "id": "blink:blink-strike",
+          "name": "Blink Strike",
+          "effect": "La prochaine attaque après le Sort double ses dégâts"
+        },
+        {
+          "id": "blink:phantom-rush",
+          "name": "Phantom Rush",
+          "effect": "+20 %, blesse les ennemis traversés (50)"
+        },
+        {
+          "id": "blink:shadow-dancer",
+          "name": "Shadow Dancer",
+          "effect": "+50 % d'esquive pendant 2,5 s"
+        }
+      ]
+    },
+    {
+      "for": "Spirit Guardians",
+      "options": [
+        {
+          "id": "spirit-guardians:deadly-orbit",
+          "name": "Deadly Orbit",
+          "effect": "Les esprits frappent au contact, +200 %"
+        },
+        {
+          "id": "spirit-guardians:open-the-floodgates",
+          "name": "Open The Floodgates",
+          "effect": "Le Sort reste actif et consomme du Mana ; +1 Mana max"
+        },
+        {
+          "id": "spirit-guardians:primed-power",
+          "name": "Primed Power",
+          "effect": "Deux esprits permanents, −1 Mana max"
+        }
+      ]
+    },
+    {
+      "for": "Dragon Dive",
+      "options": [
+        {
+          "id": "dragon-dive:deft-dive",
+          "name": "Deft Dive",
+          "effect": "Meilleure maniabilité, traverse les ennemis"
+        },
+        {
+          "id": "dragon-dive:gathering-flames",
+          "name": "Gathering Flames",
+          "effect": "Plus de dégâts avec la distance (max +100)"
+        },
+        {
+          "id": "dragon-dive:purifying-flames",
+          "name": "Purifying Flames",
+          "effect": "1 PV par ennemi tué"
+        }
+      ]
+    }
+  ],
+  "otherChoices": [
+    {
+      "id": "merlin",
+      "label": "Merlin"
+    },
+    {
+      "id": "morgana",
+      "label": "Morgane"
+    },
+    {
+      "id": "shrine",
+      "label": "Sanctuaire"
+    },
+    {
+      "id": "other",
+      "label": "Autre"
+    }
+  ]
+}

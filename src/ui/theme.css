@@ -1,0 +1,56 @@
+/* Jetons repris du prototype (reference/prototype.html). Sombre d'abord, variante claire.
+   Les couleurs de fae (--f-<id>) sont injectées depuis le pack par ui/theme.ts ; seule --f-custom est fixe. */
+:root {
+  color-scheme: dark;
+  --bg: #111619; --surface: #192024; --surface-2: #212a2f; --sunk: #0c1012; --ink: #e4e8e2;
+  --muted: color-mix(in oklab, var(--ink) 62%, var(--bg));
+  --line: color-mix(in oklab, var(--ink) 14%, transparent);
+  --moon: #dccf9a; --moon-ink: #e8dcaa; --on-moon: #15191b;
+  --ok: #86cf9f; --warn: #e6bc62; --danger: #f0897d;
+  --scrim: rgb(0 0 0 / .6); --shadow: 0 14px 40px rgb(0 0 0 / .5);
+  --f-custom: #b8b8b0;
+  --f-display: "Grenze Gotisch", "UnifrakturCook", "Times New Roman", serif;
+  --f-body: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+  --r: 10px;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    color-scheme: light;
+    --bg: #e9ece8; --surface: #f6f7f4; --surface-2: #ffffff; --sunk: #dde1dc; --ink: #1a2023;
+    --moon: #7a6716; --moon-ink: #5f500f; --on-moon: #ffffff;
+    --ok: #2a7a46; --warn: #8a5c00; --danger: #b3261e;
+    --scrim: rgb(0 0 0 / .35); --shadow: 0 12px 32px rgb(30 40 40 / .18);
+    --f-custom: #5d5d57;
+  }
+}
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: #e9ece8; --surface: #f6f7f4; --surface-2: #ffffff; --sunk: #dde1dc; --ink: #1a2023;
+  --moon: #7a6716; --moon-ink: #5f500f; --on-moon: #ffffff;
+  --ok: #2a7a46; --warn: #8a5c00; --danger: #b3261e;
+  --scrim: rgb(0 0 0 / .35); --shadow: 0 12px 32px rgb(30 40 40 / .18);
+  --f-custom: #5d5d57;
+}
+* { box-sizing: border-box }
+html, body { background: var(--bg); color: var(--ink) }
+body {
+  margin: 0;
+  font: 16px/1.45 var(--f-body);
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 0 96px;
+}
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg) }
+button, input, select, textarea { font: inherit; color: inherit }
+button { cursor: pointer }
+:focus-visible { outline: 2px solid var(--moon); outline-offset: 2px }
+.wrap { max-width: 1080px; margin-inline: auto }
+
+header.top {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg);
+  display: flex; align-items: center; gap: 12px; padding-block: 12px; border-bottom: 1px solid var(--line);
+}
+.brand { font: 600 1.7rem/1 var(--f-display); letter-spacing: .01em; color: var(--moon-ink); margin: 0 }
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important } }
+@media (max-width: 720px) { .brand { font-size: 1.45rem } }
