@@ -374,6 +374,7 @@ Si un lot dépasse une PR raisonnable (plus de ~1 500 lignes hors tests et donn�
 | P5 | Rareté et niveau (5 paliers de valeurs sur le wiki) non modélisés | Base des futurs indicateurs de dégâts |
 | P6 | Enclumes = augments de « Sword in the Stone » ; « Reaper » (Scythe) retiré par un correctif du jeu, absent du pack | Confirmer le vocabulaire en jeu |
 | P7 | Effets résumés en français à partir de l'anglais du wiki | Relecture à faire en jouant |
+| P8 | Cartes de build : le prototype écrit toujours « N runs · N victoires » ; la v0.1 accorde (« 1 run · 0 victoire ») | Écart volontaire (lot 3a), à confirmer |
 
 ---
 
@@ -455,3 +456,21 @@ Si un lot dépasse une PR raisonnable (plus de ~1 500 lignes hors tests et donn�
 - Si la base s'ouvre après le délai de 3 s, elle est refermée aussitôt : on reste en mémoire pour la session.
 - L'ordre de `list*` n'est pas garanti (ordre des clés en IndexedDB, d'insertion en mémoire) : l'interface trie.
 - `tests/setup.ts` charge `fake-indexeddb/auto` (classes IndexedDB globales).
+
+## Annexe Lot 3a — Coquille et bibliothèque
+- Lot 3 découpé : 3a (coquille + bibliothèque), 3b (Création). La version 0.0.4 sort à la fin du 3b.
+- `src/ui` : `state.ts` (reducer pur, actions avec identifiants et dates déjà calculés), `context.tsx`
+  (`AppProvider`, pack fusionné avec les ajouts manuels, recopie dans le stockage), `factory.ts` (création des
+  builds et runs, `Env` = horloge + UUID injectables), `boot.ts`, `theme.ts`, `fae.tsx`, `Library.tsx`, `App.tsx`.
+- Recopie dans le stockage : après chaque action, les objets dont la référence a changé sont enregistrés et les
+  absents supprimés ; le reducer étant immuable, il n'y a pas d'écriture à faire à la main.
+- CSS du prototype porté tel quel dans `theme.css` ; seules les règles `.fae[data-fae]` et le sigil, propres à SWORN,
+  sont générés depuis `pack.families` par `theme.ts`.
+- Builds triés du plus récent au plus ancien (`updatedAt`) au chargement ; un nouveau build ou une copie arrive en tête.
+- Confirmation de remplacement du run actif : affichée sur la carte du build lancé, ou sous l'en-tête pour un run sans build.
+- Classe, arme et sort par défaut (nouveau build, run libre) : la première classe du pack et ses premiers arme et sort.
+- « Importer / exporter » est affiché désactivé jusqu'au lot 5. Run, Historique, Catalogue et Création affichent
+  « Cet écran arrive dans une prochaine version. »
+- Cibles tactiles de 40 px (§6.7) : les boutons `.small` du prototype en font ~30 ; reporté aux finitions mobiles du lot 5.
+- e2e : `tests/e2e/library.spec.ts` (bibliothèque, aucun défilement horizontal sur chaque onglet, barre d'onglets en
+  bas sur mobile, rechargement). Le livrable a aussi été vérifié ouvert en `file://`.
