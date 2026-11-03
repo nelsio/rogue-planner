@@ -1,6 +1,17 @@
 # Journal des versions
 
-## Non publié — Lot 3a : coquille et bibliothèque (v0.0.4 à la fin du lot 3b)
+## v0.0.4 — Lot 3 : coquille, bibliothèque et Création
+### Lot 3b : Création
+- Départ : nom, classe, arme et sort (filtrés par classe), sélecteur Libre / Restreint avec sa phrase d'aide.
+- Aptitudes visées : une liste par emplacement.
+- Bénédictions visées : prérequis colorés (vert avec ✓ si remplis, orange sinon), priorité Essentielle / Bonus, retrait.
+- Fae du build, duos atteignables (bouton Viser), enclumes de l'arme puis du sort, notes.
+- Sélecteur « Ajouter » : recherche, puces de fae, mode repris dans l'en-tête ; en restreint, sections
+  Disponibles et Verrouillées (grisées, non cliquables).
+- Libellés de prérequis avec élision (« d'Oberon ») et forme « hors X ».
+- Pack SWORN : libellé court par emplacement (`slots[].short`).
+
+### Lot 3a : coquille et bibliothèque
 - Coquille : en-tête collant, sélecteur de jeu, onglets (point rouge pendant un run), thème auto → clair → sombre,
   bandeau de repli mémoire, toasts ; barre d'onglets en bas sous 720 px.
 - Couleurs de fae et sigil du jeu générés depuis le pack.

@@ -474,3 +474,21 @@ Si un lot dépasse une PR raisonnable (plus de ~1 500 lignes hors tests et donn�
 - Cibles tactiles de 40 px (§6.7) : les boutons `.small` du prototype en font ~30 ; reporté aux finitions mobiles du lot 5.
 - e2e : `tests/e2e/library.spec.ts` (bibliothèque, aucun défilement horizontal sur chaque onglet, barre d'onglets en
   bas sur mobile, rechargement). Le livrable a aussi été vérifié ouvert en `file://`.
+
+## Annexe Lot 3b — Création (v0.0.4)
+- `src/ui` : `Editor.tsx`, `Picker.tsx`, `ModeSwitch.tsx`, `items.tsx` (pastille, texte, prérequis colorés),
+  `labels.ts` (libellés), `useStartRun.tsx` (lancement de run partagé avec la bibliothèque).
+- **Pack** : champ optionnel `slots[].short` (« légère », « lourde »…) pour les libellés de prérequis ; à défaut, le
+  libellé de l'emplacement en minuscules. Ajouté au pack SWORN (réécriture JSON sans autre changement).
+- Libellés de prérequis dans `src/ui/labels.ts` et non dans `src/core` : ce sont des textes affichés, qui passent
+  par `strings.ts` (élision comprise). Le test prévu « `core.labels.spec.ts` » est donc `tests/ui/labels.spec.ts`.
+- Type « custom » renommé « Ajoutée » (libellé du prototype) dans `withCustom`.
+- Pas de ligne de prérequis pour une aptitude (elles n'en ont jamais), comme dans le prototype.
+- Sélecteur en Création : choisir une bénédiction déjà visée ne change pas sa priorité ; au plus 120 lignes par
+  section (comme le prototype), la recherche affine. Un ajout manuel avec emplacement va dans cet emplacement.
+- Listes d'aptitudes : aptitudes de l'emplacement et ajouts manuels qui le précisent.
+- Changer d'arme ou de sort garde dans `build.anvils` les enclumes de l'ancien choix (masquées), comme le prototype.
+- Duos atteignables listés sans prérequis, comme le prototype.
+- Accessibilité : « Sort » nomme à la fois le sort du kit et l'emplacement d'aptitude Sort ; les deux listes sont
+  dans des blocs distincts (Départ, Aptitudes visées). À revoir si un lecteur d'écran s'y perd.
+- e2e : `tests/e2e/creation.spec.ts` (scénario 1, et sélecteur tenu dans l'écran sans défilement horizontal).
