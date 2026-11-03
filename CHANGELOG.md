@@ -1,5 +1,13 @@
 # Journal des versions
 
+## Non publié — Lot 3a : coquille et bibliothèque (v0.0.4 à la fin du lot 3b)
+- Coquille : en-tête collant, sélecteur de jeu, onglets (point rouge pendant un run), thème auto → clair → sombre,
+  bandeau de repli mémoire, toasts ; barre d'onglets en bas sous 720 px.
+- Couleurs de fae et sigil du jeu générés depuis le pack.
+- Bibliothèque : cartes de build (kit, mode, fae, compteurs), nouveau build, dupliquer, supprimer avec confirmation,
+  lancer un run (confirmation si un run est actif), run sans build.
+- État par `useReducer` ; chaque changement est recopié dans le stockage ; onglet, build ouvert et thème retenus.
+
 ## v0.0.3 — Lot 2 : stockage
 - Interfaces `LibraryStore` et `PrefsStore`, implémentations IndexedDB (base `rogue-planner`) et mémoire.
 - `openStorage` : repli en mémoire si IndexedDB est absent, en erreur ou sans réponse en 3 s.
