@@ -34,27 +34,33 @@
   "slots": [
     {
       "id": "light",
-      "label": "Attaque légère"
+      "label": "Attaque légère",
+      "short": "légère"
     },
     {
       "id": "heavy",
-      "label": "Attaque lourde"
+      "label": "Attaque lourde",
+      "short": "lourde"
     },
     {
       "id": "spell",
-      "label": "Sort"
+      "label": "Sort",
+      "short": "sort"
     },
     {
       "id": "dash",
-      "label": "Esquive"
+      "label": "Esquive",
+      "short": "esquive"
     },
     {
       "id": "companion",
-      "label": "Compagnon"
+      "label": "Compagnon",
+      "short": "compagnon"
     },
     {
       "id": "ultimate",
-      "label": "Ultime"
+      "label": "Ultime",
+      "short": "ultime"
     }
   ],
   "kinds": [

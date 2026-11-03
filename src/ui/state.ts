@@ -25,6 +25,8 @@ export type Action =
   | { type: "buildDuplicated"; build: Build; toast: string }
   | { type: "buildRemoved"; id: string; toast: string }
   | { type: "editBuild"; id: string }
+  /** Build modifié en Création (date de modification déjà posée) ; il garde sa place dans la liste. */
+  | { type: "buildSaved"; build: Build; toast?: string }
   /** Lance un run ; un run actif passe en « abandonné » à la date `at`. */
   | { type: "runStarted"; run: Run; at: string };
 
@@ -64,6 +66,12 @@ export function reducer(state: AppState, action: Action): AppState {
       };
     case "editBuild":
       return { ...state, editingId: action.id, view: "edit" };
+    case "buildSaved":
+      return {
+        ...state,
+        builds: state.builds.map((b) => (b.id === action.build.id ? action.build : b)),
+        toast: action.toast ? withToast(state, action.toast) : state.toast,
+      };
     case "runStarted": {
       const runs = state.runs.map((r) => (r.status === "active" ? { ...r, status: "abandoned" as const, endedAt: action.at } : r));
       return { ...state, runs: [...runs, action.run], view: "run" };

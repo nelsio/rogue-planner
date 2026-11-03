@@ -3,9 +3,9 @@ import { useState, type ReactNode } from "react";
 import type { Build } from "@rogue/core";
 import { useApp } from "./context";
 import { buildFamilies, FaeChip } from "./fae";
-import { duplicateBuild, newBuild, newRun } from "./factory";
-import { activeRun } from "./state";
+import { duplicateBuild, newBuild } from "./factory";
 import { strings as t } from "./strings";
+import { useStartRun } from "./useStartRun";
 
 /** « Classe · Arme · Sort » ; la classe inconnue du pack s'affiche comme à choisir. */
 export function useKit() {
@@ -16,30 +16,10 @@ export function useKit() {
   };
 }
 
-/** Lancer un run : confirmation dans la page si un run est déjà actif. */
-type PendingStart = { buildId: string | null } | null;
-
 export function Library() {
   const { state, dispatch, pack, env } = useApp();
   const [confirmRemove, setConfirmRemove] = useState<string | null>(null);
-  const [pendingStart, setPendingStart] = useState<PendingStart>(null);
-
-  const start = (buildId: string | null, force = false) => {
-    if (!force && activeRun(state)) return setPendingStart({ buildId });
-    const build = state.builds.find((b) => b.id === buildId) ?? null;
-    const now = env.now();
-    setPendingStart(null);
-    dispatch({ type: "runStarted", run: newRun(pack, build, env.uuid(), now), at: now });
-  };
-
-  const replaceConfirm = (buildId: string | null) =>
-    pendingStart && pendingStart.buildId === buildId ? (
-      <div className="confirm" role="alert">
-        {t.confirmReplaceRun}
-        <button className="btn small danger" onClick={() => start(buildId, true)}>{t.replaceRun}</button>
-        <button className="btn small ghost" onClick={() => setPendingStart(null)}>{t.cancel}</button>
-      </div>
-    ) : null;
+  const { start, confirmFor } = useStartRun();
 
   return (
     <section className="view">
@@ -57,7 +37,7 @@ export function Library() {
           <button className="btn ghost" disabled>{t.importExport}</button>
         </div>
       </div>
-      {replaceConfirm(null)}
+      {confirmFor(null)}
       {state.builds.length ? (
         <div className="cards">
           {state.builds.map((b) => (
@@ -68,7 +48,7 @@ export function Library() {
               onAskRemove={() => setConfirmRemove(b.id)}
               onCancelRemove={() => setConfirmRemove(null)}
               onStart={() => start(b.id)}
-              startConfirm={replaceConfirm(b.id)}
+              startConfirm={confirmFor(b.id)}
             />
           ))}
         </div>

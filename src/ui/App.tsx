@@ -1,6 +1,7 @@
 // Coquille : en-tête collant, sélecteur de jeu, onglets, thème, bandeau de repli, toast (HANDOFF §6.1).
 import { useEffect } from "react";
 import { useApp } from "./context";
+import { Editor } from "./Editor";
 import { Library } from "./Library";
 import { activeRun, type View } from "./state";
 import { strings as t } from "./strings";
@@ -67,7 +68,8 @@ export function App() {
 
 function Screen({ view }: { view: View }) {
   if (view === "builds") return <Library />;
-  // Création : lot 3b ; Run et Historique : lot 4 ; Catalogue : lot 5.
+  if (view === "edit") return <Editor />;
+  // Run et Historique : lot 4 ; Catalogue : lot 5.
   return (
     <section className="view">
       <p className="empty">{t.comingSoon}</p>
