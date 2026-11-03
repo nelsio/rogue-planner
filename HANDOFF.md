@@ -374,6 +374,7 @@ Si un lot dépasse une PR raisonnable (plus de ~1 500 lignes hors tests et donn�
 | P5 | Rareté et niveau (5 paliers de valeurs sur le wiki) non modélisés | Base des futurs indicateurs de dégâts |
 | P6 | Enclumes = augments de « Sword in the Stone » ; « Reaper » (Scythe) retiré par un correctif du jeu, absent du pack | Confirmer le vocabulaire en jeu |
 | P7 | Effets résumés en français à partir de l'anglais du wiki | Relecture à faire en jouant |
+| P8 | Cartes de build : le prototype écrit toujours « N runs · N victoires » ; la v0.1 accorde (« 1 run · 0 victoire ») | Écart volontaire (lot 3a), à confirmer |
 
 ---
 
@@ -440,3 +441,71 @@ Si un lot dépasse une PR raisonnable (plus de ~1 500 lignes hors tests et donn�
 - `toggleTarget` et `applyPick` ne touchent pas `updatedAt` : les dates sont posées avant le dispatch (§2).
 - Les libellés de prérequis (`core.labels.spec.ts`, §6.3) sont reportés au lot 3, où l'interface les affiche.
 - Tests ajoutés : `core.schemas.spec.ts`, `core.pack.spec.ts`.
+
+## Annexe Lot 2 — Stockage (v0.0.3)
+- `src/storage` : `types.ts` (interfaces, `PrefsSchema`), `memory.ts`, `indexeddb.ts`, `index.ts`
+  (`openStorage`, `requestPersistence`, `loadExamples`). `openStorage` renvoie `{ kind, library, prefs }` ;
+  `kind: "memory"` signale le repli, et le texte du bandeau est dans `strings.storageFallback` (affiché au lot 3).
+- Préférence ajoutée à §3.5 : `examplesLoaded`. Les exemples sont chargés une seule fois, et seulement si la
+  bibliothèque est vide ; un joueur qui supprime tout ne les voit pas revenir.
+- Exemples SWORN : `src/games/sworn/examples.json`, copie de la fixture du prototype (un test vérifie l'égalité),
+  importée par `mergeImport`. Le stockage reste indépendant du jeu : les exemples lui sont passés en paramètre.
+- Préférences en IndexedDB : une entrée par clé dans le magasin `prefs`. Lecture clé par clé : une valeur invalide
+  est ignorée et signalée, les autres sont gardées.
+- Persistance non demandée en repli mémoire (sans objet).
+- Si la base s'ouvre après le délai de 3 s, elle est refermée aussitôt : on reste en mémoire pour la session.
+- L'ordre de `list*` n'est pas garanti (ordre des clés en IndexedDB, d'insertion en mémoire) : l'interface trie.
+- `tests/setup.ts` charge `fake-indexeddb/auto` (classes IndexedDB globales).
+
+## Annexe Lot 3a — Coquille et bibliothèque
+- Lot 3 découpé : 3a (coquille + bibliothèque), 3b (Création). La version 0.0.4 sort à la fin du 3b.
+- `src/ui` : `state.ts` (reducer pur, actions avec identifiants et dates déjà calculés), `context.tsx`
+  (`AppProvider`, pack fusionné avec les ajouts manuels, recopie dans le stockage), `factory.ts` (création des
+  builds et runs, `Env` = horloge + UUID injectables), `boot.ts`, `theme.ts`, `fae.tsx`, `Library.tsx`, `App.tsx`.
+- Recopie dans le stockage : après chaque action, les objets dont la référence a changé sont enregistrés et les
+  absents supprimés ; le reducer étant immuable, il n'y a pas d'écriture à faire à la main.
+- CSS du prototype porté tel quel dans `theme.css` ; seules les règles `.fae[data-fae]` et le sigil, propres à SWORN,
+  sont générés depuis `pack.families` par `theme.ts`.
+- Builds triés du plus récent au plus ancien (`updatedAt`) au chargement ; un nouveau build ou une copie arrive en tête.
+- Confirmation de remplacement du run actif : affichée sur la carte du build lancé, ou sous l'en-tête pour un run sans build.
+- Classe, arme et sort par défaut (nouveau build, run libre) : la première classe du pack et ses premiers arme et sort.
+- « Importer / exporter » est affiché désactivé jusqu'au lot 5. Run, Historique, Catalogue et Création affichent
+  « Cet écran arrive dans une prochaine version. »
+- Cibles tactiles de 40 px (§6.7) : les boutons `.small` du prototype en font ~30 ; reporté aux finitions mobiles du lot 5.
+- e2e : `tests/e2e/library.spec.ts` (bibliothèque, aucun défilement horizontal sur chaque onglet, barre d'onglets en
+  bas sur mobile, rechargement). Le livrable a aussi été vérifié ouvert en `file://`.
+
+## Annexe Lot 3b — Création (v0.0.4)
+- `src/ui` : `Editor.tsx`, `Picker.tsx`, `ModeSwitch.tsx`, `items.tsx` (pastille, texte, prérequis colorés),
+  `labels.ts` (libellés), `useStartRun.tsx` (lancement de run partagé avec la bibliothèque).
+- **Pack** : champ optionnel `slots[].short` (« légère », « lourde »…) pour les libellés de prérequis ; à défaut, le
+  libellé de l'emplacement en minuscules. Ajouté au pack SWORN (réécriture JSON sans autre changement).
+- Libellés de prérequis dans `src/ui/labels.ts` et non dans `src/core` : ce sont des textes affichés, qui passent
+  par `strings.ts` (élision comprise). Le test prévu « `core.labels.spec.ts` » est donc `tests/ui/labels.spec.ts`.
+- Type « custom » renommé « Ajoutée » (libellé du prototype) dans `withCustom`.
+- Pas de ligne de prérequis pour une aptitude (elles n'en ont jamais), comme dans le prototype.
+- Sélecteur en Création : choisir une bénédiction déjà visée ne change pas sa priorité ; au plus 120 lignes par
+  section (comme le prototype), la recherche affine. Un ajout manuel avec emplacement va dans cet emplacement.
+- Listes d'aptitudes : aptitudes de l'emplacement et ajouts manuels qui le précisent.
+- Changer d'arme ou de sort garde dans `build.anvils` les enclumes de l'ancien choix (masquées), comme le prototype.
+- Duos atteignables listés sans prérequis, comme le prototype.
+- Accessibilité : « Sort » nomme à la fois le sort du kit et l'emplacement d'aptitude Sort ; les deux listes sont
+  dans des blocs distincts (Départ, Aptitudes visées). À revoir si un lecteur d'écran s'y perd.
+- e2e : `tests/e2e/creation.spec.ts` (scénario 1, et sélecteur tenu dans l'écran sans défilement horizontal).
+
+## Annexe Lot 4 — RUN et Historique (v0.0.5)
+- `src/ui` : `RunView.tsx` (RUN, autres choix, fin du run), `History.tsx`, `KitFields.tsx` (classe, arme, sort,
+  partagé avec la Création), `anvils.ts`. `Picker.tsx` prend un mode `build` ou `run`.
+- Reducer : actions `runSaved` (prise, enclume, kit, autres choix, fin du run, avec changement d'écran facultatif)
+  et `runRemoved` (« Abandonner sans enregistrer »).
+- Les calculs du RUN viennent du moteur : `runProgress` (compteurs, hors plan, emplacements, encore à trouver,
+  duos ouverts) et `applyPick` (une aptitude remplace celle du même emplacement, pas de doublon).
+- Sans run actif, l'onglet Run propose les trois premiers builds et « Run sans build » (prototype).
+- Sélecteur en RUN : « Prévues dans le build » (non prises) en tête quand la recherche est vide, puis « Toutes » ;
+  les verrouillées suivent les débloquées, grisées (`dim`) mais choisissables.
+- Autres choix : la saisie se valide aussi par Entrée ; un texte vide n'ajoute rien.
+- Historique : un run dont le build a été supprimé s'affiche « Run libre », comme dans le prototype. Le filtre
+  n'est pas retenu entre deux visites.
+- Enclumes en RUN : les augments affichés suivent l'arme et le sort du run ; un changement de kit garde les enclumes prises.
+- e2e : `tests/e2e/run.spec.ts` (scénarios 2 et 5, pas de défilement horizontal en RUN et dans l'historique) ;
+  `tests/e2e/helpers.ts` lit IndexedDB pour attendre les écritures avant un rechargement.

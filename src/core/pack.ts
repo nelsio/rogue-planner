@@ -40,7 +40,8 @@ export const PackSchema = z.strictObject({
     ),
   }),
   labels: z.record(z.string(), z.string()),
-  slots: z.array(Labelled).min(1),
+  // `short` : libellé court dans les prérequis (« une aptitude de Lugh (légère, lourde) »).
+  slots: z.array(z.strictObject({ id: Id, label: z.string().min(1), short: z.string().min(1).optional() })).min(1),
   kinds: z.array(Labelled),
   families: z.array(
     z.strictObject({
@@ -144,7 +145,7 @@ function crossCheck(pack: Pack): FieldError[] {
   return errors;
 }
 
-const CUSTOM_KIND = { id: "custom", label: "Ajout manuel" };
+const CUSTOM_KIND = { id: "custom", label: "Ajoutée" };
 
 /** Ajoute au pack les bénédictions saisies à la main (type « custom », sans prérequis). */
 export function withCustom(pack: Pack, custom: readonly CustomItem[]): Pack {

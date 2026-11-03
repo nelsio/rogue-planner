@@ -11,4 +11,4 @@ export {
 export { buildOwned, isUnlocked, missing, reachableDuos } from "./requires";
 export { applyPick, runProgress, toggleTarget, type RunProgress, type SlotProgress } from "./progress";
 export { EXPORT_FORMAT, mergeImport, type MergeResult } from "./import";
-export type { FieldError } from "./zod";
+export { z, type FieldError } from "./zod";
