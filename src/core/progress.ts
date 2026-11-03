@@ -1,5 +1,5 @@
 // Création (bénédictions visées) et RUN (prises, écart au plan).
-import { getItem, type Pack, type SlotId } from "./pack";
+import { getItem, itemIndex, type Pack, type SlotId } from "./pack";
 import { buildOwned, reachableDuos } from "./requires";
 import type { Build, Prio, Run } from "./schemas";
 
@@ -22,11 +22,13 @@ export function toggleTarget(pack: Pack, build: Build, itemId: string): Build {
 export function applyPick(pack: Pack, run: Run, itemId: string, at: string): Run {
   if (run.picks.some((p) => p.id === itemId)) return run;
   const item = getItem(pack, itemId);
+  const index = itemIndex(pack);
+  // Une prise inconnue du pack (bénédiction ajoutée puis retirée) est gardée telle quelle.
   const picks =
     item.kind === "ability"
       ? run.picks.filter((p) => {
-          const other = getItem(pack, p.id);
-          return !(other.kind === "ability" && other.slot === item.slot);
+          const other = index.get(p.id);
+          return !(other?.kind === "ability" && other.slot === item.slot);
         })
       : run.picks;
   return { ...run, picks: [...picks, { id: itemId, at }] };
@@ -60,8 +62,8 @@ export function runProgress(pack: Pack, build: Build | null, run: Run): RunProgr
   for (const { id: slot } of pack.slots) {
     const current =
       picked.findLast((id) => {
-        const item = getItem(pack, id);
-        return item.kind === "ability" && item.slot === slot;
+        const item = itemIndex(pack).get(id);
+        return item?.kind === "ability" && item.slot === slot;
       }) ?? null;
     const planned = build?.abilities[slot] ?? null;
     slots[slot] = { current, planned, mismatch: current !== null && planned !== null && current !== planned };

@@ -15,7 +15,6 @@ export const strings = {
   runLive: "Run en cours",
   themeButton: "Changer de thème",
   themeTitle: (t: Theme) => `Thème : ${{ auto: "auto", light: "clair", dark: "sombre" }[t]}`,
-  comingSoon: "Cet écran arrive dans une prochaine version.",
 
   // Bibliothèque
   libraryEyebrow: (game: string) => `${game} · bibliothèque`,
@@ -108,6 +107,7 @@ export const strings = {
   noRunHelp: "Lancez un run depuis un build pour suivre l'écart au plan, ou partez sans build.",
   runStartedAt: (iso: string) => `Mode RUN · commencé à ${new Date(iso).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}`,
   freeRunTitle: "Run libre",
+  deletedBuild: "Build supprimé",
   endRun: "Terminer le run",
   changeKit: "Changer la classe, l'arme ou le sort de ce run",
   meter: { core: "Essentielles", taken: "Prises", off: "Hors plan" },
@@ -160,4 +160,42 @@ export const strings = {
   columns: { date: "Date", build: "Build", kit: "Départ", result: "Résultat", picks: "Prises", notes: "Notes" },
   noHistory: "Aucun run terminé pour ce filtre.",
   formatDate: (iso: string) => new Date(iso).toLocaleDateString("fr-FR"),
+
+  // Catalogue (HANDOFF §6.6)
+  catalogEyebrow: (game: string, n: number) => `Catalogue ${game} · ${n} bénédictions`,
+  catalogTitle: "Bénédictions",
+  sources: "Sources",
+  catalogSearch: "Chercher un nom ou un effet",
+  catalogEmpty: "Aucun résultat.",
+  customTitle: "Ajouter une bénédiction manquante",
+  customHelp: "Pour une bénédiction ajoutée par un patch ou absente de la source.",
+  customName: "Nom",
+  customFamily: "Fae",
+  customSlot: "Emplacement",
+  customStandard: "Standard",
+  customEffect: "Effet",
+  customEffectDefault: "Effet à préciser",
+  customAdd: "Ajouter au catalogue",
+  customNameMissing: "Donnez un nom",
+  customRemove: "Retirer",
+
+  // Import / export (HANDOFF §7)
+  ioTitle: "Importer / exporter",
+  ioHelp:
+    "L'export contient builds, runs et bénédictions ajoutées. L'import fusionne : les éléments de même identifiant sont remplacés, les autres sont ajoutés.",
+  exportTitle: "Export",
+  download: "Télécharger",
+  copy: "Copier",
+  toastCopied: "JSON copié",
+  toastSelected: "Texte sélectionné : copiez-le",
+  importTitle: "Import",
+  importFile: "Fichier JSON",
+  importText: "Ou coller le JSON",
+  importButton: "Importer par fusion",
+  importInvalidJson: "Ce texte n'est pas un JSON valide.",
+  importEmpty: "Choisissez un fichier ou collez un JSON.",
+  imported: (total: number, added: number, replaced: number) =>
+    `${total} ${plural(total, "élément importé", "éléments importés")} (${added} ${plural(added, "ajouté", "ajoutés")}, ${replaced} ${plural(replaced, "remplacé", "remplacés")})`,
+  importErrors: "Import refusé :",
+  exportFileName: (isoDate: string) => `rogue-planner-${isoDate.slice(0, 10)}.json`,
 } as const;

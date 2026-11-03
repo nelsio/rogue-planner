@@ -58,7 +58,7 @@ function ActiveRun({ run: r, build: b }: { run: Run; build: Build | null }) {
       <div className="runhead">
         <div className="eyebrow">{t.runStartedAt(r.startedAt)}</div>
         <div className="row" style={{ justifyContent: "space-between" }}>
-          <h2>{b ? b.name : t.freeRunTitle}</h2>
+          <h2>{b ? b.name : r.buildId ? t.deletedBuild : t.freeRunTitle}</h2>
           <button
             className="btn small"
             onClick={() => {

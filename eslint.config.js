@@ -7,6 +7,7 @@ export default tseslint.config(
   { ignores: ["dist", "coverage", "reference", "playwright-report", "test-results", ".tmp"] },
   js.configs.recommended,
   ...tseslint.configs.strict,
+  { files: ["scripts/**/*.mjs"], languageOptions: { globals: globals.node } },
   {
     files: ["**/*.{ts,tsx}"],
     languageOptions: { globals: { ...globals.browser, ...globals.node } },

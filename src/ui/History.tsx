@@ -52,7 +52,7 @@ export function History() {
                   <tr key={r.id}>
                     <td className="mono">{r.endedAt ? t.formatDate(r.endedAt) : ""}</td>
                     <td>
-                      {b ? b.name : t.freeRunTitle}
+                      {b ? b.name : r.buildId ? t.deletedBuild : t.freeRunTitle}
                       {r.example && <> <span className="example">{t.example}</span></>}
                     </td>
                     <td>{kit(r)}</td>

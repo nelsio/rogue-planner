@@ -1,5 +1,16 @@
 # Journal des versions
 
+## v0.1.0 — Lot 5 : catalogue, import / export, finitions
+- Catalogue : « Catalogue SWORN · N bénédictions » et sources du pack, puces de fae (filtre retenu), recherche
+  par nom ou effet, prérequis en texte ; ajout d'une bénédiction manquante (nom, fae, emplacement, effet) et retrait.
+- Import / export : téléchargement `rogue-planner-AAAA-MM-JJ.json`, Copier (repli : sélection du texte) ;
+  import par fusion d'un fichier ou d'un texte collé, avec le bilan ou les erreurs par champ. Un seul run reste actif.
+- Historique et RUN : « Build supprimé » pour un run dont le build n'existe plus.
+- Mobile : cibles tactiles d'au moins 40 px sur écran tactile ; select redessinés (WebKit en fige la hauteur).
+- Moteur : une prise inconnue du pack (bénédiction ajoutée puis retirée) est tolérée par `applyPick` et `runProgress`.
+- IndexedDB : la base se ferme quand une autre page demande sa mise à niveau ou sa suppression.
+- README avec captures, guide du joueur (`docs/GUIDE.md`), crédits complétés.
+
 ## v0.0.5 — Lot 4 : RUN et Historique
 - RUN : en-tête (heure de début, build ou « Run libre », kit modifiable), compteurs Essentielles / Prises / Hors plan
   et barre de progression, emplacements avec « Prévu » et contour si différent, prises dans l'ordre (prévue / hors plan),
