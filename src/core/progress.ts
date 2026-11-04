@@ -1,6 +1,6 @@
 // Création (bénédictions visées) et RUN (prises, écart au plan).
 import { getItem, type Pack, type SlotId } from "./pack";
-import { buildPotions, familyTotals, nextStep, planOrder } from "./plan";
+import { buildPotions, familyProgress, nextStep, planOrder, type FamilyProgress } from "./plan";
 import { buildOwned, reachableDuos } from "./requires";
 import type { Build, Prio, Run } from "./schemas";
 
@@ -55,10 +55,8 @@ export interface RunProgress {
   slots: Record<SlotId, SlotProgress>;
   openDuos: string[];
   next: { index: number; id: string } | null;
-  /** Une entrée par fae du plan ; `taken` compte aussi les prises hors plan. */
-  families: { family: string; planned: number; taken: number }[];
-  /** Duos du plan, et ceux déjà pris. */
-  duos: { planned: number; taken: number };
+  families: FamilyProgress["families"];
+  duos: FamilyProgress["duos"];
   potions: { index: number; planned: string | null; taken: string | null }[];
 }
 
@@ -72,12 +70,7 @@ export function runProgress(pack: Pack, build: Build | null, run: Run): RunProgr
   const prio = new Map<string, Prio | "ability">(targets.map((t) => [t.id, t.prio]));
   for (const id of Object.values(build?.abilities ?? {})) if (id) prio.set(id, "ability");
 
-  const planTotals = familyTotals(pack, order);
-  const takenTotals = familyTotals(pack, picked);
-  const familyRank = new Map(pack.families.map((f, i) => [f.id, i]));
-  const families = Object.entries(planTotals.families)
-    .map(([family, planned]) => ({ family, planned, taken: takenTotals.families[family] ?? 0 }))
-    .sort((a, b) => b.planned - a.planned || familyRank.get(a.family)! - familyRank.get(b.family)!);
+  const { families, duos } = familyProgress(pack, order, picked);
   const plannedPotions = build ? buildPotions(pack, build) : [];
 
   const slots: Record<SlotId, SlotProgress> = {};
@@ -101,7 +94,7 @@ export function runProgress(pack: Pack, build: Build | null, run: Run): RunProgr
     openDuos: reachableDuos(pack, picked, { restricted: false }),
     next: build ? nextStep(pack, build, run) : null,
     families,
-    duos: { planned: planTotals.duos.length, taken: planTotals.duos.filter((id) => pickedSet.has(id)).length },
+    duos,
     potions: Array.from({ length: pack.potions.perRun }, (_, index) => ({
       index,
       planned: plannedPotions[index] ?? null,

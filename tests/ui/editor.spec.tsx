@@ -114,13 +114,89 @@ describe("Création : aptitudes et bénédictions visées", () => {
   });
 });
 
-describe("Création : fae, duos, enclumes, notes", () => {
-  it("fae du build avec leur statut", async () => {
-    await openBuild();
-    const faes = panel("Fae du build");
-    expect(within(faes).getByText("Lugh · Critique")).toBeInTheDocument();
+describe("Création : fae, potions, ordre d'acquisition", () => {
+  it("totaux de bénédictions nécessaires par fae, mis à jour quand on vise", async () => {
+    const app = await openBuild("Spirale de givre");
+    const faes = () => panel("Fae du build · bénédictions nécessaires");
+    expect(faes().querySelector(".faes")).toHaveTextContent("Beira ×4Oberon ×2Duos ×1");
+    expect(within(faes()).getByText(/les duos sont comptés à part/)).toBeInTheDocument();
+    const slots = within(panel("Aptitudes visées")).getAllByRole("combobox");
+    await app.user.selectOptions(slots[0], "oberon:tempest-touch");
+    expect(faes().querySelector(".faes")).toHaveTextContent("Beira ×4Oberon ×3Duos ×1");
   });
 
+  it("build vide : invitation au lieu des totaux", async () => {
+    await openBuild("", { empty: true });
+    expect(within(panel("Fae du build · bénédictions nécessaires")).getByText("Choisissez une aptitude ou une bénédiction.")).toBeInTheDocument();
+  });
+
+  it("4 potions dans l'ordre, une fae par case", async () => {
+    const app = await openBuild("Spirale de givre");
+    const pots = within(panel("Potions · ordre de prise"));
+    expect((pots.getByRole("combobox", { name: "Potion 1" }) as HTMLSelectElement).value).toBe("beira");
+    const last = pots.getByRole("combobox", { name: "Potion 4" }) as HTMLSelectElement;
+    expect(last.value).toBe("");
+    expect(last.closest(".pot")).not.toHaveClass("filled");
+    await app.user.selectOptions(last, "titania");
+    expect(last.closest(".pot")).toHaveClass("filled");
+    expect(last.closest(".pot")).toHaveAttribute("data-fae", "titania");
+    expect((await stored(app, "ex-2")).potions).toEqual(["beira", "beira", "oberon", "titania"]);
+    await app.user.selectOptions(pots.getByRole("combobox", { name: "Potion 1" }), "");
+    expect((await stored(app, "ex-2")).potions).toEqual([null, "beira", "oberon", "titania"]);
+  });
+
+  it("ordre par défaut : aptitudes par emplacement puis visées ; ↑ / ↓ désactivés aux extrémités", async () => {
+    await openBuild("Spirale de givre");
+    const ord = within(panel("Ordre d'acquisition · 7"));
+    const names = ord.getAllByRole("listitem").map((li) => li.querySelector(".bn")?.textContent);
+    expect(names).toEqual(["Chilling Flourish", "Chilling Dash", "Storm Falcon", "Spell Caster", "Mana Well", "Nova Surge", "Onslaught"]);
+    expect(ord.getByRole("button", { name: "Monter Chilling Flourish" })).toBeDisabled();
+    expect(ord.getByRole("button", { name: "Descendre Onslaught" })).toBeDisabled();
+    expect(ord.queryByRole("button", { name: "Ordre par défaut" })).not.toBeInTheDocument();
+  });
+
+  it("↑ / ↓ déplacent, le focus suit l'élément ; « Ordre par défaut » revient à l'ordre du plan", async () => {
+    const app = await openBuild("Spirale de givre");
+    const ord = () => within(panel("Ordre d'acquisition · 7"));
+    await app.user.click(ord().getByRole("button", { name: "Descendre Chilling Flourish" }));
+    expect(ord().getAllByRole("listitem")[1]).toHaveTextContent("Chilling Flourish");
+    expect(ord().getByRole("button", { name: "Descendre Chilling Flourish" })).toHaveFocus();
+    expect((await stored(app, "ex-2")).order?.slice(0, 2)).toEqual(["beira:chilling-dash", "beira:chilling-flourish"]);
+
+    // À l'extrémité, le focus passe sur le bouton qui reste actif.
+    await app.user.click(ord().getByRole("button", { name: "Monter Mana Well" }));
+    await app.user.click(ord().getByRole("button", { name: "Monter Mana Well" }));
+    await app.user.click(ord().getByRole("button", { name: "Monter Mana Well" }));
+    await app.user.click(ord().getByRole("button", { name: "Monter Mana Well" }));
+    expect(ord().getAllByRole("listitem")[0]).toHaveTextContent("Mana Well");
+    expect(ord().getByRole("button", { name: "Descendre Mana Well" })).toHaveFocus();
+
+    await app.user.click(ord().getByRole("button", { name: "Ordre par défaut" }));
+    expect(ord().getAllByRole("listitem")[0]).toHaveTextContent("Chilling Flourish");
+    expect(ord().queryByRole("button", { name: "Ordre par défaut" })).not.toBeInTheDocument();
+    expect((await stored(app, "ex-2")).order).toEqual([]);
+  });
+
+  it("une bénédiction visée arrive en fin d'ordre ; une retirée en sort, et l'ordre enregistré est nettoyé", async () => {
+    const app = await openBuild();
+    expect(within(panel("Ordre d'acquisition · 11")).getAllByRole("listitem")[2]).toHaveTextContent("Critical Clover");
+    await app.user.click(within(panel("Bénédictions visées")).getByRole("button", { name: "Retirer Critical Clover" }));
+    expect(screen.getByRole("heading", { name: "Ordre d'acquisition · 10" })).toBeInTheDocument();
+    expect((await stored(app, "ex-1")).order).not.toContain("lugh:critical-clover");
+
+    await app.user.click(within(panel("Bénédictions visées")).getByRole("button", { name: "Ajouter" }));
+    await app.user.click(within(dialog()).getByRole("button", { name: /^Critical Clover/ }));
+    const items = within(panel("Ordre d'acquisition · 11")).getAllByRole("listitem");
+    expect(items[items.length - 1]).toHaveTextContent("Critical Clover");
+  });
+
+  it("build vide : rien à ordonner", async () => {
+    await openBuild("", { empty: true });
+    expect(screen.getByText("Choisissez des aptitudes et des bénédictions pour les ordonner.")).toBeInTheDocument();
+  });
+});
+
+describe("Création : duos, enclumes, notes", () => {
   it("duos atteignables : en restreint seulement les débloqués ; Viser ajoute en bonus", async () => {
     const app = await openBuild("", { empty: true });
     const slots = within(panel("Aptitudes visées")).getAllByRole("combobox");
@@ -226,6 +302,15 @@ describe("sélecteur « Ajouter »", () => {
     expect(within(dialog()).queryByText("Lucky Touch")).not.toBeInTheDocument();
     await app.user.click(within(dialog()).getByRole("button", { name: "Toutes" }));
     expect(within(dialog()).getByText("Lucky Touch")).toBeInTheDocument();
+
+    const types = within(within(dialog()).getByRole("group", { name: "Type" }));
+    await app.user.click(types.getByRole("button", { name: "Duos" }));
+    expect(types.getByRole("button", { name: "Duos" })).toHaveAttribute("aria-pressed", "true");
+    expect(within(dialog()).queryByText("Lucky Touch")).not.toBeInTheDocument();
+    expect(within(dialog()).queryByText("Critical Clover")).not.toBeInTheDocument();
+    await app.user.click(types.getByRole("button", { name: "Aptitudes" }));
+    expect(within(dialog()).getByText("Lucky Touch")).toBeInTheDocument();
+    await app.user.click(types.getByRole("button", { name: "Tous types" }));
 
     await app.user.click(within(dialog()).getByRole("button", { name: "Libre" }));
     expect((await stored(app, "id-1")).mode).toBe("free");

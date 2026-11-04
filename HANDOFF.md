@@ -702,3 +702,19 @@ Si un lot dépasse une PR raisonnable (plus de ~1 500 lignes hors tests et donn�
 - Interface, seul changement de ce lot : « Encore à trouver » suit `remaining` révisé, avec l'étiquette « aptitude »
   (comme le prototype). Le reste de l'interface de la révision 2 arrive avec les PR Création et RUN.
 - Exemples du premier lancement : `examples.json` = export v2 du prototype sans le run actif `ex-r2` (= `sample()`).
+
+## Annexe Révision 2 — Création (v0.1.2)
+- Rattrapage du lot 3 (annexe D) : puces de totaux (§6.2, §6.3 bloc 4, §6.8), potions (bloc 5), ordre d'acquisition
+  (bloc 7), filtre de type du sélecteur (§6.3). Le filtre sert aussi au « + Bénédiction » du RUN (§6.4).
+- `familyProgress(pack, plan, picked?)` (`src/core/plan.ts`) : totaux triés d'un plan, utilisé par `runProgress` et par
+  l'interface. Une fae hors pack (ajout manuel « Autre ») vient en dernier.
+- **Ordre des puces à égalité** : le prototype garde l'ordre d'apparition (« Lugh ×5 » avant « Gogmagog ×5 » sur
+  l'exemple) ; la v0.1 suit §4.7 (ordre des fae du pack, donc Gogmagog d'abord), comme la spec fournie.
+- `ui/fae.tsx` : `FamilyTotals` (« ×N », ou « pris/N » et bordure verte en RUN) remplace `buildFamilies` et
+  `FaeChip` ; le statut des fae (« Lugh · Critique ») n'est plus affiché en Création, comme dans le prototype.
+- `ui/OrderPanel.tsx` : liste `ol`, boutons ↑ / ↓ de 40 px partout (§6.7) ; après un déplacement, le focus reste sur
+  le bouton du même sens, ou sur l'autre à une extrémité.
+- `Editor` : à chaque enregistrement, `order` ne garde que les ids encore dans le plan (§3.2). Une potion vidée
+  devient `null`.
+- CSS : bloc de la révision 2 du prototype porté tel quel (totaux, ordre, pas à pas, potions) ; les sélecteurs de
+  potion font 40 px sur écran tactile.

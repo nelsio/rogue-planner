@@ -1,5 +1,6 @@
 // Sélecteur de bénédiction : feuille en bas sur mobile, fenêtre centrée sur ordinateur.
-// Création (HANDOFF §6.3) : en restreint, les verrouillées sont listées à part, grisées et non cliquables.
+// Recherche, puces de fae et filtre de type. Création (HANDOFF §6.3) : en restreint, les verrouillées sont listées à part,
+// grisées et non cliquables.
 // RUN (§6.4) : « Prévues dans le build » d'abord ; les verrouillées en bas, grisées mais choisissables (le jeu fait foi).
 import { useEffect, useRef, useState } from "react";
 import { buildOwned, missing, type Build, type Item, type Run } from "@rogue/core";
@@ -11,6 +12,9 @@ import { strings as t } from "./strings";
 /** Au plus 120 lignes par section, comme le prototype : la recherche affine. */
 const MAX_ROWS = 120;
 
+type KindFilter = keyof typeof t.types;
+const KIND_FILTERS = Object.keys(t.types) as KindFilter[];
+
 type PickerProps =
   | { mode: "build"; build: Build; onSave(build: Build, toast?: string): void; onMode(mode: Build["mode"]): void; onClose(): void }
   | { mode: "run"; run: Run; build: Build | null; onPick(item: Item): void; onClose(): void };
@@ -20,6 +24,7 @@ export function Picker(props: PickerProps) {
   const { pack } = useApp();
   const [query, setQuery] = useState("");
   const [family, setFamily] = useState("all");
+  const [kind, setKind] = useState<KindFilter>("all");
   const search = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -37,8 +42,13 @@ export function Picker(props: PickerProps) {
   const restricted = !run && props.build.mode === "restricted";
 
   const q = query.trim().toLowerCase();
+  // Filtre de type : un ajout manuel avec emplacement compte comme une aptitude.
+  const ofKind = (x: Item) => kind === "all" || x.kind === kind || (kind === "ability" && x.kind === "custom" && !!x.slot);
   const shown = pack.items.filter(
-    (x) => (family === "all" || x.families.includes(family)) && (!q || x.name.toLowerCase().includes(q) || x.effect.toLowerCase().includes(q)),
+    (x) =>
+      (family === "all" || x.families.includes(family)) &&
+      ofKind(x) &&
+      (!q || x.name.toLowerCase().includes(q) || x.effect.toLowerCase().includes(q)),
   );
   const isLocked = (x: Item) => missing(pack, x.id, owned).length > 0;
   const firstPlanned = run && build && !q ? shown.filter((x) => planned.has(x.id) && !owned.has(x.id)) : [];
@@ -99,6 +109,11 @@ export function Picker(props: PickerProps) {
                 <span className="dot" />
                 {f.name}
               </button>
+            ))}
+          </div>
+          <div className="seg small" role="group" aria-label={t.typeGroup}>
+            {KIND_FILTERS.map((k) => (
+              <button key={k} aria-pressed={kind === k} onClick={() => setKind(k)}>{t.types[k]}</button>
             ))}
           </div>
         </div>

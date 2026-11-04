@@ -10,7 +10,8 @@ export {
 } from "./schemas";
 export { buildOwned, isUnlocked, missing, reachableDuos } from "./requires";
 export {
-  applyPotion, buildPotions, familyTotals, moveInOrder, nextStep, planOrder, skipStep, undoPotion, unskipStep,
+  applyPotion, buildPotions, familyProgress, familyTotals, moveInOrder, nextStep, planOrder, skipStep, undoPotion, unskipStep,
+  type FamilyProgress,
 } from "./plan";
 export { applyPick, runProgress, toggleTarget, type RunProgress, type SlotProgress } from "./progress";
 export { EXPORT_FORMAT, mergeImport, type MergeResult } from "./import";

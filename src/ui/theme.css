@@ -186,9 +186,48 @@ pre.json{margin:0;max-height:260px;overflow:auto;background:var(--sunk);border-r
 /* ---- Ajouts v0.1 ---- */
 .banner{margin-top:12px;padding:10px 14px;border-radius:8px;border:1px solid color-mix(in oklab,var(--warn) 55%,transparent);background:color-mix(in oklab,var(--warn) 14%,var(--surface));font-size:.9rem}
 .game .sigil{width:18px;height:18px;border-radius:50%;background:var(--sigil,var(--f-custom))}
+/* ---- Révision 2 du prototype : totaux, ordre, pas à pas, potions (↑ / ↓ portés à 40 px, §6.7) ---- */
+.seg.small button{padding:5px 10px;font-size:.82rem}
+/* Totaux par fae */
+.chip .n{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-weight:700}
+.chip.done{border-color:color-mix(in oklab,var(--ok) 60%,transparent)}
+.chip.done .n{color:var(--ok)}
+/* Ordre d'acquisition */
+.ord{display:grid;gap:4px}
+.ord .bitem{grid-template-columns:auto auto 1fr auto;padding:6px 8px}
+.ord .n,.step .n{font-family:var(--f-mono);font-size:.8rem;color:var(--muted);min-width:1.6em;text-align:right}
+.ord .be{font-size:.8rem}
+.mv{border:1px solid var(--line);background:transparent;border-radius:6px;width:40px;height:40px;padding:0;font-size:.9rem}
+.mv:disabled{opacity:.3;cursor:default}
+.grp{display:flex;align-items:center;gap:6px;margin-top:6px}
+.grp:first-child{margin-top:0}
+/* Pas à pas */
+.step{border:2px solid var(--moon);background:color-mix(in oklab,var(--moon) 8%,var(--surface));border-radius:var(--r);padding:14px;display:grid;gap:8px}
+.step .bn{font-size:1.15rem;font-weight:700;display:flex;align-items:center;gap:8px}
+.step .be{color:var(--muted);font-size:.92rem}
+.steps{display:grid;gap:4px}
+.steps .bitem{grid-template-columns:auto auto 1fr auto;padding:6px 8px}
+.steps .bitem.done{opacity:.55}
+.steps .bitem.done .bn::after{content:" ✓";color:var(--ok)}
+.steps .bitem.skip .bn{text-decoration:line-through;color:var(--muted)}
+.steps .bitem.cur{border-color:var(--moon)}
+/* Aptitudes du run : fae prévue */
+.slot .fn{font-size:.75rem;color:var(--muted);font-weight:400}
+.slot .planned{display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.slot .planned b{color:var(--ink);font-weight:700}
+.slot.plan-only{border-style:dashed;border-color:color-mix(in oklab,var(--c) 60%,transparent)}
+.slot .ok{color:var(--ok);font-weight:700}
+/* Potions */
+.pots{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px}
+.pot{border:1px solid var(--line);border-radius:8px;padding:8px 10px;background:var(--surface-2);display:grid;gap:4px;min-width:0}
+.pot .sl{font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.pot .sv{font-weight:700;display:flex;gap:6px;align-items:center}
+.pot.filled{border-color:color-mix(in oklab,var(--c) 55%,transparent);background:color-mix(in oklab,var(--c) 10%,var(--surface-2))}
+.pot.next{outline:2px solid var(--moon);outline-offset:-1px}
+.pot select{width:100%;background:var(--surface-2);border:1px solid var(--line);border-radius:6px;padding:4px 6px;font-size:.88rem}
 /* Cibles tactiles d'au moins 40 px sur écran tactile (HANDOFF §6.7). */
 @media (pointer:coarse){
-  .btn,.icon-btn,.prio,.chip,.seg button,nav.tabs button,select.slot-select,label.field > :is(input,select){min-height:40px}
+  .btn,.icon-btn,.prio,.chip,.seg button,nav.tabs button,select.slot-select,.pot select,label.field > :is(input,select){min-height:40px}
   /* WebKit fige la hauteur d'un select natif : apparence retirée, chevron dessiné par deux dégradés. */
   select,.game select{-webkit-appearance:none;appearance:none;padding-right:28px;
     background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);
