@@ -50,7 +50,7 @@ for (const [name, ctxOpts, act] of shots) {
   await page.goto(url);
   await act(page);
   // Haut de page, et laisse passer les toasts.
-  await page.evaluate(() => window.scrollTo(0, 0));
+  await page.evaluate(() => globalThis.scrollTo(0, 0));
   await page.waitForTimeout(1800);
   await page.screenshot({ path: `${outDir}/${name}.png` });
   console.log(`${outDir}/${name}.png`);
