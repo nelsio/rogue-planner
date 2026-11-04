@@ -54,7 +54,8 @@ describe("RUN : en-tête et compteurs", () => {
     await startRun(null, { empty: true });
     expect(screen.getByRole("heading", { name: "Run libre" })).toBeInTheDocument();
     expect(document.querySelector(".meter")).toBeNull();
-    expect(screen.queryByRole("heading", { name: "Encore à trouver" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: /^Encore à trouver/ })).not.toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: /^Pas à pas/ })).not.toBeInTheDocument();
   });
 
   it("changer la classe du run prend la première arme et le premier sort", async () => {
@@ -86,22 +87,27 @@ describe("RUN : prises", () => {
     expect((await storedRun(app)).picks.map((p) => p.id)).toEqual(["lugh:critical-clover"]);
   });
 
-  it("une aptitude remplace celle du même emplacement ; « Prévu » et contour si différente", async () => {
+  it("une aptitude remplace celle du même emplacement ; fae prévue, « ✓ prévu », contour si différente", async () => {
     const app = await startRun();
     const light = () => screen.getByLabelText("Attaque légère");
-    expect(light()).toHaveTextContent("—Prévu : Lucky Touch");
+    expect(light()).toHaveTextContent("—Prévu : Lugh · Lucky Touch");
+    expect(light()).toHaveClass("plan-only");
+    expect(light()).toHaveAttribute("data-fae", "lugh");
+    expect(screen.getByLabelText("Compagnon")).not.toHaveClass("plan-only");
     await pick(app, "Lucky Touch");
-    expect(light()).toHaveTextContent("Lucky Touch");
-    expect(light()).not.toHaveTextContent("Prévu");
+    expect(light()).toHaveTextContent("Lucky Touch Lugh✓ prévu");
+    expect(light()).toHaveClass("filled");
     await pick(app, "Shadow Touch");
-    expect(light()).toHaveTextContent("Shadow TouchPrévu : Lucky Touch");
+    expect(light()).toHaveTextContent("Shadow Touch BadbPrévu : Lugh · Lucky Touch");
+    expect(light()).toHaveAttribute("data-fae", "badb");
     expect(light()).toHaveClass("off");
     expect((await storedRun(app)).picks.map((p) => p.id)).toEqual(["badb:shadow-touch"]);
   });
 
   it("encore à trouver : ordre d'acquisition, aptitudes comprises ; vide quand tout est pris", async () => {
     const app = await startRun("Spirale de givre");
-    const remaining = () => panel("Encore à trouver");
+    const remaining = () => panel(/^Encore à trouver/);
+    expect(screen.getByRole("heading", { name: "Encore à trouver · 7" })).toBeInTheDocument();
     const tags = within(remaining()).getAllByText(/^(aptitude|essentielle|bonus)$/).map((n) => n.textContent);
     expect(tags).toEqual(["aptitude", "aptitude", "aptitude", "essentielle", "essentielle", "essentielle", "bonus"]);
     const plan = ["Chilling Flourish", "Chilling Dash", "Storm Falcon", "Spell Caster", "Mana Well", "Nova Surge", "Onslaught"];
@@ -124,6 +130,141 @@ describe("RUN : prises", () => {
   it("notes du build affichées", async () => {
     await startRun();
     expect(within(panel("Notes du build")).getByText(/Étourdir puis critiquer/)).toBeInTheDocument();
+  });
+});
+
+describe("RUN : totaux par fae", () => {
+  it("puces prises / nécessaires, vertes quand le total est atteint", async () => {
+    const app = await startRun("Spirale de givre");
+    const faes = () => panel("Fae · prises / nécessaires").querySelector(".faes")!;
+    expect(faes()).toHaveTextContent("Beira 0/4Oberon 0/2Duos 0/1");
+    await pick(app, "Storm Falcon");
+    await pick(app, "Approaching Storm");
+    // Les prises hors plan comptent pour leur fae.
+    expect(faes()).toHaveTextContent("Beira 0/4Oberon 2/2Duos 0/1");
+    const oberon = within(faes() as HTMLElement).getByText("Oberon");
+    expect(oberon).toHaveClass("done");
+    expect(oberon).toHaveAttribute("title", "Oberon : 2 prise(s) sur 2 prévue(s)");
+    expect(within(faes() as HTMLElement).getByText("Beira")).not.toHaveClass("done");
+  });
+});
+
+describe("RUN : pas à pas", () => {
+  const steps = () => panel(/^Pas à pas/);
+  const card = () => steps().querySelector(".step") as HTMLElement;
+
+  it("étape en cours, Prise, Passer pour l'instant, Reprendre", async () => {
+    const app = await startRun();
+    expect(screen.getByRole("heading", { name: "Pas à pas · 0/11 pris" })).toBeInTheDocument();
+    expect(card()).toHaveTextContent(/^Étape 1 · aptitudeLucky Touch/);
+    const next = within(within(steps()).getByRole("region", { name: "Ensuite" })).getAllByRole("listitem");
+    expect(next.map((li) => li.querySelector(".bn")?.textContent)).toEqual(["Mighty Dash", "Critical Clover", "Mighty Strike"]);
+
+    await app.user.click(within(card()).getByRole("button", { name: "Prise" }));
+    expect(screen.getByText("Lucky Touch prise")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Pas à pas · 1/11 pris" })).toBeInTheDocument();
+    expect(card()).toHaveTextContent(/^Étape 2 · aptitudeMighty Dash/);
+
+    await app.user.click(within(card()).getByRole("button", { name: "Passer pour l'instant" }));
+    expect(card()).toHaveTextContent(/^Étape 3 · essentielleCritical Clover/);
+    // Prérequis colorés contre les prises : Lucky Touch donne l'effet Critique.
+    expect(card().querySelector(".req-ok")).toHaveTextContent("✓ un effet Critique");
+    expect((await storedRun(app)).skipped).toEqual(["gogmagog:mighty-dash"]);
+    const dash = within(panel(/^Encore à trouver/)).getByText("Mighty Dash").closest(".bitem");
+    expect(dash).toHaveClass("dim");
+
+    const all = within(steps()).getByText("Tout l'ordre (11)").closest("details") as HTMLElement;
+    const rows = within(all).getAllByRole("listitem");
+    expect(rows[0]).toHaveClass("done");
+    expect(rows[1]).toHaveClass("skip");
+    expect(rows[2]).toHaveClass("cur");
+    await app.user.click(within(rows[1]).getByRole("button", { name: "Reprendre" }));
+    expect(card()).toHaveTextContent(/^Étape 2 · aptitudeMighty Dash/);
+    expect((await storedRun(app)).skipped).toEqual([]);
+  });
+
+  it("« Reprendre les passées » ; une étape passée prise par « + Bénédiction » quitte les passées", async () => {
+    const app = await startRun();
+    await app.user.click(within(card()).getByRole("button", { name: "Passer pour l'instant" }));
+    await app.user.click(within(card()).getByRole("button", { name: "Passer pour l'instant" }));
+    await app.user.click(within(steps()).getByRole("button", { name: "Reprendre les passées (2)" }));
+    expect(card()).toHaveTextContent(/^Étape 1 · aptitudeLucky Touch/);
+
+    await app.user.click(within(card()).getByRole("button", { name: "Passer pour l'instant" }));
+    await pick(app, "Lucky Touch");
+    const r = await storedRun(app);
+    expect(r.skipped).toEqual([]);
+    expect(card()).toHaveTextContent(/^Étape 2 · aptitudeMighty Dash/);
+  });
+
+  it("plus aucune étape : tout pris, ou des étapes passées", async () => {
+    const app = await startRun("Spirale de givre");
+    for (let i = 0; i < 6; i++) await app.user.click(within(card()).getByRole("button", { name: "Prise" }));
+    await app.user.click(within(card()).getByRole("button", { name: "Passer pour l'instant" }));
+    expect(within(steps()).getByText("Plus aucune étape. Il reste des étapes passées.")).toBeInTheDocument();
+    await app.user.click(within(steps()).getByRole("button", { name: "Reprendre les passées (1)" }));
+    await app.user.click(within(card()).getByRole("button", { name: "Prise" }));
+    expect(within(steps()).getByText("Plus aucune étape. Tout le plan est pris.")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Pas à pas · 7/7 pris" })).toBeInTheDocument();
+  });
+});
+
+describe("RUN : potions", () => {
+  const pots = () => panel(/^Potions/);
+  const cell = (i: number) => within(pots()).getByLabelText(`Potion ${i}`);
+
+  it("prendre la prévue, une autre fae, annuler la dernière", async () => {
+    const app = await startRun();
+    expect(screen.getByRole("heading", { name: "Potions · 0/4" })).toBeInTheDocument();
+    expect(cell(1)).toHaveClass("next");
+    expect(cell(1)).toHaveTextContent("Potion 1—Prévue : Lugh");
+
+    await app.user.click(within(pots()).getByRole("button", { name: "Prendre la prévue : Lugh" }));
+    expect(screen.getByText("Potion de Lugh prise")).toBeInTheDocument();
+    expect(cell(1)).toHaveClass("filled");
+    expect(cell(1)).toHaveTextContent("Potion 1Lugh✓ prévue");
+    expect(cell(2)).toHaveClass("next");
+
+    await app.user.click(within(pots()).getByRole("button", { name: "Beira" }));
+    expect(cell(2)).toHaveTextContent("Potion 2BeiraPrévue : Gogmagog");
+    expect((await storedRun(app)).potions).toEqual(["lugh", "beira"]);
+
+    await app.user.click(within(pots()).getByRole("button", { name: "Annuler la dernière" }));
+    expect((await storedRun(app)).potions).toEqual(["lugh"]);
+    expect(screen.getByRole("heading", { name: "Potions · 1/4" })).toBeInTheDocument();
+  });
+
+  it("4 potions prises : plus de choix ; run libre : potions sans plan", async () => {
+    const app = await startRun(null, { empty: true });
+    expect(within(pots()).queryByRole("button", { name: /^Prendre la prévue/ })).not.toBeInTheDocument();
+    for (const f of ["Mab", "Mab", "Badb", "Titania"]) await app.user.click(within(pots()).getByRole("button", { name: f }));
+    expect(screen.getByRole("heading", { name: "Potions · 4/4" })).toBeInTheDocument();
+    expect(within(pots()).queryByRole("button", { name: "Mab" })).not.toBeInTheDocument();
+    expect(cell(4)).toHaveTextContent("Potion 4Titania");
+  });
+});
+
+describe("RUN : tri Ordre · Fae · Type", () => {
+  it("regroupe les prises et « Encore à trouver », garde le numéro de prise, mémorise le choix", async () => {
+    const app = await startRun();
+    for (const name of ["Lucky Touch", "Mighty Strike", "Collector", "Nimble"]) await pick(app, name);
+    const groups = (p: HTMLElement) => within(p).queryAllByRole("heading", { level: 3 }).map((h) => h.textContent).slice(1);
+
+    await app.user.click(within(panel("Prises, dans l'ordre")).getByRole("button", { name: "Fae" }));
+    const log = panel("Prises");
+    expect(groups(log)).toEqual(["Badb · 1", "Gogmagog · 1", "Lugh · 2"]);
+    expect(within(log).getByText("Collector").closest(".bitem")).toHaveTextContent(/^3Collector/);
+    expect(groups(panel(/^Encore à trouver/)).at(-1)).toBe("Duos · 1");
+    // Un seul choix pour les deux listes.
+    expect(within(panel(/^Encore à trouver/)).getByRole("button", { name: "Fae" })).toHaveAttribute("aria-pressed", "true");
+
+    await app.user.click(within(log).getByRole("button", { name: "Type" }));
+    expect(groups(panel("Prises"))).toEqual(["Aptitude · 2", "Standard · 2"]);
+    await flush();
+    expect((await app.storage.prefs.get()).runSort).toBe("kind");
+
+    await app.user.click(within(panel("Prises")).getByRole("button", { name: "Ordre" }));
+    expect(screen.getByRole("heading", { name: "Prises, dans l'ordre" })).toBeInTheDocument();
   });
 });
 

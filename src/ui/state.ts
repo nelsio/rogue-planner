@@ -5,6 +5,7 @@ import type { Prefs } from "../storage";
 export const VIEWS = ["builds", "edit", "run", "history", "catalog"] as const;
 export type View = (typeof VIEWS)[number];
 export type Theme = NonNullable<Prefs["theme"]>;
+export type RunSort = NonNullable<Prefs["runSort"]>;
 
 export interface AppState {
   builds: Build[];
@@ -15,6 +16,8 @@ export interface AppState {
   theme: Theme;
   /** Dernier filtre de fae du catalogue (« all » ou un id de fae). */
   codexFamily: string;
+  /** Tri des listes du RUN (Prises, Encore à trouver). */
+  runSort: RunSort;
   toast: { seq: number; text: string } | null;
 }
 
@@ -36,6 +39,7 @@ export type Action =
   /** « Abandonner sans enregistrer » : le run est supprimé. */
   | { type: "runRemoved"; id: string; view?: View }
   | { type: "codexFamily"; family: string }
+  | { type: "runSort"; sort: RunSort }
   | { type: "customAdded"; item: CustomItem; toast: string }
   | { type: "customRemoved"; id: string }
   /** Résultat d'un import par fusion ; un seul run reste actif (le plus récent), les autres sont abandonnés à `at`. */
@@ -50,7 +54,8 @@ export function initialState(library: Library, prefs: Prefs): AppState {
   let view: View = VIEWS.find((v) => v === prefs.lastView) ?? "builds";
   if (view === "edit" && !editing) view = "builds";
   return {
-    ...library, builds, view, editingId: editing, theme: prefs.theme ?? "auto", codexFamily: prefs.codexFamily ?? "all", toast: null,
+    ...library, builds, view, editingId: editing, theme: prefs.theme ?? "auto", codexFamily: prefs.codexFamily ?? "all",
+    runSort: prefs.runSort ?? "order", toast: null,
   };
 }
 
@@ -107,6 +112,8 @@ export function reducer(state: AppState, action: Action): AppState {
       return { ...state, runs: state.runs.filter((r) => r.id !== action.id), view: action.view ?? state.view };
     case "codexFamily":
       return { ...state, codexFamily: action.family };
+    case "runSort":
+      return { ...state, runSort: action.sort };
     case "customAdded":
       return { ...state, custom: [...state.custom, action.item], toast: withToast(state, action.toast) };
     case "customRemoved":

@@ -2,14 +2,16 @@
 
 Planner de builds pour jeux rogue-like, sur ordinateur et sur mobile. Premier jeu : **SWORN**.
 
-Préparez vos builds (aptitudes, bénédictions visées, duos, enclumes), puis suivez votre partie en direct :
-notez chaque bénédiction prise, l'outil montre l'écart au plan, ce qui reste à trouver et les duos qui s'ouvrent.
+Préparez vos builds (aptitudes, bénédictions visées, potions, ordre d'acquisition, duos, enclumes), puis suivez votre
+partie en direct, pas à pas :
+notez chaque bénédiction prise, l'outil montre l'étape suivante, l'écart au plan, ce qui reste à trouver et les duos qui
+s'ouvrent.
 
 **▶ Utiliser : <https://nelsio.github.io/rogue-planner/>**, ou téléchargez `rogue-planner.html` depuis la
 [dernière release](https://github.com/nelsio/rogue-planner/releases/latest) : un seul fichier, qui marche hors ligne.
 Vos données restent dans votre navigateur ; l'export JSON permet de les sauvegarder ou de changer d'appareil.
 
-![Mode RUN : compteurs, emplacements, prises dans l'ordre, ce qui reste à trouver](docs/img/run.png)
+![Mode RUN : compteurs, totaux par fae, pas à pas, ce qui reste à trouver](docs/img/run.png)
 
 | Bibliothèque | Création |
 |---|---|
@@ -23,8 +25,10 @@ Vos données restent dans votre navigateur ; l'export JSON permet de les sauvega
 
 - **Bibliothèque** de builds : créer, dupliquer, supprimer, lancer un run.
 - **Création** : classe, arme, sort ; mode **Libre** ou **Restreint** (seules les bénédictions débloquées) ;
-  prérequis en vert ✓ ou en orange ; duos atteignables ; enclumes ; notes.
-- **RUN** : prises dans l'ordre, essentielles, hors plan, emplacements, encore à trouver, duos ouverts, fin du run.
+  prérequis en vert ✓ ou en orange ; bénédictions nécessaires par fae ; 4 potions ; ordre d'acquisition ;
+  duos atteignables ; enclumes ; notes.
+- **RUN** : pas à pas dans l'ordre d'acquisition, totaux par fae, potions, prises triées par ordre, fae ou type,
+  essentielles, hors plan, emplacements avec leur fae prévue, encore à trouver, duos ouverts, fin du run.
 - **Historique** filtrable, **Catalogue** des 256 bénédictions, ajout d'une bénédiction manquante.
 - **Import / export** JSON par fusion. Thème clair, sombre ou automatique.
 

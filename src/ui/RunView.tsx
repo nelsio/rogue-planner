@@ -1,13 +1,18 @@
-// Mode RUN (HANDOFF §6.4) : prises dans l'ordre, écart au plan, emplacements, enclumes, autres choix, fin du run.
+// Mode RUN (HANDOFF §6.4) : écart au plan, totaux par fae, pas à pas, emplacements, potions, prises, enclumes,
+// autres choix, encore à trouver, fin du run.
 import { useState } from "react";
 import { applyPick, buildOwned, runProgress, type Build, type Run } from "@rogue/core";
 import { anvilGroups } from "./anvils";
 import { useApp } from "./context";
+import { FamilyTotals } from "./fae";
 import { FaeDot } from "./items";
 import { KitFields } from "./KitFields";
-import { typeLine } from "./labels";
+import { familyName, typeLine } from "./labels";
 import { useKit } from "./Library";
 import { Picker } from "./Picker";
+import { RunPotions } from "./RunPotions";
+import { SortedList, SortSwitch } from "./RunSort";
+import { RunSteps } from "./RunSteps";
 import { activeRun } from "./state";
 import { strings as t } from "./strings";
 import { useStartRun } from "./useStartRun";
@@ -42,7 +47,7 @@ function NoRun() {
 }
 
 function ActiveRun({ run: r, build: b }: { run: Run; build: Build | null }) {
-  const { dispatch, pack, env } = useApp();
+  const { state, dispatch, pack, env } = useApp();
   const kit = useKit();
   const [picking, setPicking] = useState(false);
   const [ending, setEnding] = useState(false);
@@ -51,7 +56,16 @@ function ActiveRun({ run: r, build: b }: { run: Run; build: Build | null }) {
   const index = pack.byId;
   const progress = runProgress(pack, b, r);
   const planned = b ? buildOwned(b) : new Set<string>();
-  const nameOf = (id: string | null) => (id ? (index.get(id)?.name ?? id) : "");
+  const skipped = new Set(r.skipped ?? []);
+  // Le numéro de prise reste le rang réel dans le run, quel que soit le tri ; une prise inconnue du pack est masquée.
+  const picks = r.picks.flatMap((p, rank) => {
+    const item = index.get(p.id);
+    return item ? [{ item, rank }] : [];
+  });
+  const remaining = progress.remaining.flatMap(({ id, prio }) => {
+    const item = index.get(id);
+    return item ? [{ item, prio }] : [];
+  });
 
   return (
     <section className="view">
@@ -90,67 +104,97 @@ function ActiveRun({ run: r, build: b }: { run: Run; build: Build | null }) {
           <div className="bar" aria-hidden="true">
             <i style={{ width: `${progress.coreTotal ? Math.round((progress.coreTaken / progress.coreTotal) * 100) : 0}%` }} />
           </div>
+          <div className="panel">
+            <h3>{t.runFamilies}</h3>
+            <div className="faes">
+              <FamilyTotals pack={pack} totals={progress} run empty={t.noBuildFamilies} />
+            </div>
+          </div>
         </>
       )}
 
       <div className="split">
         <div style={{ display: "grid", gap: 16, minWidth: 0 }}>
+          {b && <RunSteps run={r} build={b} progress={progress} />}
+
           <div className="panel">
             <h3>{t.slotsTitle}</h3>
             <div className="slots">
               {pack.slots.map((slot) => {
                 const s = progress.slots[slot.id];
                 const current = s.current ? index.get(s.current) : undefined;
-                const cls = ["slot", current ? "filled fae" : "empty-slot", s.mismatch && "off"].filter(Boolean).join(" ");
+                const plan = s.planned ? index.get(s.planned) : undefined;
+                const shown = current ?? plan;
+                const state = current ? "filled" : plan ? "plan-only empty-slot" : "empty-slot";
+                const cls = ["slot fae", state, s.mismatch && "off"].filter(Boolean).join(" ");
                 return (
-                  <div key={slot.id} className={cls} data-fae={current?.families[0]} aria-label={slot.label}>
+                  <div key={slot.id} className={cls} data-fae={shown?.families[0]} aria-label={slot.label}>
                     <span className="sl">{slot.label}</span>
                     <span className="sv">
                       {current ? (
                         <>
                           <FaeDot item={current} />
-                          {current.name}
+                          {current.name} <span className="fn">{familyName(pack, current.families[0])}</span>
                         </>
                       ) : (
                         "—"
                       )}
                     </span>
-                    {s.planned && (!current || s.mismatch) && <span className="planned">{t.plannedSlot(nameOf(s.planned))}</span>}
+                    {plan && (
+                      <span className="planned">
+                        {current && !s.mismatch ? (
+                          <span className="ok">{t.plannedOk}</span>
+                        ) : (
+                          <>
+                            {t.plannedPrefix}
+                            <FaeDot item={plan} />
+                            <b>{familyName(pack, plan.families[0])}</b> · {plan.name}
+                          </>
+                        )}
+                      </span>
+                    )}
                   </div>
                 );
               })}
             </div>
           </div>
 
+          <RunPotions run={r} progress={progress} />
+
           <div className="panel">
-            <h3>{t.picksTitle}</h3>
+            <div className="row" style={{ justifyContent: "space-between" }}>
+              <h3>{t.picksTitle(state.runSort === "order")}</h3>
+              <SortSwitch />
+            </div>
             <div className="blist log">
-              {r.picks.length ? (
-                r.picks.map((p, i) => {
-                  const x = index.get(p.id);
-                  if (!x) return null;
-                  const inPlan = planned.has(x.id);
-                  return (
-                    <div key={p.id} className="bitem">
-                      <span className="n">{i + 1}</span>
-                      <FaeDot item={x} />
-                      <div>
-                        <div className="bn">{x.name}</div>
-                        <div className="bt">{typeLine(pack, x)}</div>
+              {picks.length ? (
+                <SortedList
+                  entries={picks}
+                  itemOf={(p) => p.item}
+                  render={({ item: x, rank }) => {
+                    const inPlan = planned.has(x.id);
+                    return (
+                      <div key={x.id} className="bitem">
+                        <span className="n">{rank + 1}</span>
+                        <FaeDot item={x} />
+                        <div>
+                          <div className="bn">{x.name}</div>
+                          <div className="bt">{typeLine(pack, x)}</div>
+                        </div>
+                        <div className="row" style={{ flexWrap: "nowrap" }}>
+                          {b && <span className={inPlan ? "tag plan" : "tag off"}>{inPlan ? t.tagPlanned : t.tagOffPlan}</span>}
+                          <button
+                            className="btn small ghost"
+                            aria-label={t.removeItem(x.name)}
+                            onClick={() => save({ ...r, picks: r.picks.filter((_, j) => j !== rank) })}
+                          >
+                            ✕
+                          </button>
+                        </div>
                       </div>
-                      <div className="row" style={{ flexWrap: "nowrap" }}>
-                        {b && <span className={inPlan ? "tag plan" : "tag off"}>{inPlan ? t.tagPlanned : t.tagOffPlan}</span>}
-                        <button
-                          className="btn small ghost"
-                          aria-label={t.removeItem(x.name)}
-                          onClick={() => save({ ...r, picks: r.picks.filter((_, j) => j !== i) })}
-                        >
-                          ✕
-                        </button>
-                      </div>
-                    </div>
-                  );
-                })
+                    );
+                  }}
+                />
               ) : (
                 <p className="empty">{t.noPicks}</p>
               )}
@@ -190,14 +234,17 @@ function ActiveRun({ run: r, build: b }: { run: Run; build: Build | null }) {
         <aside className="side" style={{ display: "grid", gap: 16, minWidth: 0 }}>
           {b && (
             <div className="panel">
-              <h3>{t.remainingTitle}</h3>
+              <div className="row" style={{ justifyContent: "space-between" }}>
+                <h3>{t.remainingTitle(remaining.length)}</h3>
+                <SortSwitch />
+              </div>
               <div className="blist">
-                {progress.remaining.length ? (
-                  progress.remaining.map(({ id, prio }) => {
-                    const x = index.get(id);
-                    if (!x) return null;
-                    return (
-                      <div key={id} className="bitem">
+                {remaining.length ? (
+                  <SortedList
+                    entries={remaining}
+                    itemOf={(e) => e.item}
+                    render={({ item: x, prio }) => (
+                      <div key={x.id} className={skipped.has(x.id) ? "bitem dim" : "bitem"}>
                         <FaeDot item={x} />
                         <div>
                           <div className="bn">{x.name}</div>
@@ -205,8 +252,8 @@ function ActiveRun({ run: r, build: b }: { run: Run; build: Build | null }) {
                         </div>
                         <span className={prio === "bonus" ? "tag" : "tag plan"}>{t.tagPrio[prio]}</span>
                       </div>
-                    );
-                  })
+                    )}
+                  />
                 ) : (
                   <p className="empty">{t.allTaken}</p>
                 )}

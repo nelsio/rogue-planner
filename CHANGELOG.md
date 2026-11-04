@@ -1,5 +1,17 @@
 # Journal des versions
 
+## v0.1.3 — Révision 2 : RUN
+- Pas à pas : étape en cours (type, effet, prérequis colorés contre les prises), Prise, Passer pour l'instant,
+  « Ensuite » (3 étapes), « Tout l'ordre » repliable avec Reprendre, « Reprendre les passées (N) ».
+- Fae · prises / nécessaires : puces « Lugh 1/5 », vertes quand le total est atteint, et « Duos 0/1 ».
+- Aptitudes : nom de la fae prise, fae et aptitude prévues sur les emplacements vides (cadre pointillé à sa
+  couleur), « ✓ prévu » quand c'est conforme.
+- Potions : 4 cases, la prochaine encadrée, « Prendre la prévue », une puce par fae, « Annuler la dernière ».
+- Tri Ordre · Fae · Type de « Prises » et « Encore à trouver », mémorisé (`prefs.runSort`) ; le numéro de prise
+  reste le rang réel. « Encore à trouver · N » atténue les étapes passées.
+- e2e : scénario 6 (pas à pas) ; scénario 5 vérifie l'étape en cours après rechargement.
+- README (captures refaites) et guide du joueur à jour.
+
 ## v0.1.2 — Révision 2 : Création
 - Bibliothèque et Création : puces de bénédictions nécessaires par fae (« Lugh ×5 », « Duos ×1 »), triées par
   nombre décroissant puis dans l'ordre des fae du pack.
