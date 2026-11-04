@@ -1,10 +1,9 @@
 // Pastilles de fae : seules marques visuelles du jeu (aucune ressource graphique de SWORN).
 import type { Build, Pack } from "@rogue/core";
-import { itemIndex } from "@rogue/core";
 
 /** Fae d'un build : celles des aptitudes et des bénédictions visées (hors duos), dans l'ordre d'apparition. */
 export function buildFamilies(pack: Pack, build: Build): string[] {
-  const index = itemIndex(pack);
+  const index = pack.byId;
   const out = new Set<string>();
   for (const id of Object.values(build.abilities)) if (id) index.get(id)?.families.forEach((f) => out.add(f));
   for (const t of build.targets) {

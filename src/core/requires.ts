@@ -1,9 +1,9 @@
 // Prérequis et duos. L'ensemble « possédé » vaut buildOwned(build) en Création, les prises en RUN.
-import { getItem, itemIndex, type Alternative, type Item, type Pack } from "./pack";
+import { getItem, type Alternative, type Item, type Pack } from "./pack";
 import type { Build } from "./schemas";
 
 function ownedItems(pack: Pack, owned: Iterable<string>): Item[] {
-  const index = itemIndex(pack);
+  const index = pack.byId;
   return [...new Set(owned)].flatMap((id) => index.get(id) ?? []);
 }
 

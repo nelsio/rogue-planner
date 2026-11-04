@@ -8,13 +8,22 @@ const minimalRun = { id: "r1", game: "sworn", status: "active", startedAt: "t", 
 describe("BuildSchema", () => {
   it("complète les valeurs par défaut", () => {
     expect(BuildSchema.parse(minimalBuild)).toEqual({
-      ...minimalBuild, mode: "restricted", abilities: {}, targets: [], anvils: [], notes: "",
+      ...minimalBuild, mode: "restricted", abilities: {}, targets: [], anvils: [], order: [], potions: [], notes: "",
     });
   });
 
   it("convertit les emplacements vides du prototype en null", () => {
     const b = BuildSchema.parse({ ...minimalBuild, abilities: { light: "", heavy: null, dash: "lugh:lucky-dash" } });
     expect(b.abilities).toEqual({ light: null, heavy: null, dash: "lugh:lucky-dash" });
+  });
+
+  it("convertit les potions vides du prototype en null", () => {
+    expect(BuildSchema.parse({ ...minimalBuild, potions: ["beira", "", null] }).potions).toEqual(["beira", null, null]);
+  });
+
+  it("refuse une étape d'ordre vide, avec le chemin fautif", () => {
+    const res = BuildSchema.safeParse({ ...minimalBuild, order: ["lugh:lucky-touch", ""] });
+    expect(res.error?.issues[0].path).toEqual(["order", 1]);
   });
 
   it("refuse une priorité inconnue, avec le chemin fautif", () => {
@@ -27,7 +36,7 @@ describe("BuildSchema", () => {
 describe("RunSchema", () => {
   it("complète les valeurs par défaut", () => {
     expect(RunSchema.parse(minimalRun)).toEqual({
-      ...minimalRun, buildId: null, picks: [], anvils: [], others: [], result: null,
+      ...minimalRun, buildId: null, picks: [], anvils: [], potions: [], skipped: [], others: [], result: null,
     });
   });
 

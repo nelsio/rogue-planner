@@ -1,6 +1,6 @@
 // Mode Création (HANDOFF §6.3) : départ, aptitudes, bénédictions visées, fae, duos, enclumes, notes.
 import { useState } from "react";
-import { buildOwned, itemIndex, missing, reachableDuos, toggleTarget, type Build } from "@rogue/core";
+import { buildOwned, missing, reachableDuos, toggleTarget, type Build } from "@rogue/core";
 import { anvilGroups } from "./anvils";
 import { useApp } from "./context";
 import { buildFamilies } from "./fae";
@@ -25,7 +25,7 @@ function BuildEditor({ build: b }: { build: Build }) {
   const { start, confirmFor } = useStartRun();
   const save = (next: Build, toast?: string) => dispatch({ type: "buildSaved", build: { ...next, updatedAt: env.now() }, toast });
 
-  const index = itemIndex(pack);
+  const index = pack.byId;
   const owned = buildOwned(b);
   const restricted = b.mode === "restricted";
   const families = buildFamilies(pack, b);

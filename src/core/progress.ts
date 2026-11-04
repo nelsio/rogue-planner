@@ -1,5 +1,6 @@
 // Création (bénédictions visées) et RUN (prises, écart au plan).
-import { getItem, itemIndex, type Pack, type SlotId } from "./pack";
+import { getItem, type Pack, type SlotId } from "./pack";
+import { buildPotions, familyTotals, nextStep, planOrder } from "./plan";
 import { buildOwned, reachableDuos } from "./requires";
 import type { Build, Prio, Run } from "./schemas";
 
@@ -18,11 +19,14 @@ export function toggleTarget(pack: Pack, build: Build, itemId: string): Build {
   return { ...build, targets: build.targets.filter((t) => t.id !== itemId) };
 }
 
-/** Ajoute une prise ; une aptitude remplace celle du même emplacement ; pas de doublon. */
+/**
+ * Ajoute une prise ; une aptitude remplace celle du même emplacement ; pas de doublon.
+ * Une étape passée qui est prise quitte les passées.
+ */
 export function applyPick(pack: Pack, run: Run, itemId: string, at: string): Run {
   if (run.picks.some((p) => p.id === itemId)) return run;
   const item = getItem(pack, itemId);
-  const index = itemIndex(pack);
+  const index = pack.byId;
   // Une prise inconnue du pack (bénédiction ajoutée puis retirée) est gardée telle quelle.
   const picks =
     item.kind === "ability"
@@ -31,7 +35,8 @@ export function applyPick(pack: Pack, run: Run, itemId: string, at: string): Run
           return !(other?.kind === "ability" && other.slot === item.slot);
         })
       : run.picks;
-  return { ...run, picks: [...picks, { id: itemId, at }] };
+  const skipped = run.skipped && { skipped: run.skipped.filter((id) => id !== itemId) };
+  return { ...run, picks: [...picks, { id: itemId, at }], ...skipped };
 }
 
 export interface SlotProgress {
@@ -45,9 +50,16 @@ export interface RunProgress {
   coreTaken: number;
   taken: number;
   offPlan: string[];
-  remaining: { id: string; prio: Prio }[];
+  /** Plan non pris, dans l'ordre d'acquisition, aptitudes comprises. */
+  remaining: { id: string; prio: Prio | "ability" }[];
   slots: Record<SlotId, SlotProgress>;
   openDuos: string[];
+  next: { index: number; id: string } | null;
+  /** Une entrée par fae du plan ; `taken` compte aussi les prises hors plan. */
+  families: { family: string; planned: number; taken: number }[];
+  /** Duos du plan, et ceux déjà pris. */
+  duos: { planned: number; taken: number };
+  potions: { index: number; planned: string | null; taken: string | null }[];
 }
 
 export function runProgress(pack: Pack, build: Build | null, run: Run): RunProgress {
@@ -56,13 +68,23 @@ export function runProgress(pack: Pack, build: Build | null, run: Run): RunProgr
   const targets = build?.targets ?? [];
   const core = targets.filter((t) => t.prio === "core");
   const plan = build ? buildOwned(build) : null;
-  const left = targets.filter((t) => !pickedSet.has(t.id));
+  const order = build ? planOrder(pack, build) : [];
+  const prio = new Map<string, Prio | "ability">(targets.map((t) => [t.id, t.prio]));
+  for (const id of Object.values(build?.abilities ?? {})) if (id) prio.set(id, "ability");
+
+  const planTotals = familyTotals(pack, order);
+  const takenTotals = familyTotals(pack, picked);
+  const familyRank = new Map(pack.families.map((f, i) => [f.id, i]));
+  const families = Object.entries(planTotals.families)
+    .map(([family, planned]) => ({ family, planned, taken: takenTotals.families[family] ?? 0 }))
+    .sort((a, b) => b.planned - a.planned || familyRank.get(a.family)! - familyRank.get(b.family)!);
+  const plannedPotions = build ? buildPotions(pack, build) : [];
 
   const slots: Record<SlotId, SlotProgress> = {};
   for (const { id: slot } of pack.slots) {
     const current =
       picked.findLast((id) => {
-        const item = itemIndex(pack).get(id);
+        const item = pack.byId.get(id);
         return item?.kind === "ability" && item.slot === slot;
       }) ?? null;
     const planned = build?.abilities[slot] ?? null;
@@ -74,8 +96,16 @@ export function runProgress(pack: Pack, build: Build | null, run: Run): RunProgr
     coreTaken: core.filter((t) => pickedSet.has(t.id)).length,
     taken: picked.length,
     offPlan: plan ? picked.filter((id) => !plan.has(id)) : [],
-    remaining: [...left.filter((t) => t.prio === "core"), ...left.filter((t) => t.prio === "bonus")],
+    remaining: order.filter((id) => !pickedSet.has(id)).map((id) => ({ id, prio: prio.get(id)! })),
     slots,
     openDuos: reachableDuos(pack, picked, { restricted: false }),
+    next: build ? nextStep(pack, build, run) : null,
+    families,
+    duos: { planned: planTotals.duos.length, taken: planTotals.duos.filter((id) => pickedSet.has(id)).length },
+    potions: Array.from({ length: pack.potions.perRun }, (_, index) => ({
+      index,
+      planned: plannedPotions[index] ?? null,
+      taken: run.potions?.[index] ?? null,
+    })),
   };
 }

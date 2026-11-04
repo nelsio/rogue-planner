@@ -1,6 +1,6 @@
 // Mode RUN (HANDOFF §6.4) : prises dans l'ordre, écart au plan, emplacements, enclumes, autres choix, fin du run.
 import { useState } from "react";
-import { applyPick, buildOwned, itemIndex, runProgress, type Build, type Run } from "@rogue/core";
+import { applyPick, buildOwned, runProgress, type Build, type Run } from "@rogue/core";
 import { anvilGroups } from "./anvils";
 import { useApp } from "./context";
 import { FaeDot } from "./items";
@@ -48,7 +48,7 @@ function ActiveRun({ run: r, build: b }: { run: Run; build: Build | null }) {
   const [ending, setEnding] = useState(false);
   const save = (run: Run, toast?: string) => dispatch({ type: "runSaved", run, toast });
 
-  const index = itemIndex(pack);
+  const index = pack.byId;
   const progress = runProgress(pack, b, r);
   const planned = b ? buildOwned(b) : new Set<string>();
   const nameOf = (id: string | null) => (id ? (index.get(id)?.name ?? id) : "");
@@ -203,7 +203,7 @@ function ActiveRun({ run: r, build: b }: { run: Run; build: Build | null }) {
                           <div className="bn">{x.name}</div>
                           <div className="bt">{typeLine(pack, x)}</div>
                         </div>
-                        <span className={prio === "core" ? "tag plan" : "tag"}>{prio === "core" ? t.tagCore : t.tagBonus}</span>
+                        <span className={prio === "bonus" ? "tag" : "tag plan"}>{t.tagPrio[prio]}</span>
                       </div>
                     );
                   })
