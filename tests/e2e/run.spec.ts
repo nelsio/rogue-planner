@@ -1,4 +1,5 @@
-// Scénarios e2e 2 et 5 (HANDOFF §9.2) : run complet jusqu'à l'historique ; run actif retrouvé au rechargement.
+// Scénarios e2e 2 et 5 (HANDOFF §9.2) : run complet jusqu'à l'historique ; run actif et étape en cours retrouvés au
+// rechargement.
 import { expect, test, type Page } from "@playwright/test";
 import type { Run } from "@rogue/core";
 import { readStore } from "./helpers";
@@ -50,18 +51,20 @@ test("scénario 2 : trois prises dont une hors plan, une enclume prévue, victoi
   await expect(page.getByTitle("Run en cours")).toHaveCount(0);
 });
 
-test("scénario 5 : le run actif est retrouvé au rechargement", async ({ page }) => {
+test("scénario 5 : le run actif est retrouvé au rechargement, avec son étape en cours", async ({ page }) => {
   await page.goto("");
-  await page.getByRole("button", { name: "Run sans build" }).click();
-  await pick(page, "Collector");
+  await page.getByRole("article", { name: "Critiques et séismes" }).getByRole("button", { name: "Lancer un run" }).click();
+  await page.locator(".step").getByRole("button", { name: "Prise" }).click();
   await expect(page.locator(".log .bitem")).toHaveCount(1);
   // Les écritures IndexedDB sont asynchrones : on attend la prise en base avant de recharger.
   await expect
     .poll(async () => ((await readStore(page, "runs")).values as Run[]).find((r) => r.status === "active")?.picks.length)
     .toBe(1);
   await page.reload();
-  await expect(page.getByRole("heading", { name: "Run libre" })).toBeVisible();
-  await expect(page.locator(".log .bitem")).toContainText("Collector");
+  await expect(page.getByRole("heading", { name: "Critiques et séismes" })).toBeVisible();
+  await expect(page.locator(".log .bitem")).toContainText("Lucky Touch");
+  await expect(page.locator(".step")).toContainText("Étape 2 · aptitude");
+  await expect(page.locator(".step")).toContainText("Mighty Dash");
   await expect(page.getByTitle("Run en cours")).toBeVisible();
 });
 

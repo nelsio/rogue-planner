@@ -42,9 +42,17 @@ ils ne reviendront pas.
 - À chaque bénédiction prise en jeu, touchez **+ Bénédiction**. Celles prévues par le build sont en tête.
   Une bénédiction verrouillée reste choisissable : c'est le jeu qui fait foi.
 - Les compteurs montrent les **essentielles** prises, le nombre de **prises** et celles **hors plan**.
-- **Aptitudes** : une aptitude prise remplace celle du même emplacement ; « Prévu : … » rappelle le plan.
-- **Encore à trouver** liste ce qui manque, aptitudes comprises, dans l'ordre d'acquisition.
-  **Duos atteignables maintenant** suit vos prises.
+  **Fae · prises / nécessaires** compte vos prises par fae (« Lugh 1/5 ») ; la puce passe au vert une fois le
+  total atteint.
+- **Pas à pas** suit l'ordre d'acquisition du build : l'étape en cours, avec ses prérequis, puis les trois
+  suivantes. **Prise** la note ; **Passer pour l'instant** la met de côté (barrée dans « Tout l'ordre », avec
+  **Reprendre**). Prendre une étape passée par « + Bénédiction » la reprend aussi.
+- **Aptitudes** : une aptitude prise remplace celle du même emplacement. Un emplacement vide montre l'aptitude
+  prévue et sa fae ; « ✓ prévu » confirme qu'elle est prise.
+- **Potions** : la prochaine case est encadrée ; **Prendre la prévue** ou touchez une autre fae.
+  **Annuler la dernière** corrige une erreur.
+- **Prises** et **Encore à trouver** (aptitudes comprises) se trient par **Ordre**, **Fae** ou **Type** ; le choix
+  est retenu. **Duos atteignables maintenant** suit vos prises.
 - Notez les **enclumes** prises et les **autres choix** (Merlin, Morgane, sanctuaire…).
 - **Terminer le run** : victoire ou défaite, jusqu'où vous êtes allé, vos notes. Le run part dans l'historique.
   « Abandonner sans enregistrer » l'efface.

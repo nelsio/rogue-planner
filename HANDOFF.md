@@ -718,3 +718,17 @@ Si un lot dépasse une PR raisonnable (plus de ~1 500 lignes hors tests et donn�
   devient `null`.
 - CSS : bloc de la révision 2 du prototype porté tel quel (totaux, ordre, pas à pas, potions) ; les sélecteurs de
   potion font 40 px sur écran tactile.
+
+## Annexe Révision 2 — RUN (v0.1.3)
+- Rattrapage du lot 4 (annexe D) : §6.4 blocs 1 à 4 et « Encore à trouver · N », §6.8 en mode RUN, §6.9.
+  Scénarios e2e 5 (étape en cours après rechargement) et 6 verts. Avec cette PR, la révision 2 est livrée.
+- `ui/RunSteps.tsx` (pas à pas), `ui/RunPotions.tsx` (potions), `ui/RunSort.tsx` (`SortSwitch`, `SortedList`,
+  `groupBy`). `RunView` garde l'en-tête, les totaux, les aptitudes, les prises, les enclumes et la colonne de droite.
+- Pas à pas : le type de l'étape vient de `runProgress.remaining` ; « Tout l'ordre » n'apparaît que tant qu'il reste
+  une étape, comme dans le prototype (« Reprendre les passées » reste dans l'en-tête).
+- Tri : `prefs.runSort` (`order` | `family` | `kind`), action `runSort` du reducer, persisté comme `codexFamily`.
+  En Fae, une fae hors pack (ajout manuel « Autre ») forme un groupe « Autre » sans pastille, avant les duos ; en
+  Type, les groupes suivent `pack.kinds` (Aptitude, Standard, Duo, Table ronde, Ajoutée).
+- Puce « Duos » en RUN : jamais verte, comme dans le prototype (§6.8 ne prévoit la bordure verte que pour les fae).
+- Toasts repris du prototype : « Lucky Touch prise » (étape), « Potion de Lugh prise » (élision « d'Oberon »).
+- `scripts/screenshots.mjs` : scènes RUN refaites avec le pas à pas et les potions ; captures du README régénérées.

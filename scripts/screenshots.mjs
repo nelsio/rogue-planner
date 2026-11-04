@@ -25,11 +25,15 @@ const shots = [
   }],
   ["run", desktop, async (page) => {
     await page.getByRole("button", { name: "Lancer un run" }).first().click();
-    for (const n of ["Lucky Touch", "Critical Clover", "Nimble"]) await pick(page, n);
+    // Pas à pas : une étape prise, une passée ; la potion prévue ; une prise hors plan.
+    await page.locator(".step").getByRole("button", { name: "Prise" }).click();
+    await page.locator(".step").getByRole("button", { name: "Passer pour l'instant" }).click();
+    await page.getByRole("button", { name: /^Prendre la prévue/ }).click();
+    await pick(page, "Nimble");
   }],
   ["run-mobile", phone, async (page) => {
     await page.getByRole("button", { name: "Lancer un run" }).first().click();
-    for (const n of ["Lucky Touch", "Mighty Strike"]) await pick(page, n);
+    for (let i = 0; i < 2; i++) await page.locator(".step").getByRole("button", { name: "Prise" }).click();
   }],
   ["selecteur-mobile", phone, async (page) => {
     await page.getByRole("button", { name: "Modifier" }).first().click();
@@ -45,7 +49,8 @@ for (const [name, ctxOpts, act] of shots) {
   const page = await ctx.newPage();
   await page.goto(url);
   await act(page);
-  // Laisse passer les toasts.
+  // Haut de page, et laisse passer les toasts.
+  await page.evaluate(() => window.scrollTo(0, 0));
   await page.waitForTimeout(1800);
   await page.screenshot({ path: `${outDir}/${name}.png` });
   console.log(`${outDir}/${name}.png`);

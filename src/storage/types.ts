@@ -18,6 +18,8 @@ export const PrefsSchema = z.object({
   lastView: z.string().optional(),
   lastBuildId: z.string().optional(),
   codexFamily: z.string().optional(),
+  // Tri des listes du RUN (HANDOFF §6.9).
+  runSort: z.enum(["order", "family", "kind"]).optional(),
   persistRequested: z.boolean().optional(),
   // Les exemples ne sont chargés qu'une fois : une bibliothèque vidée par le joueur reste vide.
   examplesLoaded: z.boolean().optional(),
