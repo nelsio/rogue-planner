@@ -1,11 +1,11 @@
 // Libellés des prérequis et des bénédictions (HANDOFF §6.3), construits depuis le pack.
-import { itemIndex, type Alternative, type Item, type Pack } from "@rogue/core";
+import type { Alternative, Item, Pack } from "@rogue/core";
 import { strings as t } from "./strings";
 
 export const familyName = (pack: Pack, id: string) => pack.families.find((f) => f.id === id)?.name ?? t.otherFamily;
 
 export function alternativeLabel(pack: Pack, alt: Alternative): string {
-  const index = itemIndex(pack);
+  const index = pack.byId;
   if ("item" in alt) return index.get(alt.item)?.name ?? alt.item;
   if ("trigger" in alt) {
     const label = pack.triggers.find((x) => x.id === alt.trigger)?.label ?? alt.trigger;

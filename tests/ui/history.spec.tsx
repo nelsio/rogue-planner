@@ -30,7 +30,7 @@ describe("historique", () => {
     const rows = screen.getAllByRole("row");
     expect(within(rows[0]).getAllByRole("columnheader").map((c) => c.textContent)).toEqual(["Date", "Build", "Départ", "Résultat", "Prises", "Notes"]);
     const cells = within(rows[1]).getAllByRole("cell");
-    expect(cells[0]).toHaveTextContent("03/11/2026");
+    expect(cells[0]).toHaveTextContent("04/11/2026");
     expect(cells[1]).toHaveTextContent("Critiques et séismes Exemple");
     expect(cells[2]).toHaveTextContent("Vigilante · Chakrams · Shadow Strike");
     expect(cells[3]).toHaveTextContent("DéfaiteBoss de la 2e zone");

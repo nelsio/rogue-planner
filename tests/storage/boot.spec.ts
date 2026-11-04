@@ -1,6 +1,6 @@
 import { IDBFactory } from "fake-indexeddb";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import exportPrototype from "../fixtures/export-prototype.json";
+import exportPrototype from "../fixtures/export-prototype-v2.json";
 import { swornExamples } from "../../src/games/sworn";
 import { loadExamples, memoryStorage, openStorage, requestPersistence, type Storage } from "../../src/storage";
 
@@ -99,8 +99,8 @@ describe("requestPersistence", () => {
 });
 
 describe("loadExamples", () => {
-  it("les exemples SWORN sont ceux du prototype", () => {
-    expect(swornExamples).toEqual(exportPrototype);
+  it("les exemples SWORN sont ceux du prototype (révision 2, sans le run actif)", () => {
+    expect(swornExamples).toEqual({ ...exportPrototype, runs: exportPrototype.runs.filter((r) => r.id !== "ex-r2") });
   });
 
   it("charge deux builds et un run d'exemple au premier lancement", async () => {

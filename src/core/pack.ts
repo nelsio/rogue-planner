@@ -61,11 +61,15 @@ export const PackSchema = z.strictObject({
       options: z.array(z.strictObject({ id: Id, name: z.string().min(1), effect: z.string() })),
     }),
   ),
+  // Potions d'un run : une par fae (§4.8).
+  potions: z.strictObject({ perRun: z.number().int().positive(), from: z.literal("families") }),
   otherChoices: z.array(Labelled),
 });
 
-export type Pack = z.output<typeof PackSchema>;
-export type Item = Pack["items"][number];
+export type PackData = z.output<typeof PackSchema>;
+/** Pack validé, avec l'index des bénédictions par identifiant. */
+export type Pack = PackData & { byId: Map<string, Item> };
+export type Item = PackData["items"][number];
 export type ItemKind = Item["kind"];
 export type Alternative = z.output<typeof AlternativeSchema>;
 export type SlotId = string;
@@ -85,10 +89,14 @@ export function loadPack(json: unknown): Pack {
   if (!parsed.success) throw new PackFormatError(zodErrors(parsed.error));
   const errors = crossCheck(parsed.data);
   if (errors.length) throw new PackFormatError(errors);
-  return parsed.data;
+  return indexed(parsed.data);
 }
 
-function crossCheck(pack: Pack): FieldError[] {
+function indexed(data: PackData): Pack {
+  return { ...data, byId: new Map(data.items.map((i) => [i.id, i])) };
+}
+
+function crossCheck(pack: PackData): FieldError[] {
   const errors: FieldError[] = [];
   const err = (path: string, message: string) => errors.push({ path, message });
 
@@ -149,9 +157,8 @@ const CUSTOM_KIND = { id: "custom", label: "Ajoutée" };
 
 /** Ajoute au pack les bénédictions saisies à la main (type « custom », sans prérequis). */
 export function withCustom(pack: Pack, custom: readonly CustomItem[]): Pack {
-  const known = new Set(pack.items.map((i) => i.id));
   const added: Item[] = custom
-    .filter((c) => !known.has(c.id))
+    .filter((c) => !pack.byId.has(c.id))
     .map((c) => ({
       id: c.id,
       name: c.name,
@@ -162,23 +169,11 @@ export function withCustom(pack: Pack, custom: readonly CustomItem[]): Pack {
       requires: [],
     }));
   const kinds = pack.kinds.some((k) => k.id === CUSTOM_KIND.id) ? pack.kinds : [...pack.kinds, CUSTOM_KIND];
-  return { ...pack, kinds, items: [...pack.items, ...added] };
-}
-
-const indexes = new WeakMap<Pack, Map<string, Item>>();
-
-/** Index des bénédictions par identifiant, calculé une fois par pack. */
-export function itemIndex(pack: Pack): Map<string, Item> {
-  let index = indexes.get(pack);
-  if (!index) {
-    index = new Map(pack.items.map((i) => [i.id, i]));
-    indexes.set(pack, index);
-  }
-  return index;
+  return indexed({ ...pack, kinds, items: [...pack.items, ...added] });
 }
 
 export function getItem(pack: Pack, itemId: string): Item {
-  const item = itemIndex(pack).get(itemId);
+  const item = pack.byId.get(itemId);
   if (!item) throw new Error(`Bénédiction inconnue : « ${itemId} »`);
   return item;
 }

@@ -39,7 +39,7 @@ describe("catalogue", () => {
     expect((await app.storage.prefs.get()).codexFamily).toBe("oberon");
 
     await app.user.click(screen.getByRole("button", { name: "Toutes" }));
-    await app.user.type(screen.getByRole("searchbox", { name: "Chercher un nom ou un effet" }), "trèfle");
+    await app.user.type(screen.getByRole("searchbox", { name: "Chercher un nom ou un effet" }), "golden clover");
     expect(within(list()).getByText("Critical Clover")).toBeInTheDocument();
     await app.user.type(screen.getByRole("searchbox"), "zzz");
     expect(screen.getByText("Aucun résultat.")).toBeInTheDocument();

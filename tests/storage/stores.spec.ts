@@ -6,11 +6,11 @@ import { indexedDbStorage, memoryStorage, openDatabase, type Storage } from "../
 const build = (id: string, over: Partial<Build> = {}): Build => ({
   id, game: "sworn", name: id, mode: "restricted", hero: "vigilante", weapon: "Chakrams", spell: "Shadow Strike",
   abilities: { light: "lugh:lucky-touch", heavy: null }, targets: [{ id: "lugh:collector", prio: "core" }],
-  anvils: [], notes: "", updatedAt: "2026-11-03T10:00:00.000Z", ...over,
+  anvils: [], order: [], potions: [], notes: "", updatedAt: "2026-11-03T10:00:00.000Z", ...over,
 });
 const run = (id: string): Run => ({
   id, game: "sworn", buildId: null, status: "active", startedAt: "t", hero: "vigilante", weapon: "Chakrams",
-  spell: "Shadow Strike", picks: [{ id: "lugh:collector", at: "t" }], anvils: [], others: [], result: null,
+  spell: "Shadow Strike", picks: [{ id: "lugh:collector", at: "t" }], anvils: [], potions: [], skipped: [], others: [], result: null,
 });
 const custom = (id: string): CustomItem => ({ id, game: "sworn", name: "Blood Clot", family: "badb", effect: "" });
 const sortById = <T extends { id: string }>(l: T[]) => [...l].sort((a, b) => a.id.localeCompare(b.id));

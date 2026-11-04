@@ -99,12 +99,13 @@ describe("RUN : prises", () => {
     expect((await storedRun(app)).picks.map((p) => p.id)).toEqual(["badb:shadow-touch"]);
   });
 
-  it("encore à trouver : essentielles d'abord, puis bonus ; vide quand tout est pris", async () => {
+  it("encore à trouver : ordre d'acquisition, aptitudes comprises ; vide quand tout est pris", async () => {
     const app = await startRun("Spirale de givre");
     const remaining = () => panel("Encore à trouver");
-    const tags = within(remaining()).getAllByText(/^(essentielle|bonus)$/).map((n) => n.textContent);
-    expect(tags).toEqual(["essentielle", "essentielle", "essentielle", "bonus"]);
-    for (const name of ["Spell Caster", "Mana Well", "Nova Surge", "Onslaught"]) await pick(app, name);
+    const tags = within(remaining()).getAllByText(/^(aptitude|essentielle|bonus)$/).map((n) => n.textContent);
+    expect(tags).toEqual(["aptitude", "aptitude", "aptitude", "essentielle", "essentielle", "essentielle", "bonus"]);
+    const plan = ["Chilling Flourish", "Chilling Dash", "Storm Falcon", "Spell Caster", "Mana Well", "Nova Surge", "Onslaught"];
+    for (const name of plan) await pick(app, name);
     expect(within(remaining()).getByText("Tout le plan est pris.")).toBeInTheDocument();
   });
 

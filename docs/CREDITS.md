@@ -4,14 +4,15 @@
 Licence MIT (voir [LICENSE](../LICENSE)).
 
 ## Données SWORN
-`src/games/sworn/pack.json` : prérequis, effets, bénédictions et enclumes tirés du
+`src/games/sworn/pack.json` : prérequis, effets produits, bénédictions ajoutées et enclumes tirés du
 [SWORN Wiki](https://sworn-game.fandom.com/) (Fandom), sous licence
 [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/), notamment des pages de chaque fae
 (Badb, Beira, Cliona, Gogmagog, Lugh, Mab, Oberon, Titania) et des augments de *Sword in the Stone*.
-Ce fichier est donc diffusé sous CC BY-SA 3.0. Les effets y sont résumés en français.
+Ce fichier est donc diffusé sous CC BY-SA 3.0.
 
-Liste initiale des bénédictions : guide Steam
+Liste initiale des bénédictions et descriptions anglaises (texte du jeu) : guide Steam
 [« SWORN: All Blessings Guide »](https://steamcommunity.com/sharedfiles/filedetails/?id=3432002004).
+Les descriptions des enclumes et de dix bénédictions relevées sur le wiki sont des résumés anglais rédigés (HANDOFF, P7).
 
 Les sources sont aussi rappelées dans l'application, en tête du Catalogue.
 

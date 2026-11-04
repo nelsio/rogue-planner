@@ -47,7 +47,26 @@
         }
       ],
       "notes": "Étourdir puis critiquer. Prendre Lugh en premier si l'offre le permet.",
-      "updatedAt": "2026-11-03T16:28:02.442Z"
+      "order": [
+        "lugh:lucky-touch",
+        "gogmagog:mighty-dash",
+        "lugh:critical-clover",
+        "gogmagog:mighty-strike",
+        "duo:critical-opening",
+        "gogmagog:unmatched-power",
+        "gogmagog:opportunistic",
+        "lugh:lucky-flourish",
+        "lugh:stroke-of-luck",
+        "lugh:collector",
+        "gogmagog:tough-stuff"
+      ],
+      "potions": [
+        "lugh",
+        "gogmagog",
+        "lugh",
+        "gogmagog"
+      ],
+      "updatedAt": "2026-11-04T20:00:00.000Z"
     },
     {
       "id": "ex-2",
@@ -84,7 +103,15 @@
         }
       ],
       "notes": "",
-      "updatedAt": "2026-11-03T16:28:02.442Z"
+      "potions": [
+        "beira",
+        "beira",
+        "oberon",
+        ""
+      ],
+      "updatedAt": "2026-11-04T20:00:00.000Z",
+      "mode": "restricted",
+      "order": []
     }
   ],
   "runs": [
@@ -93,35 +120,35 @@
       "example": true,
       "buildId": "ex-1",
       "status": "done",
-      "startedAt": "2026-11-03T16:28:02.442Z",
-      "endedAt": "2026-11-03T16:28:02.442Z",
+      "startedAt": "2026-11-04T20:00:00.000Z",
+      "endedAt": "2026-11-04T20:00:00.000Z",
       "hero": "vigilante",
       "weapon": "Chakrams",
       "spell": "Shadow Strike",
       "picks": [
         {
           "id": "lugh:lucky-touch",
-          "at": "2026-11-03T16:28:02.442Z"
+          "at": "2026-11-04T20:00:00.000Z"
         },
         {
           "id": "lugh:critical-clover",
-          "at": "2026-11-03T16:28:02.442Z"
+          "at": "2026-11-04T20:00:00.000Z"
         },
         {
           "id": "gogmagog:mighty-dash",
-          "at": "2026-11-03T16:28:02.442Z"
+          "at": "2026-11-04T20:00:00.000Z"
         },
         {
           "id": "beira:mana-well",
-          "at": "2026-11-03T16:28:02.442Z"
+          "at": "2026-11-04T20:00:00.000Z"
         },
         {
           "id": "gogmagog:opportunistic",
-          "at": "2026-11-03T16:28:02.442Z"
+          "at": "2026-11-04T20:00:00.000Z"
         },
         {
           "id": "duo:critical-opening",
-          "at": "2026-11-03T16:28:02.442Z"
+          "at": "2026-11-04T20:00:00.000Z"
         }
       ],
       "others": [
@@ -134,7 +161,9 @@
         "outcome": "loss",
         "reached": "Boss de la 2e zone",
         "notes": "Trop peu de PV"
-      }
+      },
+      "potions": [],
+      "skipped": []
     }
   ],
   "custom": []

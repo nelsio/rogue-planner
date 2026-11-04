@@ -1,6 +1,5 @@
 // Historique des runs terminés (HANDOFF §6.5) : filtre par build, totaux, tableau défilant sur mobile.
 import { useState } from "react";
-import { itemIndex } from "@rogue/core";
 import { useApp } from "./context";
 import { FaeDot } from "./items";
 import { useKit } from "./Library";
@@ -10,7 +9,7 @@ export function History() {
   const { state, pack } = useApp();
   const kit = useKit();
   const [filter, setFilter] = useState("all");
-  const index = itemIndex(pack);
+  const index = pack.byId;
   const done = state.runs
     .filter((r) => r.status === "done" && (filter === "all" || r.buildId === filter))
     .sort((a, b) => (b.endedAt ?? "").localeCompare(a.endedAt ?? ""));

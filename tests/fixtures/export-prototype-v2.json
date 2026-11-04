@@ -1,0 +1,193 @@
+{
+  "format": "rogue-planner",
+  "version": 1,
+  "game": "sworn",
+  "builds": [
+    {
+      "id": "ex-1",
+      "example": true,
+      "game": "sworn",
+      "name": "Critiques et séismes",
+      "mode": "restricted",
+      "hero": "vigilante",
+      "weapon": "Chakrams",
+      "spell": "Shadow Strike",
+      "abilities": {
+        "light": "lugh:lucky-touch",
+        "heavy": "gogmagog:mighty-strike",
+        "spell": "lugh:lucky-flourish",
+        "dash": "gogmagog:mighty-dash",
+        "companion": "",
+        "ultimate": "lugh:stroke-of-luck"
+      },
+      "targets": [
+        {
+          "id": "duo:critical-opening",
+          "prio": "core"
+        },
+        {
+          "id": "gogmagog:opportunistic",
+          "prio": "core"
+        },
+        {
+          "id": "lugh:critical-clover",
+          "prio": "core"
+        },
+        {
+          "id": "gogmagog:unmatched-power",
+          "prio": "bonus"
+        },
+        {
+          "id": "lugh:collector",
+          "prio": "bonus"
+        },
+        {
+          "id": "gogmagog:tough-stuff",
+          "prio": "bonus"
+        }
+      ],
+      "notes": "Étourdir puis critiquer. Prendre Lugh en premier si l'offre le permet.",
+      "order": [
+        "lugh:lucky-touch",
+        "gogmagog:mighty-dash",
+        "lugh:critical-clover",
+        "gogmagog:mighty-strike",
+        "duo:critical-opening",
+        "gogmagog:unmatched-power",
+        "gogmagog:opportunistic",
+        "lugh:lucky-flourish",
+        "lugh:stroke-of-luck",
+        "lugh:collector",
+        "gogmagog:tough-stuff"
+      ],
+      "potions": [
+        "lugh",
+        "gogmagog",
+        "lugh",
+        "gogmagog"
+      ],
+      "updatedAt": "2026-11-04T20:00:00.000Z"
+    },
+    {
+      "id": "ex-2",
+      "example": true,
+      "game": "sworn",
+      "name": "Spirale de givre",
+      "hero": "monk",
+      "weapon": "Tome",
+      "spell": "Crystal Turrets",
+      "abilities": {
+        "light": "",
+        "heavy": "",
+        "spell": "beira:chilling-flourish",
+        "dash": "beira:chilling-dash",
+        "companion": "oberon:storm-falcon",
+        "ultimate": ""
+      },
+      "targets": [
+        {
+          "id": "beira:spell-caster",
+          "prio": "core"
+        },
+        {
+          "id": "beira:mana-well",
+          "prio": "core"
+        },
+        {
+          "id": "duo:nova-surge",
+          "prio": "core"
+        },
+        {
+          "id": "oberon:onslaught",
+          "prio": "bonus"
+        }
+      ],
+      "notes": "",
+      "potions": [
+        "beira",
+        "beira",
+        "oberon",
+        ""
+      ],
+      "updatedAt": "2026-11-04T20:00:00.000Z",
+      "mode": "restricted",
+      "order": []
+    }
+  ],
+  "runs": [
+    {
+      "id": "ex-r1",
+      "example": true,
+      "buildId": "ex-1",
+      "status": "done",
+      "startedAt": "2026-11-04T20:00:00.000Z",
+      "endedAt": "2026-11-04T20:00:00.000Z",
+      "hero": "vigilante",
+      "weapon": "Chakrams",
+      "spell": "Shadow Strike",
+      "picks": [
+        {
+          "id": "lugh:lucky-touch",
+          "at": "2026-11-04T20:00:00.000Z"
+        },
+        {
+          "id": "lugh:critical-clover",
+          "at": "2026-11-04T20:00:00.000Z"
+        },
+        {
+          "id": "gogmagog:mighty-dash",
+          "at": "2026-11-04T20:00:00.000Z"
+        },
+        {
+          "id": "beira:mana-well",
+          "at": "2026-11-04T20:00:00.000Z"
+        },
+        {
+          "id": "gogmagog:opportunistic",
+          "at": "2026-11-04T20:00:00.000Z"
+        },
+        {
+          "id": "duo:critical-opening",
+          "at": "2026-11-04T20:00:00.000Z"
+        }
+      ],
+      "others": [
+        {
+          "kind": "merlin",
+          "text": "Bénédiction de Merlin (nom à noter)"
+        }
+      ],
+      "result": {
+        "outcome": "loss",
+        "reached": "Boss de la 2e zone",
+        "notes": "Trop peu de PV"
+      },
+      "potions": [],
+      "skipped": []
+    },
+    {
+      "id": "ex-r2",
+      "buildId": "ex-1",
+      "status": "active",
+      "startedAt": "2026-11-04T20:00:00.000Z",
+      "hero": "vigilante",
+      "weapon": "Chakrams",
+      "spell": "Shadow Strike",
+      "picks": [
+        {
+          "id": "lugh:lucky-touch",
+          "at": "2026-11-04T20:00:00.000Z"
+        }
+      ],
+      "others": [],
+      "potions": [
+        "lugh"
+      ],
+      "skipped": [
+        "gogmagog:mighty-dash"
+      ],
+      "result": null
+    }
+  ],
+  "custom": []
+}

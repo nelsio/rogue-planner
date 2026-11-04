@@ -1,5 +1,16 @@
 # Journal des versions
 
+## v0.1.1 — Révision 2 : moteur
+- Pack SWORN du 2026-11-04 : descriptions en anglais (texte du jeu), potions (4 par run, une par fae),
+  libellés « Potion(s) ». Les libellés courts des emplacements sont conservés.
+- Moteur : ordre d'acquisition (`planOrder`, `moveInOrder`), pas à pas (`nextStep`, `skipStep`, `unskipStep`),
+  totaux par fae (`familyTotals`), potions (`buildPotions`, `applyPotion`, `undoPotion`), index `Pack.byId`.
+- `runProgress` : étape suivante, totaux par fae et duos, potions ; « encore à trouver » suit l'ordre d'acquisition
+  et comprend les aptitudes. `applyPick` retire la prise des étapes passées.
+- Schémas : `order` et `potions` (build), `potions` et `skipped` (run), complétés à `[]` au chargement et à l'import.
+- RUN : « Encore à trouver » affiche les aptitudes (étiquette « aptitude »), dans l'ordre d'acquisition.
+- Exemples du premier lancement : ordre et potions de la révision 2.
+
 ## v0.1.0 — Lot 5 : catalogue, import / export, finitions
 - Catalogue : « Catalogue SWORN · N bénédictions » et sources du pack, puces de fae (filtre retenu), recherche
   par nom ou effet, prérequis en texte ; ajout d'une bénédiction manquante (nom, fae, emplacement, effet) et retrait.

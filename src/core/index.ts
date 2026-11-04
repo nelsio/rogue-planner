@@ -1,7 +1,7 @@
-// Moteur pur (sans DOM ni React) : schémas, prérequis, duos, progression, fusion d'import.
+// Moteur pur (sans DOM ni React) : schémas, prérequis, duos, ordre, progression, potions, fusion d'import.
 // Il ne connaît aucun nom propre de jeu : tout vient du pack.
 export {
-  getItem, itemIndex, loadPack, PackFormatError, PackSchema, withCustom, ITEM_KINDS,
+  getItem, loadPack, PackFormatError, PackSchema, withCustom, ITEM_KINDS,
   type Alternative, type Item, type ItemKind, type Pack, type SlotId,
 } from "./pack";
 export {
@@ -9,6 +9,9 @@ export {
   type Build, type CustomItem, type Library, type Prio, type Run,
 } from "./schemas";
 export { buildOwned, isUnlocked, missing, reachableDuos } from "./requires";
+export {
+  applyPotion, buildPotions, familyTotals, moveInOrder, nextStep, planOrder, skipStep, undoPotion, unskipStep,
+} from "./plan";
 export { applyPick, runProgress, toggleTarget, type RunProgress, type SlotProgress } from "./progress";
 export { EXPORT_FORMAT, mergeImport, type MergeResult } from "./import";
 export { z, type FieldError } from "./zod";

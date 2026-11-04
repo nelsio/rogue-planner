@@ -1,3 +1,4 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <title>Rogue Planner</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -191,6 +192,44 @@ pre.json{margin:0;max-height:260px;overflow:auto;background:var(--sunk);border-r
 .seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
 .seg button{border:0;background:transparent;padding:8px 14px;font-weight:700;color:var(--muted)}
 .seg button[aria-pressed="true"]{background:var(--surface-2);color:var(--ink)}
+.seg.small button{padding:5px 10px;font-size:.82rem}
+/* Totaux par fae */
+.chip .n{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-weight:700}
+.chip.done{border-color:color-mix(in oklab,var(--ok) 60%,transparent)}
+.chip.done .n{color:var(--ok)}
+/* Ordre d'acquisition */
+.ord{display:grid;gap:4px}
+.ord .bitem{grid-template-columns:auto auto 1fr auto;padding:6px 8px}
+.ord .n,.step .n{font-family:var(--f-mono);font-size:.8rem;color:var(--muted);min-width:1.6em;text-align:right}
+.ord .be{font-size:.8rem}
+.mv{border:1px solid var(--line);background:transparent;border-radius:6px;width:30px;height:30px;padding:0;font-size:.9rem}
+.mv:disabled{opacity:.3;cursor:default}
+.grp{display:flex;align-items:center;gap:6px;margin-top:6px}
+.grp:first-child{margin-top:0}
+/* Pas à pas */
+.step{border:2px solid var(--moon);background:color-mix(in oklab,var(--moon) 8%,var(--surface));border-radius:var(--r);padding:14px;display:grid;gap:8px}
+.step .bn{font-size:1.15rem;font-weight:700;display:flex;align-items:center;gap:8px}
+.step .be{color:var(--muted);font-size:.92rem}
+.steps{display:grid;gap:4px}
+.steps .bitem{grid-template-columns:auto auto 1fr auto;padding:6px 8px}
+.steps .bitem.done{opacity:.55}
+.steps .bitem.done .bn::after{content:" ✓";color:var(--ok)}
+.steps .bitem.skip .bn{text-decoration:line-through;color:var(--muted)}
+.steps .bitem.cur{border-color:var(--moon)}
+/* Aptitudes du run : fae prévue */
+.slot .fn{font-size:.75rem;color:var(--muted);font-weight:400}
+.slot .planned{display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.slot .planned b{color:var(--ink);font-weight:700}
+.slot.plan-only{border-style:dashed;border-color:color-mix(in oklab,var(--c) 60%,transparent)}
+.slot .ok{color:var(--ok);font-weight:700}
+/* Potions */
+.pots{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px}
+.pot{border:1px solid var(--line);border-radius:8px;padding:8px 10px;background:var(--surface-2);display:grid;gap:4px;min-width:0}
+.pot .sl{font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.pot .sv{font-weight:700;display:flex;gap:6px;align-items:center}
+.pot.filled{border-color:color-mix(in oklab,var(--c) 55%,transparent);background:color-mix(in oklab,var(--c) 10%,var(--surface-2))}
+.pot.next{outline:2px solid var(--moon);outline-offset:-1px}
+.pot select{width:100%;background:var(--surface-2);border:1px solid var(--line);border-radius:6px;padding:4px 6px;font-size:.88rem}
 </style>
 
 <div class="wrap">
@@ -209,7 +248,7 @@ pre.json{margin:0;max-height:260px;overflow:auto;background:var(--sunk);border-r
 
 <script>
 /* ===================== Pack SWORN (données) =====================
-   Source : guide Steam « SWORN: All Blessings Guide » (accès anticipé), noms en anglais, effets résumés en français.
+   Source : guide Steam « SWORN: All Blessings Guide » (accès anticipé), noms et descriptions en anglais (table EN plus bas).
    À vérifier contre la 1.0 ; les bénédictions manquantes s'ajoutent dans le Catalogue. */
 const SLOTS=[["light","Attaque légère"],["heavy","Attaque lourde"],["spell","Sort"],["dash","Esquive"],["companion","Compagnon"],["ultimate","Ultime"]];
 const SLOT_LABEL=Object.fromEntries(SLOTS);
@@ -221,40 +260,40 @@ const HEROES={
 };
 const OTHER_KINDS=[["merlin","Merlin"],["morgana","Morgane"],["shrine","Sanctuaire"],["other","Autre"]];
 /* Enclumes : augments de l'Épée dans la pierre, propres à l'arme et au sort choisis avant le run.
-   Source : SWORN Wiki, page « Sword in the Stone » (CC BY-SA). Effets résumés en français. */
+   Source : SWORN Wiki, page « Sword in the Stone » (CC BY-SA). Effets résumés en anglais. */
 const ANVILS={
-  "Sword":[["Acceleration","+10 % de vitesse, attaque légère 30 % plus rapide"],["Blade Wave","Les 2 premiers coups légers lancent des vagues"],["Cursed Blade","Jusqu'à +90 % de dégâts selon votre malédiction"],["Double Edge","Attaque lourde −25 %, mais utilisable deux fois de suite"],["Honed Echo","L'attaque lourde libère une onde"],["Hurricane","L'attaque lourde crée un vortex qui blesse sur la durée"],["Magnesis","Attaque lourde +30 %, attire les ennemis"]],
-  "Bow":[["Focus Fire","Attaque lourde : +10 dégâts par flèche"],["Heavy Draw","Attaque légère chargée 25 % plus lentement, +50 % de dégâts"],["Rain Of Arrows","Attaque lourde : 2 flèches en plus"],["Rapid Fire","Attaque légère chargée 80 % plus vite"],["Skyfall","Attaque lourde 30 % plus rapide, +30 % de dégâts"],["Triple Shot","Attaque légère : 3 flèches en éventail, −40 % de dégâts"]],
-  "Bo Staff":[["Above it All","Invulnérable un instant pendant l'attaque lourde"],["Fivefold Strike","Si les 4 premiers coups légers touchent, le dernier double ses dégâts"],["Heavy Impact","Attaque lourde : plus de recul, écrase contre les murs"],["Helm Splitter","Attaque lourde +40 % au centre de l'impact"],["Light Impact","Attaque légère : léger recul, +25 % de dégâts"],["Unending Torrent","Après le Sort, attaque légère +40 % de vitesse pendant 3 s"]],
-  "Chakrams":[["Great Razors","Chakrams 50 % plus grands, +30 % de dégâts"],["Razor Dance","+50 % de vitesse et un tour de plus pendant l'attaque lourde"],["Razor Vortex","Attaque lourde 50 % plus grande, +30 % de dégâts"],["Spare Blade","Un chakram de plus à lancer"],["Streamline","Chakrams lancés 40 % plus loin et plus vite"]],
-  "Assassin Dagger":[["Ricochet Blade","+25 % de dégâts, ricoche (3 rebonds)"],["Veteran's Blade","+1 dégât par ennemi tué au Sort, pour tout le run (max +150)"],["Vigilante's Mark","Marque : +25 % de dégâts subis pendant 3 s"]],
-  "Blade Rush":[["Cutpurse Dash","5 pièces d'or par ennemi tué au Sort"],["Triple Slash","Trois ruées rapides, −20 % de dégâts"],["Vampire Dash","1 PV par ennemi traversé"]],
-  "Dagger Flurry":[["Fan of Knives","5 lames en plus"],["Killing Throw","Achève les ennemis mineurs sous 20 % de vie, +3 PV"],["Splintering Blades","Les lames éclatent en couteaux à l'impact"]],
-  "Shadow Strike":[["Marked for Death","Marque : +25 % de dégâts subis, +3 PV par ennemi tué"],["Omnislash","+25 % de dégâts, frappe tous les ennemis d'une zone"],["Shadow Dancer","Après le Sort, +50 % d'esquive pendant 3 s"]],
-  "Mace":[["Discharge","L'attaque légère en esquive crée un Éclair"],["Greater Smite","Éclairs 20 % plus grands, +20 % de dégâts"],["Holy Fervor","−40 % de dégâts subis pendant l'attaque légère"],["Morningstar","Attaque légère +40 % avec la pointe de l'arme"],["Thunderous Call","Chaque salve d'Éclairs en tire un de plus"]],
-  "Magic Staff":[["Cubic Spread","Attaque légère : 3 projectiles en cône, −40 % chacun"],["Magic Guard","Forte réduction de dégâts en chargeant l'attaque lourde, +50 % si touché"],["Shaping Slam","L'attaque lourde tire aussi 4 projectiles"]],
-  "Tome":[["Anticipation","Petits projectiles pendant la visée de l'attaque lourde"],["Leaden Pages","Attaque lourde +25 % de dégâts, zone +40 %"],["Lengthy Text","Attaque légère : un projectile de plus"],["Paper Storm","Attaque lourde −40 %, mais 3 projectiles"],["Reading Backwards","Attaque légère étroite, puis large en chargeant"],["Scholarly Focus","Attaque légère +20 % de dégâts et de portée"]],
-  "Chimes":[["Capriccio","Attaque légère : une Note de plus sur un ennemi proche"],["Coda","Le dernier coup léger devient un final puissant"],["Echoing Notes","Les Notes légères explosent une 2e fois (−35 %)"],["Grazioso","L'attaque lourde se guide vers l'ennemi, +50 %"],["Reverberate","L'attaque lourde rebondit et explose deux fois"]],
-  "Storm Call":[["Maelstrom","+20 % de dégâts, zone +50 %"],["Pursuing Storm","Le Sort suit lentement l'ennemi le plus proche"],["Storm Surge","Chaque frappe est plus rapide et plus forte (+5)"]],
-  "Crystal Turrets":[["Dual Core","Dure 75 % plus longtemps et tire plus"],["Piercing Shards","+25 % de dégâts, transperce"],["Rapid Fire","Cadence +200 %, −25 % de dégâts"]],
-  "Black Hole":[["Collapse","+15 dégâts par ennemi pris dedans"],["Event Horizon","Se déclenche une 2e fois (−20 %)"],["Supermassive","Zone +25 %, dégâts +25 %"]],
-  "Arcane Shield":[["Arcane Power","+15 % de dégâts aux joueurs protégés"],["Divine Shielding","Bloque entièrement un coup"],["Midnight Pulse","Le bouclier pulse toutes les 1,5 s (25 dégâts)"]],
-  "Great Hammer":[["Axis of Rotation","Attaque lourde jusqu'à +50 % au plus près"],["Bludgeon","Attaque légère : recul +400 %, écrase contre les murs (60)"],["Fully Wound","Attaque lourde +30 %, +1 charge de rotation"],["Inertial Strength","Attaque lourde : tourne et charge 50 % plus vite"],["Let It Rip","Charge deux fois plus longue, deux fois plus de rotations"],["Solid Foundation","+1 rotation à l'attaque lourde, chargée ou non"],["Spinning Lunge","L'attaque légère en esquive devient une rotation"],["Spring Loaded","Charge plus vite, +1 rotation à pleine charge"],["Star Swinger","Attaque légère 40 % plus rapide, +15 %"],["Top Heavy","Attaque légère +40 % avec la tête du marteau"]],
-  "Hand Cannon":[["Direct Hit","Attaque légère +40 % en touche directe"],["Hot Barrel","Attaque lourde +40 % à portée maximale"],["Splash Damage","Explosion de l'attaque légère 50 % plus grande, +20 %"],["Triple Barrage","Attaque légère : 3 projectiles (dégâts divisés par 3)"]],
-  "Halberd":[["Focus","Attaque légère chargée 30 % plus vite"],["Hefty Momentum","+5 dégâts par attaque pleinement chargée d'affilée (max 10)"],["Lock In","Esquiver après une charge complète la conserve"],["Stinger","Attaque lourde à 120 %, portée plus longue"]],
-  "Gauntlets":[["Barraging Beatdown","+300 % au 5e coup léger consécutif"],["Faithful Fighter","Les attaques remplissent l'Ultime 30 % plus vite"],["Furious Fists","Attaque légère 50 % plus rapide"],["Haymaker","Attaque lourde en esquive : gros recul, écrase contre les murs"],["Heavy Hitter","Attaque lourde : recul et +30 %"],["Soften Them Up","Attaque légère : +30 % de dégâts subis pendant 1 s"],["Sucker Punch","Attaque lourde +150 % sur un ennemi en pleine santé"]],
-  "Bull Rush":[["Finale","Impact au sol à la fin du Sort (75)"],["Raging Bull","+30 dégâts par coup consécutif"],["The Horns","Recul +50 %, écrase contre les murs (100)"]],
-  "Counter":[["Adrenaline","Après un contre : +20 % de dégâts, +35 % de vitesse d'attaque"],["Blood Lust","Après un contre : vol de vie (+1 PV par coup, 4 s)"],["Revenge","L'ennemi contré subit +20 % de dégâts de toutes sources"]],
-  "Commander's Shield":[["Feared Aegis","Ennemis dans la zone : +25 % de dégâts subis"],["Healing Crest","1 PV à tous les joueurs par ennemi tué dans la zone"],["Righteous Iron","Zone +30 %, protège les joueurs"]],
-  "Sky Drop":[["Bullseye","Centre de l'impact +125 %"],["Debris Launcher","Débris au départ et à l'atterrissage (45)"],["Massive Impact","+25 % de dégâts, zone +45 %"]],
-  "Armillary Sphere":[["Arcane Bombardment","Attaque lourde : 3 projectiles, −25 %"],["Arcane Chaos","Attaque légère : 2 traits de plus, dispersion +100 %"],["Gravity Well","Attaque lourde : attire les ennemis mineurs, +30 %"],["Overflowing Bolts","Attaque légère : 2 traits de plus"],["Plentiful Bolts","Attaque légère : 1 trait de plus"],["Spread Bolts","Attaque légère : deux fois plus de projectiles, plus dispersés"]],
-  "Scythe":[["Deathly Caster","Après un Sort, la prochaine attaque lourde double ses dégâts"],["Energy Drain","Tuer à l'attaque lourde rend 1 Mana"],["Malice","Tuer à l'attaque lourde : +40 % de vitesse d'attaque pendant 3 s"],["Razor's Edge","Attaque légère +40 % à portée maximale"],["Serrated Edge","Attaque légère : bonus de dégâts, effets au contact appliqués deux fois"],["Swift Death","Attaque légère +20 %, plus mobile"]],
-  "Arcane Blade":[["Arcane Recall","Les lames légères reviennent quand elles se rechargent"],["Blade Mass","Attaque lourde plus grande, environ +30 %"],["Blade Torrent","Le projectile lourd frappe 50 % plus souvent"],["Deadly Duo","Attaque légère : +2 dégâts et +2 lames"],["Embedding Strikes","Attaque légère +100 %, mais ne transperce plus"],["Mystic Smash","L'attaque lourde invoque un marteau (120)"],["Spell Weaver","+20 % à l'attaque lourde par Sort lancé (max 5)"],["Triple Finale","La dernière lame légère est tirée trois fois"],["Weaving Slashes","Attaque lourde : un coup de plus, dégâts réduits"]],
-  "Claws":[["Air Slash","Attaque légère 50 % plus grande, +20 %"],["Berserker","Attaque lourde +100 %, mais coûte 1 PV si elle touche"],["Death Lust","Tuer à l'attaque légère : +20 % de vitesse (cumulable 3 fois)"],["Demonic Ritual","L'attaque lourde coûte 5 PV, puis l'attaque légère soigne"],["Sacrificial Power","Jusqu'à +100 % selon la vie manquante"]],
-  "Mystic Beam":[["Focusing Crystal","+10 par coup consécutif sur la même cible"],["Life Drain","Vol de vie, mais −60 % de vie max"],["Piercing Beam","Transperce, +15 %"]],
-  "Blink":[["Blink Strike","La prochaine attaque après le Sort double ses dégâts"],["Phantom Rush","+20 %, blesse les ennemis traversés (50)"],["Shadow Dancer","+50 % d'esquive pendant 2,5 s"]],
-  "Spirit Guardians":[["Deadly Orbit","Les esprits frappent au contact, +200 %"],["Open The Floodgates","Le Sort reste actif et consomme du Mana ; +1 Mana max"],["Primed Power","Deux esprits permanents, −1 Mana max"]],
-  "Dragon Dive":[["Deft Dive","Meilleure maniabilité, traverse les ennemis"],["Gathering Flames","Plus de dégâts avec la distance (max +100)"],["Purifying Flames","1 PV par ennemi tué"]],
+  "Sword":[["Acceleration","+10% movement speed, Light Attack 30% faster"],["Blade Wave","Your first 2 Light hits launch waves"],["Cursed Blade","Up to +90% damage based on your curse"],["Double Edge","Heavy Attack −25% damage, but can be used twice in a row"],["Honed Echo","Your Heavy Attack releases a shockwave"],["Hurricane","Your Heavy Attack creates a vortex that deals damage over time"],["Magnesis","Heavy Attack +30% damage and pulls enemies in"]],
+  "Bow":[["Focus Fire","Heavy Attack: +10 damage per arrow"],["Heavy Draw","Charged Light Attack 25% slower, +50% damage"],["Rain Of Arrows","Heavy Attack: 2 extra arrows"],["Rapid Fire","Charged Light Attack 80% faster"],["Skyfall","Heavy Attack 30% faster, +30% damage"],["Triple Shot","Light Attack fires 3 arrows in a fan, −40% damage"]],
+  "Bo Staff":[["Above it All","Briefly invulnerable during your Heavy Attack"],["Fivefold Strike","If your first 4 Light hits land, the last one deals double damage"],["Heavy Impact","Heavy Attack: more knockback, slams enemies into walls"],["Helm Splitter","Heavy Attack +40% damage at the center of impact"],["Light Impact","Light Attack: small knockback, +25% damage"],["Unending Torrent","After casting your Spell, Light Attack +40% speed for 3 s"]],
+  "Chakrams":[["Great Razors","Chakrams 50% larger, +30% damage"],["Razor Dance","+50% speed and one extra spin during Heavy Attack"],["Razor Vortex","Heavy Attack 50% larger, +30% damage"],["Spare Blade","One extra chakram to throw"],["Streamline","Chakrams fly 40% further and faster"]],
+  "Assassin Dagger":[["Ricochet Blade","+25% damage, ricochets (3 bounces)"],["Veteran's Blade","+1 damage per Spell kill for the whole run (max +150)"],["Vigilante's Mark","Marks the target: +25% damage taken for 3 s"]],
+  "Blade Rush":[["Cutpurse Dash","5 gold per enemy killed with your Spell"],["Triple Slash","Three quick rushes, −20% damage"],["Vampire Dash","1 HP per enemy passed through"]],
+  "Dagger Flurry":[["Fan of Knives","5 extra blades"],["Killing Throw","Executes minor foes under 20% health, +3 HP"],["Splintering Blades","Blades shatter into knives on impact"]],
+  "Shadow Strike":[["Marked for Death","Marks the target: +25% damage taken, +3 HP per kill"],["Omnislash","+25% damage, hits every enemy in an area"],["Shadow Dancer","After your Spell, +50% evasion for 3 s"]],
+  "Mace":[["Discharge","Dashing Light Attack creates a Lightning strike"],["Greater Smite","Lightning 20% larger, +20% damage"],["Holy Fervor","−40% damage taken during your Light Attack"],["Morningstar","Light Attack +40% damage with the tip of the weapon"],["Thunderous Call","Each Lightning volley fires one more bolt"]],
+  "Magic Staff":[["Cubic Spread","Light Attack: 3 projectiles in a cone, −40% each"],["Magic Guard","Strong damage reduction while charging Heavy Attack, +50% damage if hit"],["Shaping Slam","Heavy Attack also fires 4 projectiles"]],
+  "Tome":[["Anticipation","Small projectiles while aiming your Heavy Attack"],["Leaden Pages","Heavy Attack +25% damage, +40% area"],["Lengthy Text","Light Attack: one extra projectile"],["Paper Storm","Heavy Attack −40% damage, but fires 3 projectiles"],["Reading Backwards","Light Attack starts narrow, widens as you charge"],["Scholarly Focus","Light Attack +20% damage and range"]],
+  "Chimes":[["Capriccio","Light Attack: one extra Note on a nearby enemy"],["Coda","The last Light hit becomes a powerful finisher"],["Echoing Notes","Light Notes explode a second time (−35%)"],["Grazioso","Heavy Attack homes in on enemies, +50% damage"],["Reverberate","Heavy Attack bounces and explodes twice"]],
+  "Storm Call":[["Maelstrom","+20% damage, +50% area"],["Pursuing Storm","Your Spell slowly follows the nearest enemy"],["Storm Surge","Each strike is faster and stronger (+5)"]],
+  "Crystal Turrets":[["Dual Core","Lasts 75% longer and fires more"],["Piercing Shards","+25% damage, pierces enemies"],["Rapid Fire","+200% fire rate, −25% damage"]],
+  "Black Hole":[["Collapse","+15 damage per enemy caught inside"],["Event Horizon","Triggers a second time (−20%)"],["Supermassive","+25% area, +25% damage"]],
+  "Arcane Shield":[["Arcane Power","+15% damage for shielded players"],["Divine Shielding","Fully blocks one hit"],["Midnight Pulse","The shield pulses every 1.5 s (25 damage)"]],
+  "Great Hammer":[["Axis of Rotation","Heavy Attack up to +50% damage up close"],["Bludgeon","Light Attack: +400% knockback, wall slam (60)"],["Fully Wound","Heavy Attack +30% damage, +1 spin charge"],["Inertial Strength","Heavy Attack spins and charges 50% faster"],["Let It Rip","Charge lasts twice as long, twice as many spins"],["Solid Foundation","+1 spin on Heavy Attack, charged or not"],["Spinning Lunge","Dashing Light Attack becomes a spin"],["Spring Loaded","Charges faster, +1 spin at full charge"],["Star Swinger","Light Attack 40% faster, +15% damage"],["Top Heavy","Light Attack +40% damage with the hammer head"]],
+  "Hand Cannon":[["Direct Hit","Light Attack +40% damage on a direct hit"],["Hot Barrel","Heavy Attack +40% damage at max range"],["Splash Damage","Light Attack explosion 50% larger, +20% damage"],["Triple Barrage","Light Attack fires 3 projectiles (damage split by 3)"]],
+  "Halberd":[["Focus","Charged Light Attack 30% faster"],["Hefty Momentum","+5 damage per consecutive fully charged attack (max 10)"],["Lock In","Dashing after a full charge keeps the charge"],["Stinger","Heavy Attack at 120% damage, longer reach"]],
+  "Gauntlets":[["Barraging Beatdown","+300% damage on the 5th consecutive Light hit"],["Faithful Fighter","Attacks fill your Ultimate 30% faster"],["Furious Fists","Light Attack 50% faster"],["Haymaker","Dashing Heavy Attack: big knockback, wall slam"],["Heavy Hitter","Heavy Attack: knockback and +30% damage"],["Soften Them Up","Light Attack: target takes +30% damage for 1 s"],["Sucker Punch","Heavy Attack +150% damage on a full-health enemy"]],
+  "Bull Rush":[["Finale","Ground slam at the end of your Spell (75)"],["Raging Bull","+30 damage per consecutive hit"],["The Horns","+50% knockback, wall slam (100)"]],
+  "Counter":[["Adrenaline","After a counter: +20% damage, +35% attack speed"],["Blood Lust","After a counter: life steal (+1 HP per hit, 4 s)"],["Revenge","Countered enemy takes +20% damage from all sources"]],
+  "Commander's Shield":[["Feared Aegis","Enemies in the area take +25% damage"],["Healing Crest","1 HP to all players per enemy killed in the area"],["Righteous Iron","+30% area, protects players"]],
+  "Sky Drop":[["Bullseye","+125% damage at the center of impact"],["Debris Launcher","Debris on take-off and landing (45)"],["Massive Impact","+25% damage, +45% area"]],
+  "Armillary Sphere":[["Arcane Bombardment","Heavy Attack: 3 projectiles, −25% damage"],["Arcane Chaos","Light Attack: 2 extra bolts, +100% spread"],["Gravity Well","Heavy Attack pulls minor foes in, +30% damage"],["Overflowing Bolts","Light Attack: 2 extra bolts"],["Plentiful Bolts","Light Attack: 1 extra bolt"],["Spread Bolts","Light Attack: twice as many projectiles, wider spread"]],
+  "Scythe":[["Deathly Caster","After a Spell, your next Heavy Attack deals double damage"],["Energy Drain","Heavy Attack kills restore 1 Mana"],["Malice","Heavy Attack kills: +40% attack speed for 3 s"],["Razor's Edge","Light Attack +40% damage at max range"],["Serrated Edge","Light Attack: bonus damage, on-hit effects applied twice"],["Swift Death","Light Attack +20% damage, more mobile"]],
+  "Arcane Blade":[["Arcane Recall","Light blades return when they recharge"],["Blade Mass","Larger Heavy Attack, about +30% damage"],["Blade Torrent","Heavy projectile hits 50% more often"],["Deadly Duo","Light Attack: +2 damage and +2 blades"],["Embedding Strikes","Light Attack +100% damage, but no longer pierces"],["Mystic Smash","Heavy Attack summons a hammer (120)"],["Spell Weaver","+20% Heavy Attack damage per Spell cast (max 5)"],["Triple Finale","The last Light blade is fired three times"],["Weaving Slashes","Heavy Attack: one extra hit, reduced damage"]],
+  "Claws":[["Air Slash","Light Attack 50% larger, +20% damage"],["Berserker","Heavy Attack +100% damage, but costs 1 HP on hit"],["Death Lust","Light Attack kills: +20% speed (stacks 3 times)"],["Demonic Ritual","Heavy Attack costs 5 HP, then Light Attacks heal"],["Sacrificial Power","Up to +100% damage based on missing health"]],
+  "Mystic Beam":[["Focusing Crystal","+10 damage per consecutive hit on the same target"],["Life Drain","Life steal, but −60% max health"],["Piercing Beam","Pierces enemies, +15% damage"]],
+  "Blink":[["Blink Strike","Your next attack after the Spell deals double damage"],["Phantom Rush","+20% damage, hurts enemies you pass through (50)"],["Shadow Dancer","+50% evasion for 2.5 s"]],
+  "Spirit Guardians":[["Deadly Orbit","Spirits hit on contact, +200% damage"],["Open The Floodgates","Spell stays active and drains Mana; +1 max Mana"],["Primed Power","Two permanent spirits, −1 max Mana"]],
+  "Dragon Dive":[["Deft Dive","Better handling, passes through enemies"],["Gathering Flames","More damage with distance (max +100)"],["Purifying Flames","1 HP per enemy killed"]],
 };
 function anvilsFor(o){
   return [o.weapon,o.spell].filter(Boolean).map(item=>({item,kind:o.weapon===item?"Arme":"Sort",list:(ANVILS[item]||[]).map(([name,effect])=>({id:`${slug(item)}:${slug(name)}`,name,effect}))}));
@@ -348,6 +387,267 @@ const EXTRA_BLESSINGS=[
   ["titania","Wildfire Flourish","standard","Le Sort garde une 2e charge d'Embrasement, plus de dégâts"],
 ];
 for(const [f,n,type,e] of EXTRA_BLESSINGS){const id=`${f}:${slug(n)}`;PACK.blessings[id]={id,name:n,fae:[f],type,effect:e}}
+/* Descriptions en anglais : guide Steam « SWORN: All Blessings Guide » (texte du jeu, coquilles corrigées).
+   Les 10 bénédictions relevées sur le wiki ont un résumé anglais rédigé à partir du wiki. */
+const EN={
+"badb:shadow-touch": "Your Light Attack can Backstab.",
+"badb:shadow-strike": "Your Heavy Attack can Backstab.",
+"badb:shadow-flourish": "Your Spell can Backstab.",
+"badb:shadow-dash": "Your Dash leaves behind a Shade.",
+"badb:the-thing-from-the-dark": "Your Companion is a Shadowkin, a nightmarish creature that launches Shades at enemies.",
+"badb:league-of-shadows": "Your Ultimate allows you to embody Badb and constantly summon Shades behind all nearby Foes for a few seconds.",
+"badb:blood-thinner": "It requires fewer Bleed stacks to Hemorrhage enemies.",
+"badb:bloody-shadows": "Your Shades cause Bleed stacks on hit.",
+"badb:bloody-stabs": "Your Backstabs inflict Bleed.",
+"badb:deadly-precision": "You can Backstab by hitting an enemy from the side. All your Backstabs deal more damage.",
+"badb:fleetfooted": "Increase your dash recharge speed.",
+"badb:grievous-wounds": "Hemorrhage now also deals a portion of the target's max health as damage.",
+"badb:into-the-night": "After killing an enemy, briefly gain Invisibility.",
+"badb:like-a-ghost": "You have a high chance to Evade incoming damage while Invisibility is active.",
+"badb:nimble": "Your Dash has an additional charge.",
+"badb:phantom-step": "You move faster while Invisibility is active.",
+"badb:shadow-step": "Every fifth Dash you become Invisible.",
+"badb:shady-business": "Hemorrhaging an enemy now sends Shades to attack nearby enemies.",
+"badb:sling-blades": "Your Shades now throw daggers to attack foes at range and deal bonus damage.",
+"badb:slippery-target": "You have a chance to Evade incoming damage.",
+"badb:stealth-caster": "Casting your spell grants Invisibility, and your spell no longer breaks Invisibility.",
+"badb:strike-from-shadows": "Attacks that break your Invisibility deal bonus damage.",
+"badb:swift-assassin": "Increase your movement speed.",
+"badb:tragic-aura": "An aura surrounds you that causes enemies to Bleed.",
+"badb:swift-killers": "Increase the team's movement speed.",
+"beira:chilling-touch": "Your Light Attack is stronger and inflicts Chill.",
+"beira:chilling-strike": "Your Heavy Attack is stronger and inflicts Chill.",
+"beira:chilling-flourish": "Your Spell is stronger and inflicts Chill.",
+"beira:chilling-dash": "Your Dash leaves behind a Frost Nova.",
+"beira:arctic-vole": "Your Companion is an Arctic Vole that shoots Frost Novas at enemies.",
+"beira:icy-vortex": "Your Ultimate allows you to embody Beira and unleash a barrage of icy blasts around you that inflict Chill.",
+"beira:arcane-engine": "Your Mana recovers faster.",
+"beira:bitter-end": "Your Frost Novas inflict a large amount of Frost Bite.",
+"beira:bitter-frost": "Increase your Frost Bite buildup.",
+"beira:cold-snap": "Frost Novas detonate instantly.",
+"beira:compounding-cold": "Your Frost Novas do extra damage for every stack of Chill on enemies.",
+"beira:freezing-chill": "Attacks that inflict Chill also build up Frost Bite on enemies.",
+"beira:frost-torrent": "Casting your Ultimate releases a flurry of Frost Novas.",
+"beira:frostburn": "When an enemy has more than 5 stacks of Chill they take damage over time.",
+"beira:frozen-blood": "Create a Frost Nova whenever you Freeze an enemy.",
+"beira:glacial-force": "Extend the duration of Freeze.",
+"beira:ice-age": "Your Ultimate inflicts a massive amount of Frost Bite.",
+"beira:ice-storm": "Attacks that inflict Chill have a chance of spawning a Frost Nova on hit.",
+"beira:mana-well": "You have an additional Mana charge.",
+"beira:nova-burst": "Your Frost Novas deal more damage and are 50% larger.",
+"beira:permafrost": "Your Chill takes longer to decay.",
+"beira:seeking-nova": "Killing an enemy affected by Chill causes a Frost Nova to seek out a nearby enemy.",
+"beira:spell-caster": "Your Spell deals bonus damage.",
+"beira:spell-thief": "Hitting an enemy with a Light or Heavy Attack restores Mana.",
+"beira:deep-chill": "Increase your team's max stacks of Chill.",
+"cliona:draining-touch": "Your Light Attack is stronger and inflicts Weak.",
+"cliona:draining-strike": "Your Heavy Attack is stronger and inflicts Weak.",
+"cliona:draining-flourish": "Your Spell is stronger and inflicts Weak.",
+"cliona:draining-dash": "Your Dash shoots a Soul Missile behind you.",
+"cliona:banshee": "Your Companion is a Banshee, a small ghoul that shoots Soul Missiles at enemies.",
+"cliona:march-of-souls": "Your Ultimate allows you to embody Cliona and launch a swarm of Soul Missiles.",
+"cliona:inescapable-end": "Soul Missiles now deal a portion of their damage to all weakened foes in a chamber.",
+"cliona:accretion": "You gain Captured Souls over time for each foe afflicted by Weak.",
+"cliona:banshee-s-offering": "Your Banshee will occasionally summon a Living Urn.",
+"cliona:cliona-s-favor": "Your Ultimate summons two Living Urns when used.",
+"cliona:death-engine": "You gain Captured Souls whenever your Soul Missiles hit foes.",
+"cliona:death-shroud": "Take less damage from all enemies.",
+"cliona:fate-breaker": "Once per Chamber when you would take lethal damage, you instead survive with 1 Health.",
+"cliona:fate-weaver": "Your blessing rewards have one less option but increased rarity.",
+"cliona:indomitable-spirit": "Your Soul Rend effects deal more damage.",
+"cliona:longing": "Weak lasts longer when you apply it.",
+"cliona:nullify": "Take less damage from traps.",
+"cliona:overflowing-soul": "Your Living Urns constantly fire Soul Missiles at nearby foes.",
+"cliona:soul-burst": "Fire additional Soul Missiles.",
+"cliona:spirit-channeler": "Decrease the amount of Spirit Charge you need to trigger Soul Rend.",
+"cliona:spirit-siphon": "Gain Spirit Charge over time from enemies afflicted with Weak.",
+"cliona:spirit-thief": "Gain Spirit Charge whenever an enemy with Weak dies.",
+"cliona:splintered-soul": "When you apply Weak to a foe with an Attack or Spell, release a Soul Missile behind them.",
+"cliona:untouchable": "Your entire team is immune to all damage for the first few seconds of a Chamber.",
+"gogmagog:mighty-touch": "Your Light Attack is stronger and inflicts Stagger.",
+"gogmagog:mighty-strike": "Your Heavy Attack is stronger and inflicts Stagger.",
+"gogmagog:mighty-flourish": "Your Spell is stronger and inflicts Stagger.",
+"gogmagog:mighty-dash": "Your Dash creates a Quake where you land.",
+"gogmagog:stony-companion": "Your Companion is a Stone Golem that creates Quakes by stomping on foes.",
+"gogmagog:wrath-of-the-giant": "Your Ultimate allows you to embody Gogmagog and pummel Foes with giant fists that inflict Stagger.",
+"gogmagog:aftershock": "Your Quake effects trigger a second time in a larger area.",
+"gogmagog:armored-skin": "Start each Chamber with a stack of Damage Shield.",
+"gogmagog:bastion": "Your Stone Golem will periodically grant a nearby ally a Damage Shield.",
+"gogmagog:concussive-slam": "After a foe recovers from Stun, they are left Vulnerable.",
+"gogmagog:devastating-quake": "All of your Quake effects deal more damage.",
+"gogmagog:flawless": "Your attacks that inflict Stagger deal extra damage if you have not been damaged in the last 3 seconds.",
+"gogmagog:fully-armored": "Damage Shield can stack up to 3 times.",
+"gogmagog:giant-slayer": "Your attacks that inflict Stagger deal extra damage to Major Foes and Bosses.",
+"gogmagog:giant-s-protection": "After using your Ultimate, gain maximum stacks of Damage Shield.",
+"gogmagog:giant-s-vengeance": "When Damage Shield breaks, create 6 Quakes around you.",
+"gogmagog:iron-flesh": "Start each Chamber with an additional stack of Damage Shield.",
+"gogmagog:landslide": "Your attacks that inflict Stagger deal extra knockback to Minor Foes.",
+"gogmagog:opportunistic": "Your Stun effects last longer.",
+"gogmagog:pillage": "Enemies drop currency on death.",
+"gogmagog:plunder": "You receive extra currency when you take a reward containing currency.",
+"gogmagog:press-the-attack": "Your attacks that inflict Stagger deal increased damage if you have not used your Dash in 3 seconds.",
+"gogmagog:quaking-stun": "When you Stun a foe, create 6 Quakes around them.",
+"gogmagog:relentless": "Your attacks that inflict Stagger deal more damage to foes that are Stunned.",
+"gogmagog:shakedown": "Your attacks that inflict Stagger apply Vulnerable for 4 seconds when Damage Shield breaks.",
+"gogmagog:sturdy-mass": "Gain damage reduction for each enemy near you, up to 25%.",
+"gogmagog:tough-stuff": "You take 1 less damage from all sources.",
+"gogmagog:unmatched-power": "Increase all Stagger you inflict.",
+"gogmagog:steel-resolve": "All players gain a stack of Damage Shield that regenerates over time.",
+"lugh:lucky-touch": "Your Light Attack is stronger and can Critical Hit.",
+"lugh:lucky-strike": "Your Heavy Attack is stronger and can Critical Hit.",
+"lugh:lucky-flourish": "Your Spell is stronger and can Critical Hit.",
+"lugh:lucky-dash": "Your Dash shoots a Golden Clover at a nearby enemy.",
+"lugh:golden-squirrel": "Your Companion is a Golden Squirrel, a gleaming woodland critter that tosses Golden Clovers at foes.",
+"lugh:stroke-of-luck": "Your Ultimate allows you to embody Lugh and hurl a spear forward with a 50% chance to Critical Hit Foes.",
+"lugh:attack-of-opportunity": "Your Golden Javelin effects can Critical Hit.",
+"lugh:collector": "Currency rewards are worth more.",
+"lugh:critical-clover": "When you Critical Hit, launch a Golden Clover at a nearby enemy.",
+"lugh:critical-favor": "Your attacks or Spells that can Critical Hit now build up Favor.",
+"lugh:deadly-precision": "Your attacks that can Critical Hit always deal more damage against Marked enemies.",
+"lugh:death-tax": "Enemies drop currency when killed.",
+"lugh:endless-fortune": "Increase your max Fortunes.",
+"lugh:favored-clovers": "Golden Clovers flip off of foes and grant Favor when caught.",
+"lugh:first-target": "Start each Chamber with an enemy Marked.",
+"lugh:gambler-mentality": "When an attack fails to Critical Hit, gain some Fortune.",
+"lugh:gilded-armor": "If you take damage while you have at least 15 currency, you lose 15 but gain 50% damage resistance.",
+"lugh:golden-mark": "You have a chance to Mark an enemy when you catch a Golden Clover.",
+"lugh:good-fortune": "Golden Clovers now flip off of enemies and give Fortune if you catch them.",
+"lugh:good-investment": "Gain 10 currency each Chamber until you spend some.",
+"lugh:greed": "Deal bonus damage for every 50 currency you have.",
+"lugh:heaven-s-phalanx": "Your Ultimate strikes all nearby foes with Golden Javelins. All your Golden Javelin effects deal more damage.",
+"lugh:lucky-mark": "When you Critical Hit, Mark a nearby enemy.",
+"lugh:on-the-house": "Your Fortune constantly increases while in a chamber with foes.",
+"lugh:royal-treasury": "Increase the damage of your Golden Clovers. Any time you flip Golden Clover projectiles off of enemies, flip 3 instead of 1.",
+"lugh:treasure-trove": "Increase the party's chances of getting higher rarity blessings.",
+"mab:venomous-touch": "Your Light Attack inflicts Venom.",
+"mab:venomous-strike": "Your Heavy Attack inflicts Venom.",
+"mab:venomous-flourish": "Your Spell inflicts Venom.",
+"mab:infecting-dash": "The end of your Dash inflicts Infected.",
+"mab:brood-mother": "Your Companion is a Brood Mother, a giant spider with an Infecting bite.",
+"mab:venomous-demise": "Your Ultimate allows you to embody Mab and launch a torrent of Bile at Foes.",
+"mab:amassing-brood": "Every third attack your Brood Mother summons a Spiderling.",
+"mab:bile-thrower": "Your Brood Mother can now also shoot Bile.",
+"mab:brood-queen": "Gain an additional Brood Mother.",
+"mab:call-to-legs": "Your Ultimate now also summons 8 Spiderlings.",
+"mab:caustic-finale": "Enemies with Venom explode on death, releasing Bile for each stack they have on them.",
+"mab:chemical-x": "You periodically shoot Bile at nearby enemies.",
+"mab:dividing-daughters": "Infected foes have a chance to spawn two Spiderlings on death.",
+"mab:fast-acting": "Venom deals damage faster.",
+"mab:feast": "Killing an enemy increases your maximum Health up to a cap.",
+"mab:feeding-frenzy": "Casting your Ultimate causes your Brood Mother and Spiderlings to attack twice as often.",
+"mab:hibernator": "Heal at the end of each Chamber.",
+"mab:lasting-sting": "Your Venom lasts longer and deals more damage with each tick.",
+"mab:leech": "Killing Infected enemies heals you.",
+"mab:lingering-pests": "Your Spiderlings have increased duration.",
+"mab:potent-poison": "Increase your max stacks of Venom.",
+"mab:regenerative": "Healing effects are more potent on you. Heal 25 health now.",
+"mab:sharp-fangs": "Your Companions deal more damage.",
+"mab:toxic-incubation": "Enemies with at least 5 stacks of your Venom are now Infected.",
+"mab:ultimate-arachnid": "When an Infected enemy dies your Brood Mother permanently gains bonus damage.",
+"mab:waste-not": "Whenever Venom inflicts damage, it will hurl Bile at another nearby enemy.",
+"mab:we-are-many": "Your team's companions deal double damage.",
+"oberon:tempest-touch": "Your Light Attack gives you a stack of Fury on hit.",
+"oberon:tempest-strike": "Your Heavy Attack gives you a stack of Fury on hit.",
+"oberon:tempest-flourish": "Your Spell gives you a stack of Fury on hit.",
+"oberon:tempest-dash": "When you Dash, summon a Whirlwind that follows your path.",
+"oberon:storm-falcon": "Your Companion is a Storm Falcon, a fearless bird that shoots Whirlwinds at foes.",
+"oberon:tempestuous-barrage": "Your Ultimate allows you to embody Oberon and unleash a barrage of Fury punches.",
+"oberon:approaching-storm": "Deal additional damage for each foe nearby you.",
+"oberon:arcing-bolts": "Your Chain Lightning can bounce further and deals more damage.",
+"oberon:as-the-wind": "Increase the distance your Dash covers by +25%.",
+"oberon:closed-circuit": "Your Chain Lightning can bounce more times, and can bounce back to foes it has already hit.",
+"oberon:ebb-and-flow": "Slowly build up Flow while in combat.",
+"oberon:electric-judgement": "While using your Ultimate, rapidly shoot Chain Lightning.",
+"oberon:eye-of-the-storm": "Your Storm Falcon has two permanent Whirlwinds orbiting it.",
+"oberon:flood-meditation": "Your Fury attacks build up Flow.",
+"oberon:furious-lightning": "Your Fury attacks emit Chain Lightning.",
+"oberon:guiding-breeze": "Gain movement speed for 1.75 seconds when you deal damage.",
+"oberon:last-wind": "Whenever you enter Flow, launch Whirlwinds in all directions.",
+"oberon:lightning-rod": "Your Storm Falcon periodically shoots Chain Lightning.",
+"oberon:live-in-fury": "Your Fury stacks last longer before wearing off.",
+"oberon:onslaught": "Increase your max stacks of Fury.",
+"oberon:plentiful-winds": "Whenever you would create a Whirlwind, create an additional one.",
+"oberon:rapid-flood": "Increase Flow's movement and attack speed bonuses.",
+"oberon:rising-current": "Chain Lightning deals increased damage for each stack of Fury.",
+"oberon:storm-meditation": "When you have ten or more stacks of Fury, periodically shoot Chain Lightning at nearby Foes.",
+"oberon:swift-killer": "Gain increased damage for 0.7 seconds when you Dash.",
+"oberon:tailwind": "Increase your maximum stacks of Fury by 1 for each active Whirlwind.",
+"oberon:torrential-flood": "Increase the duration of your Flow.",
+"oberon:typhoon": "Your Whirlwinds periodically shoot Chain Lightning.",
+"oberon:whirlwind-shot": "While in Flow, your Fury attacks launch Whirlwinds.",
+"oberon:go-with-the-flow": "Your entire party slowly builds up Flow while in combat.",
+"oberon:compounding-flood": "You keep gaining Fury while in Flow.",
+"oberon:enduring-storm": "Your Chain Lightning bounces more times.",
+"oberon:hurricane": "While in Flow, your Whirlwinds are faster and more numerous.",
+"oberon:fury-of-blows": "Increase the whole team's attack speed.",
+"titania:burning-touch": "Every 8 seconds, your Light Attack will Ignite foes.",
+"titania:burning-strike": "Every 8 seconds, your Heavy Attack will Ignite foes.",
+"titania:burning-flourish": "Every 8 seconds, your Spell will Ignite foes.",
+"titania:burning-dodge": "Every 6 seconds your Dash will cause you to Immolate.",
+"titania:ember-cat": "Your Companion is an Ember Cat, a fiery cat that shoots Immolating fireballs.",
+"titania:lion-claw": "Your Ultimate allows you to embody Titania and launch an Ember Cat forward to Ignite foes in an area.",
+"titania:afterburn": "Your Ignited attacks cause foes they hit to Immolate.",
+"titania:cauterize": "Damage from your Immolate effects can trigger the bonus damage from Scorch.",
+"titania:disintegration": "Your Immolate effects become more powerful the longer they are active.",
+"titania:dying-spark": "You deal more base damage with all your attacks when your health is below 35%.",
+"titania:ember-core": "Your Ember Cat periodically Immolates itself.",
+"titania:ember-scorch": "Ember Cat fireballs also apply Scorch.",
+"titania:enduring-flame": "Hitting a foe with an Ignited effect causes you to Immolate.",
+"titania:fan-the-flame": "Your Ignite effects recharge more quickly while you are standing in an Immolate effect.",
+"titania:feed-the-fire": "Increase the duration of Immolate.",
+"titania:great-ignis": "Your attacks that can Ignite gain an additional Ignite charge.",
+"titania:greater-ignis": "Your attacks that can Ignite gain an additional Ignite charge.",
+"titania:hot-streak": "If an Ignited attack kills at least one foe, the attack is partially recharged.",
+"titania:lion-spirit": "Using your Ultimate immediately restores all of your Ignite charges.",
+"titania:overheat": "Your attacks that can Ignite deal bonus damage while recharging.",
+"titania:raging-inferno": "Increase the frequency Immolate deals damage.",
+"titania:rapid-burn": "Your Ignite effects recharge quicker.",
+"titania:ring-of-fire": "Immolating enemies take more damage from your Ignite effects.",
+"titania:rising-flame": "Passively regen Ultimate.",
+"titania:scorching-aura": "Foes affected by Immolate for 2 seconds become Scorched.",
+"titania:scorching-edge": "Your Ignite effects apply Scorched.",
+"titania:searing-blaze": "Scorch lasts longer.",
+"titania:slow-burn": "Your Ignited attacks are stronger but take 2 seconds longer to recharge.",
+"titania:strike-back": "Whenever you take damage, gain 60% of the damage taken as Ultimate.",
+"titania:third-degree": "Scorch deals additional damage.",
+"titania:volcanic-retaliation": "Whenever you take damage, create an Eruption around you.",
+"titania:heat-wave": "Enemies spawn Scorched.",
+"titania:burn-bright": "Your Immolate effects cover a larger area.",
+"titania:eruption": "Taking damage makes nearby enemies explode.",
+"titania:proximity-burns": "Your Immolate deals more damage to enemies in contact with you.",
+"titania:wildfire-touch": "Your Light Attack keeps a second Ignite charge and deals more damage.",
+"titania:wildfire-strike": "Your Heavy Attack keeps a second Ignite charge and deals more damage.",
+"titania:wildfire-flourish": "Your Spell keeps a second Ignite charge and deals more damage.",
+"duo:fan-of-knives": "Shades throw daggers at all nearby Chilled enemies.",
+"duo:helpless-prey": "When a foe is afflicted with Weak a Shade will periodically strike them.",
+"duo:bone-collector": "Killing a foe grants bonus damage to all attacks for the remainder of this Quest. Limited to 15 kills per chamber.",
+"duo:weak-point": "You are more likely to Critical Hit when striking enemies from behind.",
+"duo:salt-the-wound": "Backstabbing an enemy causes Venom on that enemy to tick for a portion of its total damage.",
+"duo:channeled-darkness": "During Flow your attacks with Fury effects can Backstab.",
+"duo:immolating-shades": "Your Shades leave behind an Immolate.",
+"duo:eternal-sting": "Venom stacks don't decay on Chilled enemies.",
+"duo:grave-weakness": "Your Weak effects reduce enemy damage even more.",
+"duo:king-of-spiders": "Evolve your Brood Mother to be larger, hit harder, and inflict Stagger.",
+"duo:lucky-sting": "All sources of Venom have a chance of inflicting 2 extra stacks.",
+"duo:venom-meditation": "Your Chain Lightning inflicts Venom.",
+"duo:combustion": "Your Ignited attacks will detonate all stacks of Venom on enemies, dealing additional damage per stack.",
+"duo:inevitable": "After 30 seconds in combat, increase all of your base damage.",
+"duo:shatter": "Hitting a Frozen enemy with an attack that inflicts Stagger will shatter the ice for massive damage.",
+"duo:flash-freeze": "Every time you apply Chill, you have a chance to instantly Freeze the target.",
+"duo:nova-surge": "Your Frost Novas burst three times.",
+"duo:icy-hot": "Frost Novas leave an Immolate behind.",
+"duo:bone-breaker": "Weak foes take additional Stagger buildup from all sources.",
+"duo:easy-targets": "Increase your Critical Hit damage against Weak enemies.",
+"duo:spirit-of-the-wind": "Whenever you lose stacks of Fury, gain Spirit Charge equal to 10 times the amount lost.",
+"duo:pyre": "Weak enemies apply and trigger Scorch to themselves whenever they attack.",
+"duo:critical-opening": "Increase your Critical Hit chance against Stunned enemies.",
+"duo:berserker": "Gain damage reduction while in Flow.",
+"duo:detonate": "Foes you Stun will create an Eruption.",
+"duo:critical-temperature": "Increase your Critical Hit chance against Scorched enemies.",
+"duo:flame-meditation": "While in Flow, your Ignite effects have no cooldown.",
+"duo:wave-of-fortune": "Greatly increase Critical Hit chance while in Flow."
+};
+for(const [id,t] of Object.entries(EN)) if(PACK.blessings[id]) PACK.blessings[id].effect=t;
 PACK.version="liste : guide Steam et wiki SWORN ; prérequis : wiki SWORN (CC BY-SA)";
 
 const TRIGGERS={crit:"Critique",clover:"Trèfle doré",favor:"Faveur",mark:"Marque",fortune:"Fortune",
@@ -461,11 +761,13 @@ function sample(){
   const b1={id:"ex-1",example:true,game:"sworn",name:"Critiques et séismes",mode:"restricted",hero:"vigilante",weapon:"Chakrams",spell:"Shadow Strike",
     abilities:{light:"lugh:lucky-touch",heavy:"gogmagog:mighty-strike",spell:"lugh:lucky-flourish",dash:"gogmagog:mighty-dash",companion:"",ultimate:"lugh:stroke-of-luck"},
     targets:[{id:"duo:critical-opening",prio:"core"},{id:"gogmagog:opportunistic",prio:"core"},{id:"lugh:critical-clover",prio:"core"},{id:"gogmagog:unmatched-power",prio:"bonus"},{id:"lugh:collector",prio:"bonus"},{id:"gogmagog:tough-stuff",prio:"bonus"}],
-    notes:"Étourdir puis critiquer. Prendre Lugh en premier si l'offre le permet.",updatedAt:now()};
+    notes:"Étourdir puis critiquer. Prendre Lugh en premier si l'offre le permet.",
+    order:["lugh:lucky-touch","gogmagog:mighty-dash","lugh:critical-clover","gogmagog:mighty-strike","duo:critical-opening","gogmagog:unmatched-power","gogmagog:opportunistic","lugh:lucky-flourish","lugh:stroke-of-luck","lugh:collector","gogmagog:tough-stuff"],
+    potions:["lugh","gogmagog","lugh","gogmagog"],updatedAt:now()};
   const b2={id:"ex-2",example:true,game:"sworn",name:"Spirale de givre",hero:"monk",weapon:"Tome",spell:"Crystal Turrets",
     abilities:{light:"",heavy:"",spell:"beira:chilling-flourish",dash:"beira:chilling-dash",companion:"oberon:storm-falcon",ultimate:""},
     targets:[{id:"beira:spell-caster",prio:"core"},{id:"beira:mana-well",prio:"core"},{id:"duo:nova-surge",prio:"core"},{id:"oberon:onslaught",prio:"bonus"}],
-    notes:"",updatedAt:now()};
+    notes:"",potions:["beira","beira","oberon",""],updatedAt:now()};
   const run={id:"ex-r1",example:true,buildId:"ex-1",status:"done",startedAt:now(),endedAt:now(),hero:"vigilante",weapon:"Chakrams",spell:"Shadow Strike",
     picks:["lugh:lucky-touch","lugh:critical-clover","gogmagog:mighty-dash","beira:mana-well","gogmagog:opportunistic","duo:critical-opening"].map(id=>({id,at:now()})),
     others:[{kind:"merlin",text:"Bénédiction de Merlin (nom à noter)"}],result:{outcome:"loss",reached:"Boss de la 2e zone",notes:"Trop peu de PV"}};
@@ -474,9 +776,10 @@ function sample(){
 let S;
 try{S=JSON.parse(localStorage.getItem(KEY)||"null")}catch{S=null}
 if(!S||!Array.isArray(S.builds)) S=sample();
-S.ui={confirm:null,histFilter:"all",catFae:"all",catQuery:""};
+S.ui={confirm:null,histFilter:"all",catFae:"all",catQuery:"",runSort:"order"};
 /* Builds enregistrés avant le mode restreint : ils y passent par défaut. */
-S.builds.forEach(b=>{if(!b.mode)b.mode="restricted"});
+S.builds.forEach(b=>{if(!b.mode)b.mode="restricted";if(!Array.isArray(b.potions))b.potions=Array(POTION_COUNT).fill("");if(!Array.isArray(b.order))b.order=[]});
+S.runs.forEach(r=>{if(!Array.isArray(r.potions))r.potions=[];if(!Array.isArray(r.skipped))r.skipped=[]});
 function save(){try{const {ui,...rest}=S;localStorage.setItem(KEY,JSON.stringify(rest))}catch{/* stockage indisponible : l'état reste en mémoire */}}
 const allBlessings=()=>({...PACK.blessings,...Object.fromEntries(S.custom.map(c=>[c.id,c]))});
 const B=id=>allBlessings()[id];
@@ -527,6 +830,36 @@ function reqHtml(x,have){
   return `<div class="req">Prérequis : ${parts.join(" et ")}</div>`;
 }
 const isRestricted=b=>b?.mode==="restricted";
+/* Plan du build : aptitudes (ordre des emplacements) puis bénédictions visées, réordonnées par b.order. */
+function planIds(b){return [...SLOTS.map(([k])=>b.abilities[k]).filter(Boolean),...b.targets.map(t=>t.id)].filter((id,i,a)=>B(id)&&a.indexOf(id)===i)}
+function planOrder(b){const ids=planIds(b),set=new Set(ids);const kept=(b.order||[]).filter(id=>set.has(id));return [...kept,...ids.filter(id=>!kept.includes(id))]}
+/* Totaux par fae : une bénédiction de la fae = 1 (aptitude, standard, table ronde) ; les duos sont comptés à part. */
+function faeCounts(ids){const c={},duos=[];ids.map(B).filter(Boolean).forEach(x=>{if(x.type==="duo")duos.push(x);else x.fae.forEach(f=>c[f]=(c[f]||0)+1)});return {c,duos}}
+function faeTotalsHtml(planned,got){
+  const P=faeCounts(planned),G=got?faeCounts(got):null;
+  const fs=Object.keys(P.c).sort((a,b)=>P.c[b]-P.c[a]);
+  if(!fs.length&&!P.duos.length)return '<span class="muted">Choisissez une aptitude ou une bénédiction.</span>';
+  const chip=f=>{const n=P.c[f],g=G?.c[f]||0;const nm=PACK.fae[f]?.name||"Autre";
+    return `<span class="fae chip ${G&&g>=n?"done":""}" data-fae="${f}" title="${esc(nm)} : ${G?`${g} prise(s) sur `:""}${n} prévue(s)"><span class="dot"></span>${esc(nm)} <span class="n">${G?`${g}/${n}`:`×${n}`}</span></span>`};
+  const gd=G?P.duos.filter(d=>G.duos.some(x=>x.id===d.id)).length:0;
+  return fs.map(chip).join("")+(P.duos.length?`<span class="chip" style="--c:var(--ok)"><span class="duo-dot" style="--c1:var(--muted);--c2:var(--ok)"></span>Duos <span class="n">${G?`${gd}/${P.duos.length}`:`×${P.duos.length}`}</span></span>`:"");
+}
+/* Potions : une potion par fae, 4 par run. */
+const POTION_COUNT=4;
+const potLabel=f=>f&&PACK.fae[f]?`Potion ${deFae(f)}`:"—";
+/* Tri des listes en RUN : ordre du plan, par fae ou par type. */
+const TYPE_ORDER=["ability","standard","duo","roundtable","custom"];
+const SORT_LABEL={order:"Ordre",fae:"Fae",type:"Type"};
+function grouped(items,mode,render){
+  if(mode==="order")return items.map(render).join("");
+  const key=x=>mode==="fae"?(x.type==="duo"?"duo":x.fae[0]):x.type;
+  const keys=mode==="fae"?[...Object.keys(PACK.fae),"other","duo"]:TYPE_ORDER;
+  return keys.map(k=>{const g=items.filter(x=>key(x)===k);if(!g.length)return"";
+    const head=mode==="fae"?(k==="duo"?"Duos":PACK.fae[k]?.name||"Autre"):TYPE_LABEL[k];
+    const dot=mode==="fae"&&PACK.fae[k]?`<span class="fae dot" data-fae="${k}"></span>`:"";
+    return `<div class="grp">${dot}<h3>${esc(head)} · ${g.length}</h3></div>${g.map(render).join("")}`}).join("");
+}
+const sortSeg=cur=>`<div class="seg small" role="group" aria-label="Trier">${Object.entries(SORT_LABEL).map(([k,l])=>`<button data-act="run-sort" data-v="${k}" aria-pressed="${cur===k}">${l}</button>`).join("")}</div>`;
 
 /* ===================== Navigation ===================== */
 function tabs(){
@@ -541,7 +874,7 @@ function vBuilds(){
   const cards=S.builds.map(b=>{
     const runs=S.runs.filter(r=>r.buildId===b.id&&r.status==="done");
     const wins=runs.filter(r=>r.result?.outcome==="win").length;
-    const faes=buildFae(b).map(f=>`<span class="fae chip" data-fae="${f}"><span class="dot"></span>${PACK.fae[f].name}</span>`).join("");
+    const faes=planIds(b).length?faeTotalsHtml(planIds(b)):"";
     const conf=S.ui.confirm===b.id?`<div class="confirm">Supprimer ce build et garder son historique ?<button class="btn small danger" data-act="del-build" data-id="${b.id}">Supprimer</button><button class="btn small ghost" data-act="cancel">Annuler</button></div>`:"";
     return `<article class="card">
       <div class="row" style="justify-content:space-between"><h2>${esc(b.name)}</h2>${b.example?'<span class="example">Exemple</span>':""}</div>
@@ -594,11 +927,19 @@ function vEdit(){
           <div class="blist">${targets||'<p class="empty">Aucune bénédiction visée. Ajoutez celles qui font tourner le build.</p>'}</div></div>
       </div>
       <aside class="side" style="display:grid;gap:16px;min-width:0">
-        <div class="panel"><h3>Fae du build</h3><div class="faes">${[...faes].map(f=>`<span class="fae chip" data-fae="${f}"><span class="dot"></span>${PACK.fae[f].name} · ${PACK.fae[f].status}</span>`).join("")||'<span class="muted">Choisissez une aptitude ou une bénédiction.</span>'}</div></div>
+        <div class="panel"><h3>Fae du build · bénédictions nécessaires</h3><div class="faes">${faeTotalsHtml(planIds(b))}</div>
+          <p class="muted" style="margin:0;font-size:.82rem">Aptitudes, standards et table ronde comptent pour leur fae ; les duos sont comptés à part.</p></div>
+        <div class="panel"><h3>Potions · ordre de prise</h3><div class="pots">${Array.from({length:POTION_COUNT},(_,i)=>{const f=b.potions[i];
+          return `<label class="pot fae ${f?"filled":""}" ${f?`data-fae="${f}"`:""}><span class="sl">Potion ${i+1}</span><select data-potion="${i}" aria-label="Potion ${i+1}"><option value="">—</option>${Object.values(PACK.fae).map(x=>`<option value="${x.id}" ${f===x.id?"selected":""}>${x.name}</option>`).join("")}</select></label>`}).join("")}</div>
+          <p class="muted" style="margin:0;font-size:.82rem">Une potion par fae ; elle oriente vers le sanctuaire de cette fae.</p></div>
         <div class="panel"><h3>Duos atteignables</h3>
           <div class="blist">${duos.length?duos.map(d=>`<div class="bitem">${faeDot(d)}<div><div class="bn">${esc(d.name)}</div><div class="be">${esc(d.effect)}</div></div><button class="btn small" data-act="target" data-id="${d.id}">Viser</button></div>`).join(""):'<p class="empty">Il faut deux fae pour débloquer un duo.</p>'}</div></div>
       </aside>
     </div>
+    <div class="panel"><div class="row" style="justify-content:space-between"><h3>Ordre d'acquisition · ${planOrder(b).length}</h3>${(b.order||[]).length?`<button class="btn small ghost" data-act="ord-reset">Ordre par défaut</button>`:""}</div>
+      <p class="muted" style="margin:0;font-size:.85rem">L'ordre dans lequel prendre aptitudes et bénédictions. Le mode RUN le suit pas à pas.</p>
+      ${(()=>{const ord=planOrder(b);return ord.length?`<div class="ord">${ord.map((id,i)=>{const x=B(id);return `<div class="bitem"><span class="n">${i+1}</span>${faeDot(x)}<div style="min-width:0"><div class="bn">${esc(x.name)}</div><div class="bt">${typeLine(x)}</div></div>
+        <div class="row" style="flex-wrap:nowrap;gap:4px"><button class="mv" data-act="ord-mv" data-i="${i}" data-d="-1" aria-label="Monter ${esc(x.name)}" ${i===0?"disabled":""}>↑</button><button class="mv" data-act="ord-mv" data-i="${i}" data-d="1" aria-label="Descendre ${esc(x.name)}" ${i===ord.length-1?"disabled":""}>↓</button></div></div>`}).join("")}</div>`:'<p class="empty">Choisissez des aptitudes et des bénédictions pour les ordonner.</p>'})()}</div>
     <div class="panel"><h3>Enclumes · augments de l'arme et du sort</h3>
       ${anvilsFor(b).map(g=>`<div class="stack-s"><div class="eyebrow">${g.kind} · ${esc(g.item)}</div><div class="aug-grid">${g.list.map(a=>`<button class="aug" data-act="anvil-plan" data-id="${a.id}" aria-pressed="${(b.anvils||[]).includes(a.id)}"><span class="bn">${esc(a.name)}</span><span class="be">${esc(a.effect)}</span></button>`).join("")||'<p class="empty">Aucun augment connu.</p>'}</div></div>`).join("")}
           <p class="muted" style="margin:0;font-size:.85rem">Touchez un augment pour le viser. Ils changent avec l'arme et le sort choisis.</p></div>
@@ -621,13 +962,47 @@ function vRun(){
   const faeSet=new Set(r.picks.flatMap(p=>B(p.id)?.type==="duo"?[]:B(p.id)?.fae||[]));
   const duos=reachableDuos(faeSet).filter(d=>!got.has(d.id));
   const curAb={};r.picks.forEach(p=>{const x=B(p.id);if(x?.slot)curAb[x.slot]=x});
-  const slots=SLOTS.map(([k,l])=>{const c=curAb[k],pl=b&&B(b.abilities[k]);const mism=c&&pl&&c.id!==pl.id;
-    return `<div class="slot ${c?"filled fae":"empty-slot"} ${mism?"off":""}" ${c?`data-fae="${c.fae[0]}"`:""}><span class="sl">${l}</span>
-      <span class="sv">${c?`${faeDot(c)}${esc(c.name)}`:"—"}</span>${pl&&(!c||mism)?`<span class="planned">Prévu : ${esc(pl.name)}</span>`:""}</div>`}).join("");
-  const remaining=tg.filter(t=>!got.has(t.id)).map(t=>B(t.id)).filter(Boolean);
-  const log=r.picks.map((p,i)=>{const x=B(p.id);if(!x)return"";const pl=planned.has(x.id);
+  const fn=x=>PACK.fae[x.fae[0]]?.name||"Autre";
+  const slots=SLOTS.map(([k,l])=>{const c=curAb[k],pl=b&&B(b.abilities[k]);const mism=c&&pl&&c.id!==pl.id;const show=c||pl;
+    return `<div class="slot fae ${c?"filled":pl?"plan-only empty-slot":"empty-slot"} ${mism?"off":""}" ${show?`data-fae="${show.fae[0]}"`:""}><span class="sl">${l}</span>
+      <span class="sv">${c?`${faeDot(c)}${esc(c.name)} <span class="fn">${esc(fn(c))}</span>`:"—"}</span>
+      ${pl?`<span class="planned">${c&&!mism?'<span class="ok">✓ prévu</span>':`Prévu : ${faeDot(pl)}<b>${esc(fn(pl))}</b> · ${esc(pl.name)}`}</span>`:""}</div>`}).join("");
+  const order=b?planOrder(b):[];
+  const skipped=new Set(r.skipped||[]);
+  const prio=id=>{const t=tg.find(t=>t.id===id);return t?t.prio:"ability"};
+  const remaining=order.filter(id=>!got.has(id)).map(B).filter(Boolean);
+  const sortMode=S.ui.runSort||"order";
+  const remItem=x=>{const p=prio(x.id);return `<div class="bitem ${skipped.has(x.id)?"dim":""}">${faeDot(x)}<div><div class="bn">${esc(x.name)}</div><div class="bt">${typeLine(x)}</div></div>${p==="ability"?'<span class="tag plan">aptitude</span>':p==="core"?'<span class="tag plan">essentielle</span>':'<span class="tag">bonus</span>'}</div>`};
+  const pickIdx=new Map(r.picks.map((p,i)=>[p,i]));
+  const logItem=p=>{const x=B(p.id);if(!x)return"";const i=pickIdx.get(p);const pl=planned.has(x.id);
     return `<div class="bitem"><span class="n">${i+1}</span>${faeDot(x)}<div><div class="bn">${esc(x.name)}</div><div class="bt">${typeLine(x)}</div></div>
-      <div class="row" style="flex-wrap:nowrap">${b?`<span class="tag ${pl?"plan":"off"}">${pl?"prévue":"hors plan"}</span>`:""}<button class="btn small ghost" data-act="unpick" data-i="${i}" aria-label="Retirer ${esc(x.name)}">✕</button></div></div>`}).join("");
+      <div class="row" style="flex-wrap:nowrap">${b?`<span class="tag ${pl?"plan":"off"}">${pl?"prévue":"hors plan"}</span>`:""}<button class="btn small ghost" data-act="unpick" data-i="${i}" aria-label="Retirer ${esc(x.name)}">✕</button></div></div>`};
+  const pickObjs=r.picks.filter(p=>B(p.id));
+  const log=sortMode==="order"?pickObjs.map(logItem).join(""):grouped(pickObjs.map(p=>Object.assign(Object.create(B(p.id)),{__p:p})),sortMode,x=>logItem(x.__p));
+  /* Pas à pas : prochaine étape = premier élément de l'ordre ni pris ni passé. */
+  const stepIdx=order.findIndex(id=>!got.has(id)&&!skipped.has(id));
+  const doneN=order.filter(id=>got.has(id)).length;
+  const stepPanel=b&&order.length?(()=>{
+    const head=`<div class="row" style="justify-content:space-between"><h3>Pas à pas · ${doneN}/${order.length} pris</h3>${skipped.size?`<button class="btn small ghost" data-act="step-unskip-all">Reprendre les passées (${skipped.size})</button>`:""}</div>`;
+    if(stepIdx<0)return `<div class="panel">${head}<p class="empty">Plus aucune étape. ${doneN===order.length?"Tout le plan est pris.":"Il reste des étapes passées."}</p></div>`;
+    const x=B(order[stepIdx]);const p=prio(x.id);
+    const next=order.slice(stepIdx+1).filter(id=>!got.has(id)&&!skipped.has(id)).slice(0,3).map(B);
+    const st=(id,i)=>{const y=B(id);const cls=got.has(id)?"done":skipped.has(id)?"skip":i===stepIdx?"cur":"";
+      return `<div class="bitem ${cls}"><span class="n">${i+1}</span>${faeDot(y)}<div><div class="bn">${esc(y.name)}</div><div class="bt">${typeLine(y)}</div></div>${skipped.has(id)?`<button class="btn small ghost" data-act="step-unskip" data-id="${id}">Reprendre</button>`:got.has(id)?"":`<span class="tag ${i===stepIdx?"plan":""}">${i===stepIdx?"en cours":"à venir"}</span>`}</div>`};
+    return `<div class="panel">${head}
+      <div class="step"><div class="eyebrow">Étape ${stepIdx+1} · ${p==="ability"?"aptitude":p==="core"?"essentielle":"bonus"}</div>
+        <div class="bn">${faeDot(x)}${esc(x.name)}</div><div class="be">${esc(x.effect)}</div><div class="bt">${typeLine(x)}</div>${reqHtml(x,got)}
+        <div class="row"><button class="btn primary" data-act="step-take" data-id="${x.id}">Prise</button><button class="btn ghost" data-act="step-skip" data-id="${x.id}">Passer pour l'instant</button></div></div>
+      ${next.length?`<div class="steps"><h3>Ensuite</h3>${next.map(y=>st(y.id,order.indexOf(y.id))).join("")}</div>`:""}
+      <details><summary class="muted">Tout l'ordre (${order.length})</summary><div class="steps" style="margin-top:6px">${order.map(st).join("")}</div></details></div>`})():"";
+  /* Potions du run : 4, dans l'ordre ; la prochaine est proposée d'après le build. */
+  const rp=r.potions||[];const bp=b?b.potions||[]:[];
+  const potPanel=`<div class="panel"><div class="row" style="justify-content:space-between"><h3>Potions · ${rp.length}/${POTION_COUNT}</h3>${rp.length?`<button class="btn small ghost" data-act="pot-undo">Annuler la dernière</button>`:""}</div>
+    <div class="pots">${Array.from({length:POTION_COUNT},(_,i)=>{const t=rp[i],pl=bp[i];const f=t||pl;const isNext=i===rp.length;
+      return `<div class="pot fae ${t?"filled":""} ${isNext?"next":""}" ${f?`data-fae="${f}"`:""}><span class="sl">Potion ${i+1}</span>
+        <span class="sv">${t?`<span class="dot"></span>${esc(PACK.fae[t].name)}`:"—"}</span>
+        ${pl?`<span class="planned muted" style="font-size:.78rem">${t?(t===pl?'<span class="ok">✓ prévue</span>':`Prévue : ${esc(PACK.fae[pl].name)}`):`Prévue : <span class="fae dot" data-fae="${pl}"></span> ${esc(PACK.fae[pl].name)}`}</span>`:""}</div>`}).join("")}</div>
+    ${rp.length<POTION_COUNT?`<div class="faes">${bp[rp.length]?`<button class="btn small primary" data-act="pot-take" data-f="${bp[rp.length]}">Prendre la prévue : ${esc(PACK.fae[bp[rp.length]].name)}</button>`:""}${Object.values(PACK.fae).map(x=>`<button class="chip fae" data-fae="${x.id}" data-act="pot-take" data-f="${x.id}"><span class="dot"></span>${x.name}</button>`).join("")}</div>`:""}</div>`;
   const others=r.others.map((o,i)=>`<div class="bitem"><span class="tag">${esc(OTHER_KINDS.find(k=>k[0]===o.kind)?.[1]||o.kind)}</span><div class="bn">${esc(o.text)}</div><button class="btn small ghost" data-act="unother" data-i="${i}" aria-label="Retirer">✕</button></div>`).join("");
   const endForm=S.ui.confirm==="end-run"?`<div class="panel"><h3>Fin du run</h3>
       <div class="seg" role="group" aria-label="Résultat"><button id="out-win" data-act="outcome" data-v="win" aria-pressed="${S.ui.outcome==="win"}">Victoire</button><button id="out-loss" data-act="outcome" data-v="loss" aria-pressed="${S.ui.outcome!=="win"}">Défaite</button></div>
@@ -641,11 +1016,14 @@ function vRun(){
       <details><summary class="muted">Changer la classe, l'arme ou le sort de ce run</summary><div style="margin-top:8px">${heroFields(r,"r")}</div></details></div>
     ${endForm}
     ${b?`<div class="meter"><div class="k-core"><b>${coreGot}/${core.length}</b><span>Essentielles</span></div><div><b>${r.picks.length}</b><span>Prises</span></div><div class="k-off"><b>${off}</b><span>Hors plan</span></div></div>
-      <div class="bar" aria-hidden="true"><i style="width:${core.length?Math.round(coreGot/core.length*100):0}%"></i></div>`:""}
+      <div class="bar" aria-hidden="true"><i style="width:${core.length?Math.round(coreGot/core.length*100):0}%"></i></div>
+      <div class="panel"><h3>Fae · prises / nécessaires</h3><div class="faes">${faeTotalsHtml(order,r.picks.map(p=>p.id))}</div></div>`:""}
     <div class="split">
       <div style="display:grid;gap:16px;min-width:0">
+        ${stepPanel}
         <div class="panel"><h3>Aptitudes</h3><div class="slots">${slots}</div></div>
-        <div class="panel"><h3>Prises, dans l'ordre</h3><div class="blist log">${log||'<p class="empty">Rien pour l\'instant. Touchez « + Bénédiction » à chaque choix en jeu.</p>'}</div></div>
+        ${potPanel}
+        <div class="panel"><div class="row" style="justify-content:space-between"><h3>Prises${sortMode==="order"?", dans l'ordre":""}</h3>${sortSeg(sortMode)}</div><div class="blist log">${log||'<p class="empty">Rien pour l\'instant. Touchez « + Bénédiction » à chaque choix en jeu.</p>'}</div></div>
         <div class="panel"><h3>Enclumes · ${(r.anvils||[]).length} pris</h3>
           ${anvilsFor(r).map(g=>`<div class="stack-s"><div class="eyebrow">${g.kind} · ${esc(g.item)}</div><div class="aug-grid">${g.list.map(a=>{const pl=b&&(b.anvils||[]).includes(a.id);return `<button class="aug ${pl?"planned":""}" data-act="anvil-take" data-id="${a.id}" aria-pressed="${(r.anvils||[]).includes(a.id)}"><span class="bn">${esc(a.name)}</span><span class="be">${esc(a.effect)}</span>${pl?'<span class="tag plan">prévu</span>':""}</button>`}).join("")}</div></div>`).join("")}</div>
         <div class="panel"><div class="row" style="justify-content:space-between"><h3>Autres choix du run</h3></div>
@@ -654,7 +1032,7 @@ function vRun(){
           <div class="blist">${others}</div></div>
       </div>
       <aside class="side" style="display:grid;gap:16px;min-width:0">
-        ${b?`<div class="panel"><h3>Encore à trouver</h3><div class="blist">${remaining.length?remaining.map(x=>`<div class="bitem">${faeDot(x)}<div><div class="bn">${esc(x.name)}</div><div class="bt">${typeLine(x)}</div></div>${tg.find(t=>t.id===x.id).prio==="core"?'<span class="tag plan">essentielle</span>':'<span class="tag">bonus</span>'}</div>`).join(""):'<p class="empty">Tout le plan est pris.</p>'}</div></div>`:""}
+        ${b?`<div class="panel"><div class="row" style="justify-content:space-between"><h3>Encore à trouver · ${remaining.length}</h3>${sortSeg(sortMode)}</div><div class="blist">${remaining.length?grouped(remaining,sortMode,remItem):'<p class="empty">Tout le plan est pris.</p>'}</div></div>`:""}
         <div class="panel"><h3>Duos atteignables maintenant</h3><div class="blist">${duos.length?duos.map(d=>`<div class="bitem">${faeDot(d)}<div><div class="bn">${esc(d.name)}</div><div class="be">${esc(d.effect)}</div></div>${planned.has(d.id)?'<span class="tag plan">prévu</span>':'<span class="tag duo">ouvert</span>'}</div>`).join(""):'<p class="empty">Prenez une bénédiction de deux fae différentes.</p>'}</div></div>
         ${b&&b.notes?`<div class="panel"><h3>Notes du build</h3><p style="margin:0">${esc(b.notes)}</p></div>`:""}
       </aside>
@@ -697,7 +1075,7 @@ function vCatalog(){
 }
 
 /* ===================== Feuilles ===================== */
-function openPicker(mode){S.ui.picker={mode,q:"",fae:"all"};renderLayer()}
+function openPicker(mode){S.ui.picker={mode,q:"",fae:"all",type:"all"};renderLayer()}
 function renderLayer(){
   const L=document.getElementById("layer");
   if(S.ui.picker) return L.innerHTML=pickerHtml(),L.querySelector("#pick-q")?.focus({preventScroll:true});
@@ -709,7 +1087,7 @@ function pickerHtml(){
   const got=new Set(p.mode==="run"?r.picks.map(x=>x.id):b.targets.map(t=>t.id).concat(Object.values(b.abilities)));
   const planned=new Set(b?b.targets.map(t=>t.id).concat(Object.values(b.abilities).filter(Boolean)):[]);
   const q=p.q.toLowerCase();
-  const all=Object.values(allBlessings()).filter(x=>(p.fae==="all"||x.fae.includes(p.fae))&&(!q||x.name.toLowerCase().includes(q)||x.effect.toLowerCase().includes(q)));
+  const all=Object.values(allBlessings()).filter(x=>(p.fae==="all"||x.fae.includes(p.fae))&&(p.type==="all"||x.type===p.type||(p.type==="ability"&&x.type==="custom"&&x.slot))&&(!q||x.name.toLowerCase().includes(q)||x.effect.toLowerCase().includes(q)));
   /* Mode restreint (création) : les bénédictions verrouillées ne se choisissent pas. En RUN : signalées, mais choisissables (le jeu fait foi). */
   const restricted=p.mode==="build"&&isRestricted(b);
   const have=p.mode==="run"?new Set(r.picks.map(x=>x.id)):owned(b);
@@ -725,7 +1103,8 @@ function pickerHtml(){
   return `<div class="sheet-scrim" data-act="close-sheet"><div class="sheet" role="dialog" aria-modal="true" aria-label="Choisir une bénédiction">
     <div class="row" style="justify-content:space-between"><h2>${p.mode==="run"?"Bénédiction prise":"Viser une bénédiction"}</h2>${p.mode==="build"?`<div class="seg" role="group" aria-label="Mode du build"><button data-act="build-mode" data-v="free" aria-pressed="${!restricted}">Libre</button><button data-act="build-mode" data-v="restricted" aria-pressed="${restricted}">Restreint</button></div>`:""}<button class="btn small ghost" data-act="close-sheet">Fermer</button></div>
     <div style="display:grid;gap:8px"><input class="search" id="pick-q" placeholder="Taper les premières lettres" value="${esc(p.q)}">
-      <div class="faes"><button class="chip fae" aria-pressed="${p.fae==="all"}" data-act="pick-fae" data-f="all">Toutes</button>${Object.values(PACK.fae).map(x=>`<button class="chip fae" data-fae="${x.id}" aria-pressed="${p.fae===x.id}" data-act="pick-fae" data-f="${x.id}"><span class="dot"></span>${x.name}</button>`).join("")}</div></div>
+      <div class="faes"><button class="chip fae" aria-pressed="${p.fae==="all"}" data-act="pick-fae" data-f="all">Toutes</button>${Object.values(PACK.fae).map(x=>`<button class="chip fae" data-fae="${x.id}" aria-pressed="${p.fae===x.id}" data-act="pick-fae" data-f="${x.id}"><span class="dot"></span>${x.name}</button>`).join("")}</div>
+      <div class="seg small" role="group" aria-label="Type">${[["all","Tous types"],["ability","Aptitudes"],["standard","Standard"],["duo","Duos"],["roundtable","Table ronde"]].map(([k,l])=>`<button data-act="pick-type" data-t="${k}" aria-pressed="${p.type===k}">${l}</button>`).join("")}</div></div>
     <div class="scroll">${prevues.length?`<div class="blist"><h3>Prévues dans le build</h3>${prevues.map(item).join("")}</div>`:""}
       <div class="blist">${prevues.length?"<h3>Toutes</h3>":""}${restricted?`<h3>Disponibles · ${open.length}</h3>`:""}${rest.slice(0,120).map(item).join("")||(restricted?'<p class="empty">Rien de débloqué ici. Choisissez d\'abord une aptitude de cette fae.</p>':'<p class="empty">Aucun résultat. Ajoutez-la depuis le Catalogue.</p>')}</div>
       ${restricted&&locked.length?`<details class="blist" open><summary class="muted">Verrouillées · ${locked.length} (il manque une aptitude)</summary><div class="blist" style="margin-top:6px">${locked.slice(0,120).map(item).join("")}</div></details>`:""}</div>
@@ -747,9 +1126,13 @@ function ioHtml(){
 function startRun(bid){
   const old=activeRun(); if(old){old.status="abandoned"}
   const b=build(bid);
-  const r={id:uid(),buildId:b?b.id:null,status:"active",startedAt:now(),hero:b?.hero||"vigilante",weapon:b?.weapon||HEROES.vigilante.weapons[0],spell:b?.spell||HEROES.vigilante.spells[0],picks:[],others:[],result:null};
+  const r={id:uid(),buildId:b?b.id:null,status:"active",startedAt:now(),hero:b?.hero||"vigilante",weapon:b?.weapon||HEROES.vigilante.weapons[0],spell:b?.spell||HEROES.vigilante.spells[0],picks:[],others:[],potions:[],skipped:[],result:null};
   S.runs.push(r);S.activeRunId=r.id;save();go("run");
 }
+/* Ajoute une prise au run ; une aptitude remplace celle du même emplacement. */
+function runPick(id){const r=activeRun(),x=B(id);if(!r||!x)return;
+  if(x.slot){const i=r.picks.findIndex(p=>B(p.id)?.slot===x.slot);if(i>=0)r.picks.splice(i,1)}
+  r.picks.push({id,at:now()});r.skipped=(r.skipped||[]).filter(s=>s!==id);save()}
 function importMerge(text){
   let j;try{j=JSON.parse(text)}catch{return "Ce texte n'est pas un JSON valide."}
   if(j?.format!=="rogue-planner"&&j?.format!=="carnet-runs") return "Ce fichier ne vient pas de Rogue Planner : le champ « format » est absent.";
@@ -778,14 +1161,23 @@ document.addEventListener("click",async e=>{
     case "pick-run":return openPicker("run");
     case "close-sheet":S.ui.picker=null;return renderLayer();
     case "pick-fae":S.ui.picker.fae=el.dataset.f;return renderLayer();
+    case "pick-type":S.ui.picker.type=el.dataset.t;return renderLayer();
+    case "run-sort":S.ui.runSort=el.dataset.v;return render();
+    case "ord-mv":{const b=build(S.editingId);const o=planOrder(b),i=+el.dataset.i,j=i+ +el.dataset.d;if(j<0||j>=o.length)return;[o[i],o[j]]=[o[j],o[i]];b.order=o;b.updatedAt=now();save();render();
+      return document.querySelector(`[data-act="ord-mv"][data-i="${j}"][data-d="${el.dataset.d}"]`)?.focus({preventScroll:true})||document.querySelector(`[data-act="ord-mv"][data-i="${j}"]`)?.focus({preventScroll:true})}
+    case "ord-reset":{const b=build(S.editingId);b.order=[];b.updatedAt=now();save();toast("Ordre par défaut");return render()}
+    case "step-take":{const x=B(id);runPick(id);toast(`${x.name} prise`);return render()}
+    case "step-skip":{const r=activeRun();r.skipped=[...new Set([...(r.skipped||[]),id])];save();return render()}
+    case "step-unskip":{const r=activeRun();r.skipped=(r.skipped||[]).filter(s=>s!==id);save();return render()}
+    case "step-unskip-all":{const r=activeRun();r.skipped=[];save();return render()}
+    case "pot-take":{const r=activeRun();r.potions=r.potions||[];if(r.potions.length>=POTION_COUNT)return;r.potions.push(el.dataset.f);save();toast(`${potLabel(el.dataset.f)} prise`);return render()}
+    case "pot-undo":{const r=activeRun();(r.potions||[]).pop();save();return render()}
     case "choose":{
       const x=B(id);
       if(S.ui.picker.mode==="build"){const b=build(S.editingId);
         if(x.type==="ability"||x.slot){b.abilities[x.slot]=x.id}else if(!b.targets.some(t=>t.id===id))b.targets.push({id,prio:"bonus"});
         b.updatedAt=now();save();S.ui.picker=null;renderLayer();toast(`${x.name} visée`);return render()}
-      const r=activeRun();
-      if(x.slot){const i=r.picks.findIndex(p=>B(p.id)?.slot===x.slot);if(i>=0)r.picks.splice(i,1)}
-      r.picks.push({id,at:now()});save();S.ui.picker=null;renderLayer();toast(`${x.name} ajoutée`);return render()}
+      runPick(id);S.ui.picker=null;renderLayer();toast(`${x.name} ajoutée`);return render()}
     case "target":{const b=build(S.editingId);b.targets.push({id,prio:"bonus"});save();return render()}
     case "untarget":{const b=build(S.editingId);b.targets=b.targets.filter(t=>t.id!==id);save();return render()}
     case "prio":{const t=build(S.editingId).targets.find(t=>t.id===id);t.prio=t.prio==="core"?"bonus":"core";save();return render()}
@@ -821,6 +1213,7 @@ document.addEventListener("change",e=>{
     if(t.dataset.bind==="hero"){r.hero=t.value;r.weapon=HEROES[t.value].weapons[0];r.spell=HEROES[t.value].spells[0]}else r[t.dataset.bind]=t.value;save();return render()}
   if(S.view==="edit"){const b=build(S.editingId);
     if(t.dataset.slot!==undefined){b.abilities[t.dataset.slot]=t.value;save();return render()}
+    if(t.dataset.potion!==undefined){b.potions=b.potions||[];b.potions[+t.dataset.potion]=t.value;b.updatedAt=now();save();return render()}
     if(t.dataset.bind==="hero"){b.hero=t.value;b.weapon=HEROES[t.value].weapons[0];b.spell=HEROES[t.value].spells[0];save();return render()}
     if(t.dataset.bind){b[t.dataset.bind]=t.value;save();return render()}}
 });
@@ -839,3 +1232,5 @@ function render(){
 applyTheme();render();
 </script>
 
+
+</body></html>

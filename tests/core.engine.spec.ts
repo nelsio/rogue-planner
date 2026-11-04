@@ -1,6 +1,7 @@
 /**
- * Spécification exécutable du moteur (HANDOFF §4, §10.1). Fournie : ne pas modifier les valeurs attendues.
+ * Spécification exécutable du moteur (HANDOFF §4, §9.1). Fournie : ne pas modifier les valeurs attendues.
  * Un désaccord se signale dans HANDOFF §12 (points ouverts), il ne se corrige pas ici.
+ * Révision 2 (04/11/2026) : `runProgress().remaining` suit l'ordre d'acquisition et inclut les aptitudes (HANDOFF annexe D).
  */
 import { describe, expect, it } from "vitest";
 import {
@@ -207,7 +208,13 @@ describe("runProgress", () => {
     expect(p.coreTaken).toBe(1);
     expect(p.taken).toBe(4);
     expect(p.offPlan).toEqual(["gogmagog:press-the-attack", "badb:shadow-strike"]);
-    expect(p.remaining).toEqual([{ id: "duo:critical-opening", prio: "core" }, { id: "lugh:collector", prio: "bonus" }]);
+    // Révision 2 : ordre d'acquisition (aptitudes par emplacement, puis visées), aptitudes comprises.
+    expect(p.remaining).toEqual([
+      { id: "gogmagog:mighty-strike", prio: "ability" },
+      { id: "gogmagog:mighty-dash", prio: "ability" },
+      { id: "lugh:collector", prio: "bonus" },
+      { id: "duo:critical-opening", prio: "core" },
+    ]);
     expect(p.slots.light).toEqual({ current: "lugh:lucky-touch", planned: "lugh:lucky-touch", mismatch: false });
     expect(p.slots.heavy).toEqual({ current: "badb:shadow-strike", planned: "gogmagog:mighty-strike", mismatch: true });
     expect(p.slots.dash).toEqual({ current: null, planned: "gogmagog:mighty-dash", mismatch: false });
@@ -223,7 +230,7 @@ describe("runProgress", () => {
 
 describe("withCustom", () => {
   it("ajoute une bénédiction saisie à la main, sans prérequis", () => {
-    const p = withCustom(pack, [{ id: "custom:blood-clot-1a2b", game: "sworn", name: "Blood Clot", family: "badb", effect: "Vos cumuls de Saignement ne retombent pas" }]);
+    const p = withCustom(pack, [{ id: "custom:blood-clot-1a2b", game: "sworn", name: "Blood Clot", family: "badb", effect: "Your Bleed stacks don't decay" }]);
     expect(p.items).toHaveLength(257);
     expect(isUnlocked(p, "custom:blood-clot-1a2b", [])).toBe(true);
     expect(applyPick(p, run(), "custom:blood-clot-1a2b", "t1").picks).toHaveLength(1);
