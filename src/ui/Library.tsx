@@ -1,8 +1,8 @@
 // Bibliothèque de builds (HANDOFF §6.2).
 import { useState, type ReactNode } from "react";
-import type { Build } from "@rogue/core";
+import { familyProgress, planOrder, type Build } from "@rogue/core";
 import { useApp } from "./context";
-import { buildFamilies, FaeChip } from "./fae";
+import { FamilyTotals } from "./fae";
 import { duplicateBuild, newBuild } from "./factory";
 import { ImportExport } from "./ImportExport";
 import { strings as t } from "./strings";
@@ -74,7 +74,7 @@ function BuildCard(props: {
   const kit = useKit();
   const done = state.runs.filter((r) => r.buildId === b.id && r.status === "done");
   const wins = done.filter((r) => r.result?.outcome === "win").length;
-  const families = buildFamilies(pack, b);
+  const totals = familyProgress(pack, planOrder(pack, b));
 
   return (
     <article className="card" aria-label={b.name}>
@@ -86,7 +86,7 @@ function BuildCard(props: {
         {kit(b)} · {b.mode === "restricted" ? t.modeRestricted : t.modeFree}
       </div>
       <div className="faes">
-        {families.length ? families.map((f) => <FaeChip key={f} pack={pack} family={f} />) : <span className="muted">{t.noFae}</span>}
+        <FamilyTotals pack={pack} totals={totals} empty={t.noFae} />
       </div>
       <div className="stats">
         <span><b>{b.targets.filter((x) => x.prio === "core").length}</b> {t.coreCount}</span>

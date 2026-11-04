@@ -59,6 +59,11 @@ export const strings = {
   },
   otherFamily: "Autre",
 
+  // Puces de totaux par fae (HANDOFF §6.8)
+  duos: "Duos",
+  totalTitle: (name: string, planned: number, taken?: number) =>
+    `${name} : ${taken === undefined ? "" : `${taken} prise(s) sur `}${planned} prévue(s)`,
+
   // Création (HANDOFF §6.3)
   editorEyebrow: "Mode Création",
   backToLibrary: "Retour à la bibliothèque",
@@ -78,8 +83,19 @@ export const strings = {
   prio: { core: "Essentielle", bonus: "Bonus" },
   prioTitle: "Changer la priorité",
   removeItem: (name: string) => `Retirer ${name}`,
-  buildFamilies: "Fae du build",
+  buildFamilies: "Fae du build · bénédictions nécessaires",
   noBuildFamilies: "Choisissez une aptitude ou une bénédiction.",
+  buildFamiliesHelp: "Aptitudes, standards et table ronde comptent pour leur fae ; les duos sont comptés à part.",
+  potionsTitle: "Potions · ordre de prise",
+  potion: (i: number) => `Potion ${i + 1}`,
+  noPotion: "—",
+  potionsHelp: "Une potion par fae ; elle oriente vers le sanctuaire de cette fae.",
+  orderTitle: (n: number) => `Ordre d'acquisition · ${n}`,
+  orderReset: "Ordre par défaut",
+  orderHelp: "L'ordre dans lequel prendre aptitudes et bénédictions. Le mode RUN le suit pas à pas.",
+  noOrder: "Choisissez des aptitudes et des bénédictions pour les ordonner.",
+  moveUp: (name: string) => `Monter ${name}`,
+  moveDown: (name: string) => `Descendre ${name}`,
   duosTitle: "Duos atteignables",
   noDuos: "Il faut deux fae pour débloquer un duo.",
   aim: "Viser",
@@ -95,6 +111,8 @@ export const strings = {
   close: "Fermer",
   searchPlaceholder: "Taper les premières lettres",
   allFamilies: "Toutes",
+  typeGroup: "Type",
+  types: { all: "Tous types", ability: "Aptitudes", standard: "Standard", duo: "Duos", roundtable: "Table ronde" },
   available: (n: number) => `Disponibles · ${n}`,
   locked: (n: number) => `Verrouillées · ${n} (il manque une aptitude)`,
   nothingUnlocked: "Rien de débloqué ici. Choisissez d'abord une aptitude de cette fae.",

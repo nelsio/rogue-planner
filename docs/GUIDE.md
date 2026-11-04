@@ -6,7 +6,8 @@ aucun serveur.
 
 ## 1. La bibliothèque (onglet Builds)
 
-Chaque carte est un build : sa classe, son arme, son sort, ses fae, et le bilan de ses runs.
+Chaque carte est un build : sa classe, son arme, son sort, le nombre de bénédictions nécessaires par fae
+(« Lugh ×5 », les duos à part) et le bilan de ses runs.
 
 - **Nouveau build** ouvre la Création.
 - **Lancer un run** démarre le suivi en direct avec ce build.
@@ -24,12 +25,17 @@ ils ne reviendront pas.
    - en **Libre**, tout est proposé, sans prérequis.
 3. **Aptitudes visées** : une par emplacement (attaque légère, lourde, sort, esquive, compagnon, ultime).
    Elles fixent les fae du build.
-4. **Bénédictions visées** : touchez **Ajouter**, cherchez, choisissez. Chaque ligne montre ses **prérequis** :
-   en vert avec ✓ s'ils sont remplis par le build, en orange sinon. Touchez la priorité pour passer de
-   **Bonus** à **Essentielle** (celles qui font tourner le build).
-5. **Duos atteignables** : les duos que vos fae ouvrent ; **Viser** les ajoute.
-6. **Enclumes** : les augments de votre arme et de votre sort ; touchez ceux que vous visez.
-7. **Notes** : ordre de prise, pièges à éviter…
+4. **Bénédictions visées** : touchez **Ajouter**, cherchez (par nom, fae ou type), choisissez. Chaque ligne montre
+   ses **prérequis** : en vert avec ✓ s'ils sont remplis par le build, en orange sinon. Touchez la priorité pour
+   passer de **Bonus** à **Essentielle** (celles qui font tourner le build).
+5. **Fae du build** : combien de bénédictions il faut chez chaque fae. Aptitudes, standards et table ronde comptent
+   pour leur fae ; les duos sont comptés à part.
+6. **Potions** : les 4 potions du run, dans l'ordre ; chacune oriente vers le sanctuaire de sa fae.
+7. **Duos atteignables** : les duos que vos fae ouvrent ; **Viser** les ajoute.
+8. **Ordre d'acquisition** : dans quel ordre prendre aptitudes et bénédictions. Montez ou descendez une ligne avec
+   ↑ et ↓ ; une bénédiction ajoutée arrive en fin de liste. **Ordre par défaut** revient aux aptitudes puis aux visées.
+9. **Enclumes** : les augments de votre arme et de votre sort ; touchez ceux que vous visez.
+10. **Notes** : ordre de prise, pièges à éviter…
 
 ## 3. Suivre une partie (onglet Run)
 
@@ -37,7 +43,8 @@ ils ne reviendront pas.
   Une bénédiction verrouillée reste choisissable : c'est le jeu qui fait foi.
 - Les compteurs montrent les **essentielles** prises, le nombre de **prises** et celles **hors plan**.
 - **Aptitudes** : une aptitude prise remplace celle du même emplacement ; « Prévu : … » rappelle le plan.
-- **Encore à trouver** liste ce qui manque, essentielles d'abord. **Duos atteignables maintenant** suit vos prises.
+- **Encore à trouver** liste ce qui manque, aptitudes comprises, dans l'ordre d'acquisition.
+  **Duos atteignables maintenant** suit vos prises.
 - Notez les **enclumes** prises et les **autres choix** (Merlin, Morgane, sanctuaire…).
 - **Terminer le run** : victoire ou défaite, jusqu'où vous êtes allé, vos notes. Le run part dans l'historique.
   « Abandonner sans enregistrer » l'efface.

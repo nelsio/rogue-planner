@@ -11,10 +11,9 @@ describe("bibliothèque", () => {
     const c = card("Critiques et séismes");
     expect(within(c).getByText("Exemple")).toBeInTheDocument();
     expect(within(c).getByText("Vigilante · Chakrams · Shadow Strike · mode restreint")).toBeInTheDocument();
-    expect(within(c).getByText("Lugh")).toBeInTheDocument();
-    expect(within(c).getByText("Gogmagog")).toBeInTheDocument();
-    // Aucun Beira : les duos ne comptent pas, et Critical Opening est Gogmagog + Lugh.
-    expect(within(c).queryByText("Beira")).not.toBeInTheDocument();
+    // Totaux par fae : nombre prévu décroissant, puis ordre du pack ; les duos à part.
+    expect(c.querySelector(".faes")).toHaveTextContent("Gogmagog ×5Lugh ×5Duos ×1");
+    expect(within(c).getByText("Lugh")).toHaveAttribute("title", "Lugh : 5 prévue(s)");
     expect(c.querySelector(".stats")).toHaveTextContent("3 essentielles6 visées1 run · 0 victoire");
     expect(within(card("Spirale de givre")).getByText(/mode restreint/)).toBeInTheDocument();
   });

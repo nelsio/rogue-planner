@@ -1,14 +1,16 @@
-// Mode Création (HANDOFF §6.3) : départ, aptitudes, bénédictions visées, fae, duos, enclumes, notes.
+// Mode Création (HANDOFF §6.3) : départ, aptitudes, bénédictions visées, totaux par fae, potions, duos,
+// ordre d'acquisition, enclumes, notes.
 import { useState } from "react";
-import { buildOwned, missing, reachableDuos, toggleTarget, type Build } from "@rogue/core";
+import { buildOwned, buildPotions, familyProgress, missing, planOrder, reachableDuos, toggleTarget, type Build } from "@rogue/core";
 import { anvilGroups } from "./anvils";
 import { useApp } from "./context";
-import { buildFamilies } from "./fae";
+import { FamilyTotals } from "./fae";
 import { FaeDot, ItemText } from "./items";
 import { KitFields } from "./KitFields";
 import { familyName } from "./labels";
 import { Library } from "./Library";
 import { ModeSwitch } from "./ModeSwitch";
+import { OrderPanel } from "./OrderPanel";
 import { Picker } from "./Picker";
 import { strings as t } from "./strings";
 import { useStartRun } from "./useStartRun";
@@ -23,12 +25,19 @@ function BuildEditor({ build: b }: { build: Build }) {
   const { dispatch, pack, env } = useApp();
   const [picking, setPicking] = useState(false);
   const { start, confirmFor } = useStartRun();
-  const save = (next: Build, toast?: string) => dispatch({ type: "buildSaved", build: { ...next, updatedAt: env.now() }, toast });
+  const save = (next: Build, toast?: string) => {
+    // Les ids d'ordre sortis du plan sont nettoyés à la sauvegarde (§3.2).
+    const plan = new Set(planOrder(pack, next));
+    const order = (next.order ?? []).filter((id) => plan.has(id));
+    dispatch({ type: "buildSaved", build: { ...next, order, updatedAt: env.now() }, toast });
+  };
 
   const index = pack.byId;
   const owned = buildOwned(b);
   const restricted = b.mode === "restricted";
-  const families = buildFamilies(pack, b);
+  const totals = familyProgress(pack, planOrder(pack, b));
+  const potions = buildPotions(pack, b);
+  const setPotion = (i: number, family: string) => save({ ...b, potions: potions.map((p, j) => (j === i ? family || null : p)) });
   const duos = reachableDuos(pack, owned, { restricted }).filter((id) => !b.targets.some((x) => x.id === id));
 
   const setMode = (mode: Build["mode"]) => mode !== b.mode && save({ ...b, mode }, t.toastMode[mode]);
@@ -135,20 +144,26 @@ function BuildEditor({ build: b }: { build: Build }) {
           <div className="panel">
             <h3>{t.buildFamilies}</h3>
             <div className="faes">
-              {families.length ? (
-                families.map((id) => {
-                  const f = pack.families.find((x) => x.id === id);
-                  return (
-                    <span key={id} className="fae chip" data-fae={id}>
-                      <span className="dot" />
-                      {f ? `${f.name} · ${f.status}` : t.otherFamily}
-                    </span>
-                  );
-                })
-              ) : (
-                <span className="muted">{t.noBuildFamilies}</span>
-              )}
+              <FamilyTotals pack={pack} totals={totals} empty={t.noBuildFamilies} />
             </div>
+            <p className="muted" style={{ margin: 0, fontSize: ".82rem" }}>{t.buildFamiliesHelp}</p>
+          </div>
+          <div className="panel">
+            <h3>{t.potionsTitle}</h3>
+            <div className="pots">
+              {potions.map((f, i) => (
+                <label key={i} className={f ? "pot fae filled" : "pot fae"} data-fae={f ?? undefined}>
+                  <span className="sl">{t.potion(i)}</span>
+                  <select aria-label={t.potion(i)} value={f ?? ""} onChange={(e) => setPotion(i, e.target.value)}>
+                    <option value="">{t.noPotion}</option>
+                    {pack.families.map((x) => (
+                      <option key={x.id} value={x.id}>{x.name}</option>
+                    ))}
+                  </select>
+                </label>
+              ))}
+            </div>
+            <p className="muted" style={{ margin: 0, fontSize: ".82rem" }}>{t.potionsHelp}</p>
           </div>
           <div className="panel">
             <h3>{t.duosTitle}</h3>
@@ -174,6 +189,8 @@ function BuildEditor({ build: b }: { build: Build }) {
           </div>
         </aside>
       </div>
+
+      <OrderPanel build={b} onSave={save} />
 
       <div className="panel">
         <h3>{t.anvilsTitle}</h3>

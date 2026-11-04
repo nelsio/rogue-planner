@@ -1,5 +1,15 @@
 # Journal des versions
 
+## v0.1.2 — Révision 2 : Création
+- Bibliothèque et Création : puces de bénédictions nécessaires par fae (« Lugh ×5 », « Duos ×1 »), triées par
+  nombre décroissant puis dans l'ordre des fae du pack.
+- Création : 4 potions dans l'ordre (une fae par case, case à la couleur de la fae).
+- Création : ordre d'acquisition numéroté, boutons ↑ / ↓ de 40 px (le focus suit l'élément déplacé),
+  « Ordre par défaut » ; les étapes sorties du plan sont nettoyées à l'enregistrement.
+- Sélecteur « Ajouter » et « + Bénédiction » : filtre de type (Tous types, Aptitudes, Standard, Duos, Table ronde).
+- Moteur : `familyProgress`, totaux triés d'un plan, partagés par la bibliothèque, la Création et le RUN.
+- Guide du joueur mis à jour.
+
 ## v0.1.1 — Révision 2 : moteur
 - Pack SWORN du 2026-11-04 : descriptions en anglais (texte du jeu), potions (4 par run, une par fae),
   libellés « Potion(s) ». Les libellés courts des emplacements sont conservés.

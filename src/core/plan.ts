@@ -60,6 +60,30 @@ export function familyTotals(pack: Pack, ids: Iterable<string>): { families: Rec
   return { families, duos };
 }
 
+export interface FamilyProgress {
+  families: { family: string; planned: number; taken: number }[];
+  duos: { planned: number; taken: number };
+}
+
+/**
+ * Totaux d'un plan face aux prises : une entrée par fae du plan, triées par nombre prévu décroissant puis dans
+ * l'ordre des fae du pack (une fae hors pack, ajout manuel « Autre », vient en dernier). `taken` compte aussi les
+ * prises hors plan ; les duos pris ne comptent que ceux du plan.
+ */
+export function familyProgress(pack: Pack, plan: Iterable<string>, picked: Iterable<string> = []): FamilyProgress {
+  const planned = familyTotals(pack, plan);
+  const pickedIds = new Set(picked);
+  const taken = familyTotals(pack, pickedIds);
+  const rank = (family: string) => {
+    const i = pack.families.findIndex((f) => f.id === family);
+    return i < 0 ? pack.families.length : i;
+  };
+  const families = Object.entries(planned.families)
+    .map(([family, n]) => ({ family, planned: n, taken: taken.families[family] ?? 0 }))
+    .sort((a, b) => b.planned - a.planned || rank(a.family) - rank(b.family));
+  return { families, duos: { planned: planned.duos.length, taken: planned.duos.filter((id) => pickedIds.has(id)).length } };
+}
+
 /** Potions prévues, toujours `pack.potions.perRun` cases (null = non prévue). */
 export function buildPotions(pack: Pack, build: Build): (string | null)[] {
   return Array.from({ length: pack.potions.perRun }, (_, i) => build.potions?.[i] ?? null);
